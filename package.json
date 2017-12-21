@@ -1,0 +1,19 @@
+{
+  "name": "create-next-example-app",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "graphql": "^0.11.3",
+    "isomorphic-fetch": "^2.2.1",
+    "koa": "^2.3.0",
+    "koa-router": "^7.2.1",
+    "next": "^2.4.7",
+    "prop-types": "^15.5.10",
+    "react": "^15.6.1",
+    "react-apollo": "^1.4.15",
+    "react-dom": "^15.6.1"
+  }
+}
