@@ -2,9 +2,9 @@ import Link from 'next/link'
 import Layout from '../components/layout'
 import Head from '../components/head'
 import Artist from '../components/artist.comp'
-import withData from '../lib/withData'
+import WithData from '../lib/withData'
 
-export default withData((props) => (
+export default WithData((props) => (
   <Layout>
     <Artist id={props.url.query.id} />
     Artist page, list of songs
