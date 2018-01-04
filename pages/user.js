@@ -10,7 +10,9 @@ export default (props) => (
   <Layout>
     <p>User Page</p>
     <p>profile, photo, premium account?, social media account</p>
-    <Link href="/multilist">uploads (make it user/uploads)</Link>
+    <Link href="/multilist">
+      <a>uploads (make it user/uploads)</a>
+    </Link>
   </Layout>
 )
 // ))

@@ -19,7 +19,7 @@ const artistQuery = gql`
   }
 `
 
-function ArtistData({ data: { artist } }) {
+function ArtistData({ data: { loading, error, artist } }) {
   if (artist) {
     return (
       <div>

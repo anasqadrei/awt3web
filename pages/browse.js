@@ -10,7 +10,9 @@ export default (props) => (
   <Layout>
     Browse page
     <p>Artists List</p>
-    <Link as="/artist/1/وديع" href={`/artist?id=1`}>وديع الصافي</Link>
+    <Link as="/artist/1/وديع" href={`/artist?id=1`}>
+      <a>وديع الصافي</a>
+    </Link>
     <p>Hashtags List</p>
     <Link as="/hashtag/الليل_يا_ليلى" href={`/hashtag?id=XX`}>#الليل....</Link>
   </Layout>

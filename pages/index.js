@@ -14,10 +14,10 @@ export default () => (
         <p>Trending</p>
         <p>My Recently Played</p>
         <Link as="/song/1/الليل-يا-ليلى" href={`/song?id=1`}>
-        <a className="card">
-          <h3>الليل-يا-ليلى</h3>
-          <p>وديع الصافي</p>
-        </a>
+          <a className="card">
+            <h3>الليل-يا-ليلى</h3>
+            <p>وديع الصافي</p>
+          </a>
         </Link>
       </div>
     </div>

@@ -1,24 +1,22 @@
 import Nav from '../components/nav'
 import Library from '../components/library'
-import Footnote from '../components/footnote'
 import Search from '../components/search'
+import Footnote from '../components/footnote'
 
 const Layout = (props) => (
   <div dir="rtl">
     <Nav />
     <Library />
-    <Footnote />
     <Search />
     {props.children}
+    <Footnote />
 
-    <style jsx>{`
+    <style jsx global>{`
       div {
         text-align: right;
       }
     `}</style>
   </div>
-
-
 )
 
 export default Layout
