@@ -1,9 +1,10 @@
+import withSentry from '../lib/withSentry'
 import Nav from '../components/nav'
 import Library from '../components/library'
 import Search from '../components/search'
 import Footnote from '../components/footnote'
 
-const Layout = (props) => (
+export default withSentry((props) => (
   <div dir="rtl">
     <Nav />
     <Library />
@@ -17,6 +18,4 @@ const Layout = (props) => (
       }
     `}</style>
   </div>
-)
-
-export default Layout
+))

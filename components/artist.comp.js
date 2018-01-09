@@ -1,5 +1,9 @@
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import Logger from '../lib/logger'
+import ErrorMessage from './errorMessage'
+
+const logger = new Logger()
 
 const artistQuery = gql`
   query artist ($id: Int!){
@@ -43,8 +47,11 @@ function ArtistData({ data: { loading, error, artist } }) {
         `}</style>
       </div>
     )
+  } else if (error) {
+    logger.logException(error)
+    return <ErrorMessage message='حدث خطأ ما في عرض بيانات الفنان. الرجاء إعادة المحاولة.' />
   } else {
-    return (<div>Loading</div>)
+    return (<div>Loading... (design this)</div>)
   }
 }
 
