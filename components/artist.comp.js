@@ -1,5 +1,6 @@
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
+import { withRouter } from 'next/router'
 import Logger from '../lib/logger'
 import ErrorMessage from './errorMessage'
 
@@ -10,6 +11,7 @@ const artistQuery = gql`
     artist(id: $id) {
       id
       name
+      slug
       defaultImage
       likersCount
       songsCount
@@ -23,8 +25,21 @@ const artistQuery = gql`
   }
 `
 
-function ArtistData({ data: { loading, error, artist } }) {
-  if (artist) {
+function ArtistData({ data: { loading, error, artist }, ownProps, router }) {
+  if (loading) {
+    return (<div>Loading... (design this)</div>)
+  } else if (error) {
+    logger.logException(error)
+    return <ErrorMessage message='حدث خطأ ما في عرض بيانات الفنان. الرجاء إعادة المحاولة.' />
+  } else if (artist) {
+    if (ownProps.fixSlug) {
+      const re = new RegExp ('^' + ownProps.url.pathname + '/' + ownProps.url.query.id + '/' + artist.slug + '([?].*|[#].*|/)?$')
+      if (!decodeURIComponent(ownProps.url.asPath).match(re)) {
+        const href = ownProps.url.pathname + '?id=' + ownProps.url.query.id + '&slug=' + artist.slug
+        const as = ownProps.url.pathname + '/' + ownProps.url.query.id + '/' + artist.slug
+        router.replace(href, as)
+      }
+    }
     return (
       <div>
         <div>
@@ -47,18 +62,16 @@ function ArtistData({ data: { loading, error, artist } }) {
         `}</style>
       </div>
     )
-  } else if (error) {
-    logger.logException(error)
-    return <ErrorMessage message='حدث خطأ ما في عرض بيانات الفنان. الرجاء إعادة المحاولة.' />
   } else {
-    return (<div>Loading... (design this)</div>)
+    return (<div>Artist doesn't exist (design this)</div>)
   }
 }
 
-export default graphql(artistQuery, { options: ({ id }) => {
-  return {
-    variables: {
-      id
-    }
-  }
-}})(ArtistData)
+export default graphql(artistQuery, {
+  options: ({url}) => {
+    return {variables: {
+        id: url.query.id
+      }}
+  },
+  props: ({data, ownProps}) => ({data, ownProps})
+})(withRouter(ArtistData))

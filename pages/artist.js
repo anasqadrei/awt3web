@@ -6,7 +6,7 @@ import WithData from '../lib/withData'
 
 export default WithData((props) => (
   <Layout>
-    <Artist id={props.url.query.id} />
+    <Artist url={props.url} fixSlug={true} />
     Artist page, list of songs
     <Link as="/song/1/الليل-يا-ليلى" href={`/song?id=1`}>
       <a>
