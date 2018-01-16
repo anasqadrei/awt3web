@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Layout from '../components/layout'
-import Head from '../components/head'
 import Artist from '../components/artist.comp'
 import WithData from '../lib/withData'
 

@@ -2,6 +2,7 @@ import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { withRouter } from 'next/router'
 import Logger from '../lib/logger'
+import Head from './head'
 import ErrorMessage from './errorMessage'
 
 const logger = new Logger()
@@ -42,6 +43,7 @@ function ArtistData({ data: { loading, error, artist }, ownProps, router }) {
     }
     return (
       <div>
+        <Head title={artist.name} description={artist.name} url={artist.url} ogImage={artist.defaultImage} />
         <div>
           <h1 className="title">{artist.name}</h1>
           <img src={artist.defaultImage} />
