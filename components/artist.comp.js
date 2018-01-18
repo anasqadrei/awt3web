@@ -32,6 +32,8 @@ function ArtistData({ data: { loading, error, artist }, ownProps, router }) {
   } else if (error) {
     logger.logException(error)
     return <ErrorMessage message='حدث خطأ ما في عرض بيانات الفنان. الرجاء إعادة المحاولة.' />
+  } else if (!artist) {
+    return (<div>Artist doesn't exist (design this)</div>)
   } else if (artist) {
     if (ownProps.fixSlug) {
       const re = new RegExp ('^' + ownProps.url.pathname + '/' + ownProps.url.query.id + '/' + artist.slug + '([?].*|[#].*|/)?$')
@@ -64,8 +66,6 @@ function ArtistData({ data: { loading, error, artist }, ownProps, router }) {
         `}</style>
       </div>
     )
-  } else {
-    return (<div>Artist doesn't exist (design this)</div>)
   }
 }
 
