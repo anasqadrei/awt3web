@@ -1,11 +1,9 @@
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
 import { withRouter } from 'next/router'
-import Logger from '../lib/logger'
+import Raven from 'raven-js'
 import Head from './head'
 import ErrorMessage from './errorMessage'
-
-const logger = new Logger()
 
 const artistQuery = gql`
   query artist ($id: Int!){
@@ -30,7 +28,7 @@ function ArtistData({ data: { loading, error, artist }, ownProps, router }) {
   if (loading) {
     return (<div>Loading... (design this)</div>)
   } else if (error) {
-    logger.logException(error)
+    Raven.captureException(error.message, {extra: error})
     return <ErrorMessage message='حدث خطأ ما في عرض بيانات الفنان. الرجاء إعادة المحاولة.' />
   } else if (!artist) {
     return (<div>Artist doesn't exist (design this)</div>)
