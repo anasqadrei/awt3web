@@ -1,10 +1,6 @@
 module.exports = {
-  webpack: (config) => {
-    // Fixes npm packages that depend on `fs` module
-    config.node = {
-      fs: 'empty'
-    }
-
-    return config
+  publicRuntimeConfig: {
+    SENTRY_PUBLIC_DSN: process.env.SENTRY_PUBLIC_DSN,
+    GRAPHQL_ENDPOINT: process.env.GRAPHQL_ENDPOINT
   }
 }
