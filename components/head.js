@@ -8,7 +8,7 @@ const defaultOGImage = ''
 
 const Head = (props) => (
   <NextHead>
-    <meta charset="UTF-8" />
+    <meta charSet="UTF-8" />
     <meta name="application-name" content="أوتاريكا" />
     <title>{(props.title?props.title + ' - ':'') + defaultTitle}</title>
     <meta name="title" content={(props.title?props.title + ' - ':'') + defaultTitle} />
