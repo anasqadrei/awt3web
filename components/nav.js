@@ -1,61 +1,39 @@
 import Head from './head'
 import Link from 'next/link'
 
-const links = [
-  { href: '/browse', label: 'تصفح' },
-  { href: '/song/upload', label: 'رفع أغاني' },
-  { href: '/user', label: 'الدخول السريع' }
-].map(link => {
-  link.key = `nav-link-${link.href}-${link.label}`
-  return link
-})
-
 const Nav = () => (
   <nav>
-    <ul>
-      <li>
-        <Link prefetch href="/">
-          <a>أوتاريكا</a>
-        </Link>
-      </li>
-      <ul>
-        {links.map(
-          ({ key, href, label }) => (
-            <li key={key}>
-              <Link href={href}>
-                <a>{label}</a>
-              </Link>
-            </li>
-          )
-        )}
-      </ul>
-    </ul>
-
-    <style jsx>{`
-      :global(body) {
-        margin: 0;
-        font-family: -apple-system,BlinkMacSystemFont,Avenir Next,Avenir,Helvetica,sans-serif;
-      }
-      nav {
-        text-align: center;
-      }
-      ul {
-        display: flex;
-        justify-content: space-between;
-      }
-      nav > ul {
-        padding: 4px 16px;
-      }
-      li {
-        display: flex;
-        padding: 6px 8px;
-      }
-      a {
-        color: #067df7;
-        text-decoration: none;
-        font-size: 13px;
-      }
-    `}</style>
+    <Link prefetch href="/">
+      <a>Awtarika</a>
+    </Link>
+    <input type="text"/>
+    <Link href="/search-results?q=Search-Term">
+      <a>Search</a>
+    </Link>
+    <Link prefetch href="/song/upload">
+      <a>Upload</a>
+    </Link>
+    <Link href="/user">
+      <a>Library</a>
+    </Link>
+    <Link href="/playlists-list">
+      <a>My Playlists</a>
+    </Link>
+    <Link href="/playlist">
+      <a>Recently Played</a>
+    </Link>
+    <Link href="/playlist">
+      <a>Most Played</a>
+    </Link>
+    <Link href="/multilist">
+      <a>Liked</a>
+    </Link>
+    <Link href="/multilist">
+      <a>Saved</a>
+    </Link>
+    <Link href="/user">
+      <a>Login</a>
+    </Link>
   </nav>
 )
 
