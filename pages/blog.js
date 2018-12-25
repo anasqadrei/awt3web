@@ -1,16 +1,26 @@
-// @flow
-
 import Link from 'next/link'
 import Layout from '../components/layout'
 import Head from '../components/head'
 
-// export default withData((props) => (
-export default (props) => (
+const blogposts = []
+for (let i = 0; i < 20; i++) {
+  blogposts.push(
+    <div key={i}>
+      <Link prefetch as="/blog/1/slug" href={`/blogpost?id=1`}>
+        <a>Blogpost {i}</a>
+      </Link>
+      <p>Date 23/4/2014, 5 comments</p>
+    </div>
+  )
+}
 
+export default (props) => (
   <Layout>
+    <Head/>
     blog page
     <p>blogposts List</p>
-    <Link as="/blog/1/xx" href={`/blogpost?id=1`}>xx</Link>
+    <div>
+     {blogposts}
+    </div>
   </Layout>
 )
-// ))
