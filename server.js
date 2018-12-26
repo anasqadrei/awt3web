@@ -36,6 +36,11 @@ app.prepare()
     ctx.respond = false
   })
 
+  router.get('/user/:id/:slug', async ctx => {
+    await app.render(ctx.req, ctx.res, '/user', Object.assign(ctx.params, ctx.query))
+    ctx.respond = false
+  })
+
   router.get('*', async ctx => {
     await handle(ctx.req, ctx.res)
     ctx.respond = false

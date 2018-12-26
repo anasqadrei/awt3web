@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import Layout from '../components/layout'
 import Head from '../components/head'
+import Comment from '../components/comment.comp'
+import CommentsList from '../components/commentsList.comp'
 
 export default (props) => (
   <Layout>
@@ -32,11 +34,7 @@ export default (props) => (
       Aenean imperdiet. Etiam ultricies nisi vel augue.
       Curabitur ullamcorper ultricies nisi.
     </p>
-    <div>
-      <textarea row="5"/>
-      <Link href="#">
-        <a>Post Comment</a>
-      </Link>
-    </div>
+    <Comment/>
+    <CommentsList/>
   </Layout>
 )

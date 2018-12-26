@@ -31,7 +31,7 @@ const Nav = () => (
     <Link href="/multilist">
       <a>Saved</a>
     </Link>
-    <Link href="/user">
+    <Link as="/user/1/xxx" href={{ pathname: '/user', query: { id: 1, slug: 'xxx' } }}>
       <a>Login</a>
     </Link>
   </nav>
