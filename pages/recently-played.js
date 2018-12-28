@@ -14,7 +14,7 @@ for (let i = 0; i < 10; i++) {
 export default (props) => (
   <Layout>
     <LibraryNav/>
-    <img src="https://via.placeholder.com/80"/>playlist page, list of songs
+    <img src="https://via.placeholder.com/80"/>Recently Played
     <div>
       <Link href=""><a>Play All</a></Link> | <Link href=""><a>Shuffle</a></Link>
     </div>

@@ -3,6 +3,7 @@ import Layout from '../components/layout'
 import Head from '../components/head'
 import LibraryNav from '../components/libraryNav'
 import SongItem from '../components/songItem.comp'
+import ArtistItem from '../components/artistItem.comp'
 
 const songs = []
 for (let i = 0; i < 10; i++) {
@@ -11,16 +12,27 @@ for (let i = 0; i < 10; i++) {
   )
 }
 
+const artists = []
+for (let i = 0; i < 5; i++) {
+  artists.push(
+    <ArtistItem key={i}/>
+  )
+}
+
 export default (props) => (
   <Layout>
     <LibraryNav/>
-    <img src="https://via.placeholder.com/80"/>playlist page, list of songs
+    Liked
     <div>
-      <Link href=""><a>Play All</a></Link> | <Link href=""><a>Shuffle</a></Link>
+      Songs
+      {songs}
+      <div>
+        <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
+      </div>
     </div>
-    {songs}
     <div>
-      <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
+      Artists
+      {artists}
     </div>
   </Layout>
 )

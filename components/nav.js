@@ -1,4 +1,3 @@
-import Head from './head'
 import Link from 'next/link'
 
 const Nav = () => (
@@ -13,22 +12,22 @@ const Nav = () => (
     <Link prefetch href="/song/upload">
       <a>Upload</a>
     </Link>
-    <Link href="/user">
+    <Link href="/playlists-list">
       <a>Library</a>
     </Link>
     <Link href="/playlists-list">
       <a>My Playlists</a>
     </Link>
-    <Link href="/playlist">
+    <Link href="/recently-played">
       <a>Recently Played</a>
     </Link>
-    <Link href="/playlist">
+    <Link href="/most-played">
       <a>Most Played</a>
     </Link>
-    <Link href="/multilist">
+    <Link href="/liked">
       <a>Liked</a>
     </Link>
-    <Link href="/multilist">
+    <Link href="/saved">
       <a>Saved</a>
     </Link>
     <Link as="/user/1/xxx" href={{ pathname: '/user', query: { id: 1, slug: 'xxx' } }}>
