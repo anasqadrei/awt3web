@@ -16,7 +16,7 @@ export default (props) => (
     <LibraryNav/>
     <img src="https://via.placeholder.com/80"/>playlist page, list of songs
     <div>
-      <Link href=""><a>Play All</a></Link> | <Link href=""><a>Shuffle</a></Link>
+      <Link href=""><a>Play All</a></Link> | <Link href=""><a>Shuffle</a></Link> | <Link href=""><a>Edit</a></Link> | <Link href=""><a>Delete</a></Link>
     </div>
     {songs}
     <div>
