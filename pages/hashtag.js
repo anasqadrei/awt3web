@@ -1,18 +1,19 @@
 import Link from 'next/link'
 import Layout from '../components/layout'
 import Head from '../components/head'
+import SongItem from '../components/songItem.comp'
 
-// export default withData((props) => (
+const songs = []
+for (let i = 0; i < 10; i++) {
+  songs.push(
+    <SongItem key={i}/>
+  )
+}
+
 export default (props) => (
-
   <Layout>
-    hashtag page, list of songs
-    <Link as="/song/1/الليل-يا-ليلى" href={`/song?id=1`}>
-      <a>
-        الليل-يا-ليلى
-        وديع الصافي
-      </a>
-    </Link>
+    <Head/>
+    #hashtag
+    {songs}
   </Layout>
 )
-// ))
