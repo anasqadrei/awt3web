@@ -22,6 +22,7 @@ for (let i = 0; i < 20; i++) {
 
 const CommentsList = () => (
   <div>
+    Total Comments: 2,464
     {comments}
   </div>
 )
