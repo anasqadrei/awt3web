@@ -2,70 +2,120 @@ import Link from 'next/link'
 import Layout from '../components/layout'
 import Head from '../components/head'
 
+const recentlyAddedSongs = []
+for (let i = 0; i < 20; i++) {
+  recentlyAddedSongs.push(
+    <div key={i}>
+      <img src="https://via.placeholder.com/80?text=song+image"/>
+      <Link as="/song/1/slug" href={`/song?id=1`}>
+        <a>song title</a>
+      </Link>
+      <Link as="/artist/1/slug" href={`/artist?id=1`}>
+        <a>artist name</a>
+      </Link>
+    </div>
+  )
+}
+
+const trendingSongs = []
+for (let i = 0; i < 20; i++) {
+  trendingSongs.push(
+    <div key={i}>
+      <img src="https://via.placeholder.com/80?text=song+image"/>
+      <Link as="/song/1/slug" href={`/song?id=1`}>
+        <a>song title</a>
+      </Link>
+      <Link as="/artist/1/slug" href={`/artist?id=1`}>
+        <a>artist name</a>
+      </Link>
+    </div>
+  )
+}
+
+const recentlyPlayedSongs = []
+for (let i = 0; i < 20; i++) {
+  recentlyPlayedSongs.push(
+    <div key={i}>
+      <img src="https://via.placeholder.com/80?text=song+image"/>
+      <Link as="/song/1/slug" href={`/song?id=1`}>
+        <a>song title</a>
+      </Link>
+      <Link as="/artist/1/slug" href={`/artist?id=1`}>
+        <a>artist name</a>
+      </Link>
+    </div>
+  )
+}
+
+const hashtags = []
+for (let i = 0; i < 20; i++) {
+  hashtags.push(
+    <Link key={i} as="/hashtag/XX" href={`/hashtag?id=XX`}>
+      <a>#Hashtagـ{i} </a>
+    </Link>
+  )
+}
+
+const artists = []
+for (let i = 0; i < 20; i++) {
+  artists.push(
+    <Link key={i} as="/artist/0/xxx" href={{ pathname: '/artist', query: { id: 0, slug: 'xxx' } }}>
+      <a><img src="https://via.placeholder.com/80?text=Artist+Img" alt=""/>Artists {i}</a>
+    </Link>
+  )
+}
+
+const trendingSearches = []
+for (let i = 0; i < 20; i++) {
+  trendingSearches.push(
+    <Link key={i} href="search-results?q=Search-Term">
+      <a>trending keyword {i} </a>
+    </Link>
+  )
+}
+
 export default () => (
   <Layout>
     <Head title="أوتاريكا" />
-
-    <div className="hero">
-      <h1 className="title">أوتاريكا</h1>
-      <p className="description">اهلا بكم في موقع اوتاريكا للاغاني حيث نتمنى ان تسعدوا بقضاء افضل الاوقات بسماع كل ما يحلوا لكم من اغاني و موسيقى.</p>
-      <div className="row">
-        <p>New Songs</p>
-        <p>Trending</p>
-        <p>My Recently Played</p>
-        <Link as="/song/1/الليل-يا-ليلى" href={`/song?id=1`}>
-          <a className="card">
-            <h3>الليل-يا-ليلى</h3>
-            <p>وديع الصافي</p>
-          </a>
-        </Link>
+    <div>
+      <h1>Awtarika</h1>
+      <p>اهلا بكم في موقع اوتاريكا للاغاني حيث نتمنى ان تسعدوا بقضاء افضل الاوقات بسماع كل ما يحلوا لكم من اغاني و موسيقى.</p>
+      <div>
+        New Songs
+        {recentlyAddedSongs}
       </div>
+      <div>
+        <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
+      </div>
+      <div>
+        Trending
+        {trendingSongs}
+      </div>
+      <div>
+        Trending Searches
+        {trendingSearches}
+      </div>
+      <div>
+        <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
+      </div>
+      <div>
+        My Recently Played
+        {recentlyPlayedSongs}
+      </div>
+      <div>
+        <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
+      </div>
+      <div>
+        hashtags
+        {hashtags}
+      </div>
+      <div>
+        popular artists
+        {artists}
+      </div>
+      <Link href="browse">
+        <a>Browse More</a>
+      </Link>
     </div>
-
-    <style jsx>{`
-      .hero {
-        width: 100%;
-        color: #333;
-      }
-      .title {
-        margin: 0;
-        width: 100%;
-        padding-top: 80px;
-        line-height: 1.15;
-        font-size: 48px;
-      }
-      .title, .description {
-        text-align: center;
-      }
-      .row {
-        max-width: 880px;
-        margin: 80px auto 40px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-      }
-      .card {
-        padding: 18px 18px 24px;
-        width: 220px;
-        text-align: left;
-        text-decoration: none;
-        color: #434343;
-        border: 1px solid #9B9B9B;
-      }
-      .card:hover {
-        border-color: #067df7;
-      }
-      .card h3 {
-        margin: 0;
-        color: #067df7;
-        font-size: 18px;
-      }
-      .card p {
-        margin: 0;
-        padding: 12px 0 0;
-        font-size: 13px;
-        color: #333;
-      }
-    `}</style>
   </Layout>
 )

@@ -13,7 +13,7 @@ for (let i = 0; i < 20; i++) {
       <Link as="/artist/1/slug" href={`/artist?id=1`}>
         <a>artist name</a>
       </Link>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua....</p>
+      <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua....</p>
     </div>
   )
 }
