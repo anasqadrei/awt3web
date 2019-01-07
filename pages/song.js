@@ -31,6 +31,9 @@ export default (props) => (
       <Link href="/"><a>Play</a></Link> played 323,334 times
     </div>
     <div>
+      <Link href="/"><a>Play Next/Add to Queue(currently playing)</a></Link>
+    </div>
+    <div>
       <Link href="/"><a>Download</a></Link> Downloaded 23,334 times
     </div>
     <div>
