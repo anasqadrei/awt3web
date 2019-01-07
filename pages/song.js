@@ -18,6 +18,24 @@ for (let i = 0; i < 3; i++) {
   )
 }
 
+const relatedSongs = []
+for (let i = 0; i < 20; i++) {
+  relatedSongs.push(
+    <div key={i}>
+      <img src="https://via.placeholder.com/30?text=song+image"/>
+      <Link as="/song/1/slug" href={`/song?id=1`}>
+        <a>song title</a>
+      </Link>
+      <Link as="/artist/1/slug" href={`/artist?id=1`}>
+        <a>artist name</a>
+      </Link>
+      <img src="https://via.placeholder.com/30?text=duration"/> 3:25
+      <img src="https://via.placeholder.com/30?text=playsCount"/> 2,323
+      <img src="https://via.placeholder.com/30?text=More+Actions"/>
+    </div>
+  )
+}
+
 export default (props) => (
   <Layout>
     {/* lift state up to make song title as the head title */}
@@ -79,6 +97,10 @@ export default (props) => (
       last modified on 12/4/2017 by <Link href="/user/1/xxx"><a>username 2</a></Link>
       <Link href="/"><a>Update Lyrics</a></Link>
       <Link href="/"><a>Delete*</a></Link>
+    </div>
+    <div>
+      Related Songs
+      {relatedSongs}
     </div>
     <Comment/>
     <CommentsList/>
