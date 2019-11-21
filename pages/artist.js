@@ -54,7 +54,7 @@ export default WithData((props) => (
       <Link href="/"><a>Facebook</a></Link>
       <Link href="/"><a>Twitter</a></Link>
       <Link href="/"><a>Google+</a></Link>
-      <input value="https://www.awtarika.com/artist/1/slug-here"/>
+      <input value="https://www.awtarika.com/artist/1/slug-here" readOnly/>
     </div>
     <div>
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
