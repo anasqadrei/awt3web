@@ -1,10 +1,10 @@
 import Link from 'next/link'
+import { withRouter } from 'next/router'
 import Layout from '../components/layout'
 import WithData from '../lib/withData'
 import Comment from '../components/comment.comp'
 import CommentsList from '../components/commentsList.comp'
-// import Artist from '../components/artist.comp'
-// <Artist url={props.url} fixSlug={true} />
+import Artist from '../components/artist.comp'
 
 const recentlyAddedSongs = []
 for (let i = 0; i < 10; i++) {
@@ -39,8 +39,9 @@ for (let i = 0; i < 20; i++) {
   )
 }
 
-export default WithData((props) => (
+export default withRouter(WithData((props) => (
   <Layout>
+    <Artist router={props.router} fixSlug={true} />
     <div>
       <img src="https://via.placeholder.com/80"/>Artist Name
       <Link href=""><a>Like</a></Link> 2,233 liked them
@@ -76,4 +77,4 @@ export default WithData((props) => (
     <Comment/>
     <CommentsList/>
   </Layout>
-))
+)))

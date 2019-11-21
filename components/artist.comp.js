@@ -1,6 +1,5 @@
 import { graphql } from 'react-apollo'
 import gql from 'graphql-tag'
-import { withRouter } from 'next/router'
 import Raven from 'raven-js'
 import Head from './head'
 import ErrorMessage from './errorMessage'
@@ -68,10 +67,10 @@ function ArtistData({ data: { loading, error, artist }, ownProps, router }) {
 }
 
 export default graphql(artistQuery, {
-  options: ({url}) => {
+  options: ({router}) => {
     return {variables: {
-        id: url.query.id
+        id: router.query.id
       }}
   },
   props: ({data, ownProps}) => ({data, ownProps})
-})(withRouter(ArtistData))
+})(ArtistData)
