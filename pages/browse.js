@@ -13,8 +13,9 @@ for (let i = 0; i < 20; i++) {
 
 const artists = []
 for (let i = 0; i < 20; i++) {
+
   artists.push(
-    <Link key={i} as="/artist/0/xxx" href={{ pathname: '/artist', query: { id: 0, slug: 'xxx' } }}>
+    <Link key={i} as={`/artist/${i}/xxxy`} href={{ pathname: '/artist', query: { id: i, slug: 'xxx' } }}>
       <a><img src="https://via.placeholder.com/150?text=Artist+Img" alt=""/>Artists {i}</a>
     </Link>
   )

@@ -5,55 +5,53 @@ import Head from './head'
 import ErrorMessage from './errorMessage'
 
 const artistQuery = gql`
-  query artist ($id: Int!){
-    artist(id: $id) {
+  query getArtist ($id: ID!) {
+    getArtist(id: $id) {
       id
       name
       slug
-      defaultImage
-      likersCount
-      songsCount
-      songsListenersCount
-      songsPlaysCount
-      songsLikedCount
-      songsImagesCount
-      commentsCount
+      imageUrl
+      likes
+      songs
+      songUsersPlayed
+      songPlays
+      songLikes
+      songImages
       url
     }
   }
 `
 
-function ArtistData({ data: { loading, error, artist }, ownProps, router }) {
+function ArtistData({ data: { loading, error, getArtist }, ownProps }) {
   if (loading) {
     return (<div>Loading... (design this)</div>)
   } else if (error) {
     Raven.captureException(error.message, {extra: error})
     return <ErrorMessage message='حدث خطأ ما في عرض بيانات الفنان. الرجاء إعادة المحاولة.' />
-  } else if (!artist) {
+  } else if (!getArtist) {
     return (<div>Artist doesn't exist (design this)</div>)
-  } else if (artist) {
+  } else if (getArtist) {
     if (ownProps.fixSlug) {
-      const re = new RegExp ('^' + ownProps.url.pathname + '/' + ownProps.url.query.id + '/' + artist.slug + '([?].*|[#].*|/)?$')
-      if (!decodeURIComponent(ownProps.url.asPath).match(re)) {
-        const href = ownProps.url.pathname + '?id=' + ownProps.url.query.id + '&slug=' + artist.slug
-        const as = ownProps.url.pathname + '/' + ownProps.url.query.id + '/' + artist.slug
-        router.replace(href, as)
+      const re = new RegExp ('^' + ownProps.router.pathname + '/' + ownProps.router.query.id + '/' + getArtist.slug + '([?].*|[#].*|/)?$')
+      if (!decodeURIComponent(ownProps.router.asPath).match(re)) {
+        const href = ownProps.router.pathname + '?id=' + ownProps.router.query.id + '&slug=' + getArtist.slug
+        const as = ownProps.router.pathname + '/' + ownProps.router.query.id + '/' + getArtist.slug
+        ownProps.router.replace(href, as)
       }
     }
     return (
       <div>
-        <Head title={artist.name} description={artist.name} url={artist.url} ogImage={artist.defaultImage} />
+        <Head title={ getArtist.name } description={ getArtist.name } url={ getArtist.url } ogImage={ getArtist.imageUrl } />
         <div>
-          <h1 className="title">{artist.name}</h1>
-          <img src={artist.defaultImage} />
-          <p className="description">عدد المعجبين: {artist.likersCount}</p>
-          <p className="description">عدد الاغاني: {artist.songsCount}</p>
-          <p className="description">عدد المستمعين: {artist.songsListenersCount}</p>
-          <p className="description">عدد سماع الاغاني: {artist.songsPlaysCount}</p>
-          <p className="description">عدد الاغاني المفضلة: {artist.songsLikedCount}</p>
-          <p className="description">الصور: {artist.songsImagesCount}</p>
-          <p className="description">عدد التعليقات: {artist.commentsCount}</p>
-          <p className="description">الرابط: <span dir="ltr">{artist.url}</span></p>
+          <h1 className="title">{ getArtist.name }</h1>
+          <img src={ getArtist.imageUrl } />
+          <p className="description">عدد المعجبين: { getArtist.likes }</p>
+          <p className="description">عدد الاغاني: { getArtist.songs }</p>
+          <p className="description">عدد المستمعين: { getArtist.songUsersPlayed }</p>
+          <p className="description">عدد سماع الاغاني: { getArtist.songPlays }</p>
+          <p className="description">عدد الاغاني المفضلة: { getArtist.songLikes }</p>
+          <p className="description">الصور: { getArtist.songImages }</p>
+          <p className="description">الرابط: <span dir="ltr">{ getArtist.url }</span></p>
         </div>
 
         <style jsx>{`
@@ -67,10 +65,11 @@ function ArtistData({ data: { loading, error, artist }, ownProps, router }) {
 }
 
 export default graphql(artistQuery, {
-  options: ({router}) => {
-    return {variables: {
+  options: ({ router }) => {
+    return { variables: {
         id: router.query.id
-      }}
+      }
+    }
   },
-  props: ({data, ownProps}) => ({data, ownProps})
+  props: ({ data, ownProps }) => ({ data, ownProps })
 })(ArtistData)
