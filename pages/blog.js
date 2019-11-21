@@ -6,7 +6,7 @@ const blogposts = []
 for (let i = 0; i < 20; i++) {
   blogposts.push(
     <div key={i}>
-      <Link prefetch as="/blog/1/slug" href={`/blogpost?id=1`}>
+      <Link as="/blog/1/slug" href={`/blogpost?id=1`}>
         <a>Blogpost {i}</a>
       </Link>
       <p>Date 23/4/2014, 5 comments</p>

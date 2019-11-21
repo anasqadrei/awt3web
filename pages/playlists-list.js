@@ -7,7 +7,7 @@ const playlists = []
 for (let i = 0; i < 10; i++) {
   playlists.push(
     <div key={i}>
-      <Link prefetch as="/playlist/1/slug" href={`/playlist?id=1`}>
+      <Link as="/playlist/1/slug" href={`/playlist?id=1`}>
         <a><img src="https://via.placeholder.com/30"/>My Playlist {i}</a>
       </Link>
     </div>

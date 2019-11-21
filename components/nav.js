@@ -2,14 +2,14 @@ import Link from 'next/link'
 
 const Nav = () => (
   <nav>
-    <Link prefetch href="/">
+    <Link href="/">
       <a>Awtarika</a>
     </Link>
     <input type="text"/>
     <Link href="/search-results?q=Search-Term">
       <a>Search</a>
     </Link>
-    <Link prefetch href="/song-upload">
+    <Link href="/song-upload">
       <a>Upload</a>
     </Link>
     <Link href="/playlists-list">
