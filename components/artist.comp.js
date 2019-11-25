@@ -40,7 +40,7 @@ for (let i = 0; i < 20; i++) {
   )
 }
 
-const artistQuery = gql`
+const getArtistQuery = gql`
   query getArtist ($id: ID!) {
     getArtist(id: $id) {
       id
@@ -64,18 +64,12 @@ function ArtistData({ data: { loading, error, getArtist }, ownProps }) {
   if (loading) {
     return (<div>Loading... (design this)</div>)
   } else if (error) {
-    Raven.captureException(error.message, {extra: error})
+    Raven.captureException(error.message, { extra: error })
     return <ErrorMessage message='حدث خطأ ما في عرض بيانات الفنان. الرجاء إعادة المحاولة.' />
   } else if (!getArtist) {
     return (<div>Artist doesn't exist (design this)</div>)
   } else if (getArtist) {
     if (ownProps.fixSlug) {
-      // const re = new RegExp ('^' + ownProps.router.pathname + '/' + ownProps.router.query.id + '/' + getArtist.slug + '([?].*|[#].*|/)?$')
-      // if (!decodeURIComponent(ownProps.router.asPath).match(re)) {
-      //   const href = ownProps.router.pathname + '?id=' + ownProps.router.query.id + '&slug=' + getArtist.slug
-      //   const as = ownProps.router.pathname + '/' + ownProps.router.query.id + '/' + getArtist.slug
-      //   ownProps.router.replace(href, as)
-      // }
       const regExp = new RegExp (`^${ ownProps.router.pathname }/${ ownProps.router.query.id }/${ getArtist.slug }([?].*|[#].*|/)?$`)
       if (!decodeURIComponent(ownProps.router.asPath).match(regExp)) {
         const href = `${ ownProps.router.pathname }?id=${ ownProps.router.query.id }&slug=${ getArtist.slug }`
@@ -129,7 +123,7 @@ function ArtistData({ data: { loading, error, getArtist }, ownProps }) {
         </div>
 
         <Comment/>
-        <CommentsList total={ getArtist.comments }/>
+        <CommentsList collection='artists' id={ getArtist.id } total={ getArtist.comments }/>
 
         <style jsx>{`
           .title, .description {
@@ -141,9 +135,10 @@ function ArtistData({ data: { loading, error, getArtist }, ownProps }) {
   }
 }
 
-export default graphql(artistQuery, {
+export default graphql(getArtistQuery, {
   options: ({ router }) => {
-    return { variables: {
+    return {
+      variables: {
         id: router.query.id
       }
     }
