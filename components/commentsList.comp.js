@@ -35,7 +35,7 @@ const LIST_COMMENTS_QUERY = gql`
   }
 `
 
-export default function CommentsList(ownProps) {
+export default function commentsList(ownProps) {
 
   // listComments query variables
   const queryVariables = {

@@ -1,11 +1,33 @@
 import Link from 'next/link'
-import { graphql } from 'react-apollo'
+import { useQuery } from '@apollo/react-hooks'
+import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
 import Head from './head'
 import Comment from './comment.comp'
 import CommentsList from './commentsList.comp'
 import ErrorMessage from './errorMessage'
+
+const ARTISTS_COLLECTION = 'artists'
+const GET_ARTIST_QUERY = gql`
+  query getArtist ($id: ID!) {
+    getArtist(id: $id) {
+      id
+      name
+      slug
+      imageUrl
+      likes
+      shares
+      comments
+      songs
+      songUsersPlayed
+      songPlays
+      songLikes
+      songImages
+      url
+    }
+  }
+`
 
 const recentlyAddedSongs = []
 for (let i = 0; i < 10; i++) {
@@ -40,108 +62,109 @@ for (let i = 0; i < 20; i++) {
   )
 }
 
-const getArtistQuery = gql`
-  query getArtist ($id: ID!) {
-    getArtist(id: $id) {
-      id
-      name
-      slug
-      imageUrl
-      likes
-      shares
-      comments
-      songs
-      songUsersPlayed
-      songPlays
-      songLikes
-      songImages
-      url
-    }
-  }
-`
+export default function artist(ownProps) {
 
-function ArtistData({ data: { loading, error, getArtist }, ownProps }) {
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
-  } else if (error) {
+  // getArtist query variables
+  const queryVariables = {
+    id: ownProps.router.query.id
+  }
+
+  // excute query
+  // setting notifyOnNetworkStatusChange to true will make the component rerender when
+  // the "networkStatus" changes, so we are able to know if it is fetching
+  // more data
+  const { loading, error, data, fetchMore, networkStatus } = useQuery (
+    GET_ARTIST_QUERY,
+    {
+      variables: queryVariables,
+      notifyOnNetworkStatusChange: true,
+    }
+  )
+
+  // error handling
+  if (error) {
     Raven.captureException(error.message, { extra: error })
     return <ErrorMessage message='حدث خطأ ما في عرض بيانات الفنان. الرجاء إعادة المحاولة.' />
-  } else if (!getArtist) {
-    return (<div>Artist doesn't exist (design this)</div>)
-  } else if (getArtist) {
-    if (ownProps.fixSlug) {
-      const regExp = new RegExp (`^${ ownProps.router.pathname }/${ ownProps.router.query.id }/${ getArtist.slug }([?].*|[#].*|/)?$`)
-      if (!decodeURIComponent(ownProps.router.asPath).match(regExp)) {
-        const href = `${ ownProps.router.pathname }?id=${ ownProps.router.query.id }&slug=${ getArtist.slug }`
-        const as = `${ ownProps.router.pathname }/${ ownProps.router.query.id }/${ getArtist.slug }`
-        ownProps.router.replace(href, as)
-      }
-    }
-    return (
-      <div>
-        <Head title={ getArtist.name } description={ getArtist.name } url={ getArtist.url } ogImage={ getArtist.imageUrl } />
-        <div>
-          <img src={ getArtist.imageUrl?getArtist.imageUrl:`https://via.placeholder.com/100?text=no+photo?` }/>
-          <h1 className="title">{ getArtist.name }</h1>
-          <Link href=""><a>Like</a></Link>
-          { getArtist.likes?`${ getArtist.likes } liked them`:`be the first to like? or empty?` }
-        </div>
-
-        <div>
-          New Songs
-          {recentlyAddedSongs}
-        </div>
-
-        <div>
-          Share
-          { getArtist.shares?`${ getArtist.shares } shared this`:`be the first to share` }
-          <Link href="/"><a>Facebook</a></Link>
-          <Link href="/"><a>Twitter</a></Link>
-          <Link href="/"><a>Google+</a></Link>
-          <span dir="ltr"><input value={ getArtist.url } readOnly/></span>
-        </div>
-
-        <div>
-          <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
-        </div>
-
-        <div>
-          Popular songs
-          {popularSongs}
-        </div>
-
-        <div>
-          Data?
-          { getArtist.songUsersPlayed?`${ getArtist.songUsersPlayed } listers`:`` }
-          Songs played: { getArtist.songPlays?getArtist.songPlays:0 }
-        </div>
-
-        <div>
-          All songs (sort: alphabetically, new, most listed, most liked).
-          Total Songs: { getArtist.songs }, Liked songs: { getArtist.songLikes }
-          {allSongs}
-        </div>
-
-        <Comment/>
-        <CommentsList collection='artists' id={ getArtist.id } total={ getArtist.comments }/>
-
-        <style jsx>{`
-          .title, .description {
-            text-align: center;
-          }
-        `}</style>
-      </div>
-    )
   }
-}
 
-export default graphql(getArtistQuery, {
-  options: ({ router }) => {
-    return {
-      variables: {
-        id: router.query.id
-      }
+  // initial loading
+  if (loading) {
+    return (<div>Loading... (design this)</div>)
+  }
+
+  // get data
+  const { getArtist } = data
+
+  // in case artist not found
+  if (!getArtist) {
+    return (<div>Artist doesn't exist (design this)</div>)
+  }
+
+  // TODO: why fixSlug?? why not always?
+  // fix url
+  if (ownProps.fixSlug) {
+    const regExp = new RegExp (`^${ ownProps.router.pathname }/${ ownProps.router.query.id }/${ getArtist.slug }([?].*|[#].*|/)?$`)
+    if (!decodeURIComponent(ownProps.router.asPath).match(regExp)) {
+      const href = `${ ownProps.router.pathname }?id=${ ownProps.router.query.id }&slug=${ getArtist.slug }`
+      const as = `${ ownProps.router.pathname }/${ ownProps.router.query.id }/${ getArtist.slug }`
+      ownProps.router.replace(href, as)
     }
-  },
-  props: ({ data, ownProps }) => ({ data, ownProps })
-})(ArtistData)
+  }
+
+  // display artist
+  return (
+    <section>
+      <Head title={ getArtist.name } description={ getArtist.name } url={ getArtist.url } ogImage={ getArtist.imageUrl } />
+      <div>
+        <img src={ getArtist.imageUrl?getArtist.imageUrl:`https://via.placeholder.com/100?text=no+photo?` }/>
+        <h1 className="title">{ getArtist.name }</h1>
+        <Link href=""><a>Like</a></Link>
+        { getArtist.likes?`${ getArtist.likes } liked them`:`be the first to like? or empty?` }
+      </div>
+
+      <div>
+        New Songs
+        {recentlyAddedSongs}
+      </div>
+
+      <div>
+        Share
+        { getArtist.shares?`${ getArtist.shares } shared this`:`be the first to share` }
+        <Link href="/"><a>Facebook</a></Link>
+        <Link href="/"><a>Twitter</a></Link>
+        <Link href="/"><a>Google+</a></Link>
+        <span dir="ltr"><input value={ getArtist.url } readOnly/></span>
+      </div>
+
+      <div>
+        <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
+      </div>
+
+      <div>
+        Popular songs
+        {popularSongs}
+      </div>
+
+      <div>
+        Data?
+        { getArtist.songUsersPlayed?`${ getArtist.songUsersPlayed } listers`:`` }
+        Songs played: { getArtist.songPlays?getArtist.songPlays:0 }
+      </div>
+
+      <div>
+        All songs (sort: alphabetically, new, most listed, most liked).
+        Total Songs: { getArtist.songs }, Liked songs: { getArtist.songLikes }
+        {allSongs}
+      </div>
+
+      <Comment/>
+      <CommentsList collection={ ARTISTS_COLLECTION } id={ getArtist.id } total={ getArtist.comments }/>
+
+      <style jsx>{`
+        .title, .description {
+          text-align: center;
+        }
+      `}</style>
+    </section>
+  )
+}
