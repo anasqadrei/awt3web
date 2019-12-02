@@ -5,7 +5,7 @@ import gql from 'graphql-tag'
 import Raven from 'raven-js'
 import ErrorMessage from './errorMessage'
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 25
 const LIST_COMMENTS_QUERY = gql`
   query listComments ($reference: CommentReferenceInput!, $page: Int!, $pageSize: Int!) {
     listComments(reference: $reference, page: $page, pageSize: $pageSize) {
@@ -35,16 +35,17 @@ const LIST_COMMENTS_QUERY = gql`
   }
 `
 
-export default function commentsList(ownProps) {
+let nonEmptyList = true
 
-  // listComments query variables
+export default function CommentsList(props) {
+  // set query variables
   const queryVariables = {
+    reference: {
+      collection: props.collection,
+      id: props.id
+    },
     page: 1,
     pageSize: PAGE_SIZE,
-    reference: {
-      collection: ownProps.collection,
-      id: ownProps.id
-    },
   }
 
   // excute query
@@ -59,17 +60,21 @@ export default function commentsList(ownProps) {
     }
   )
 
-  // loading more network status
+  // loading more network status. fetchMore: query is currently in flight
   const loadingMore = (networkStatus === NetworkStatus.fetchMore)
 
   // get and append new fetched comments
   const loadMoreComments = () => {
-    queryVariables.page++
     fetchMore({
-      variables: queryVariables,
+      variables: {
+        page: (listComments.length/queryVariables.pageSize)+1
+      },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult) {
           return previousResult
+        }
+        if (fetchMoreResult.listComments && fetchMoreResult.listComments.length === 0) {
+          nonEmptyList = false
         }
         return Object.assign({}, previousResult, {
           listComments: [...previousResult.listComments, ...fetchMoreResult.listComments],
@@ -81,7 +86,7 @@ export default function commentsList(ownProps) {
   // error handling
   if (error) {
     Raven.captureException(error.message, { extra: error })
-    return <ErrorMessage message='حدث خطأ ما في عرض بيانات الفنان. الرجاء إعادة المحاولة.' />
+    return <ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />
   }
 
   // initial loading
@@ -91,7 +96,13 @@ export default function commentsList(ownProps) {
 
   // get data and decide on paging
   const { listComments } = data
-  const nextPage = (queryVariables.page === (listComments.length/queryVariables.pageSize))
+
+  // * listComments.length % queryVariables.pageSize is > 0 means it is definitely the last page.
+  // e.g. length = 35, pageSize 10
+  // * if nonEmptyList is set to false, it means page requested returned an emptylist.
+  // e.g. length = 30, pageSize 10
+  // There is no next page in the above two cases
+  const nextPage = !(listComments.length%queryVariables.pageSize) && nonEmptyList
 
   // in case no comments found
   if (!listComments.length) {
@@ -101,18 +112,18 @@ export default function commentsList(ownProps) {
   // display comments
   return (
     <section>
-      { ownProps.total && `${ ownProps.total } commented` }
+      { props.total && `${ props.total } commented` }
       { listComments.map(comment => (
         <div key={ comment.id }>
-          <Link as={ `/user/${ comment.user.slug }/${ comment.user.id }` } href={`/user?id=${ comment.user.id }`}>
+          <Link as={ `/user/${ comment.user.id }/${ comment.user.slug }` } href={`/user?id=${ comment.user.id }`}>
             <img src={ comment.user.imageUrl?comment.user.imageUrl:`https://via.placeholder.com/100?text=No+Photo` } alt={ comment.user.imageUrl && comment.user.username }/>
           </Link>
-          <Link as={ `/user/${ comment.user.slug }/${ comment.user.id }` } href={`/user?id=${ comment.user.id }`}>
+          <Link as={ `/user/${ comment.user.id }/${ comment.user.slug }` } href={`/user?id=${ comment.user.id }`}>
             <a>{ comment.user.username }</a>
           </Link>
 
           <p>Date { comment.createdDate }</p>
-          <p>{ comment.text }</p>
+          <div dangerouslySetInnerHTML={{ __html: comment.text }} />
 
           <p>
             <Link href="#">
@@ -135,15 +146,15 @@ export default function commentsList(ownProps) {
           <div>
             { comment.children && comment.children.map( reply => (
               <div key={ reply.id }>
-                <Link as={ `/user/${ reply.user.slug }/${ reply.user.id }` } href={`/user?id=${ reply.user.id }`}>
+                <Link as={ `/user/${ comment.user.id }/${ comment.user.slug }` } href={`/user?id=${ comment.user.id }`}>
                   <img src={ reply.user.imageUrl?reply.user.imageUrl:`https://via.placeholder.com/100?text=No+Photo` } alt={ reply.user.imageUrl && reply.user.username }/>
                 </Link>
-                <Link as={ `/user/${ reply.user.slug }/${ reply.user.id }` } href={`/user?id=${ reply.user.id }`}>
+                <Link as={ `/user/${ comment.user.id }/${ comment.user.slug }` } href={`/user?id=${ comment.user.id }`}>
                   <a>{ reply.user.username }</a>
                 </Link>
 
                 <p>Date { reply.createdDate }</p>
-                <p>{ reply.text }</p>
+                <div dangerouslySetInnerHTML={{ __html: reply.text }} />
 
                 <p>
                   <Link href="#">
@@ -174,8 +185,8 @@ export default function commentsList(ownProps) {
         </div>
       ))}
 
-      { ownProps.total &&
-        ( nextPage?
+      { props.total && (
+          (loadingMore || nextPage)?
           <button onClick={ () => loadMoreComments() } disabled={ loadingMore }>
             { loadingMore ? 'Loading...' : 'Show More Comments' }
           </button>

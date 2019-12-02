@@ -1,26 +1,22 @@
-import Link from 'next/link'
+import { withRouter } from 'next/router'
+import WithData from '../lib/withData'
 import Layout from '../components/layout'
 import Head from '../components/head'
+import BlogpostsList from '../components/blogpostsList.comp'
 
-const blogposts = []
-for (let i = 0; i < 20; i++) {
-  blogposts.push(
-    <div key={i}>
-      <Link as="/blog/1/slug" href={`/blogpost?id=1`}>
-        <a>Blogpost {i}</a>
-      </Link>
-      <p>Date 23/4/2014, 5 comments</p>
-    </div>
-  )
-}
+const title = "المدونة"
+const metaDescription = "مدونة موقع أوتاريكا للأغاني العربية"
 
-export default (props) => (
+export default withRouter(WithData((props) => (
   <Layout>
-    <Head/>
-    blog page
+    <Head title={ title } description={ metaDescription } asPath={ decodeURIComponent(props.router.asPath) } />
+    <h1 className="title">{ title }</h1>
     <p>blogposts List</p>
-    <div>
-     {blogposts}
-    </div>
+    <BlogpostsList/>
+    <style jsx>{`
+      .title, .description {
+        text-align: center;
+      }
+    `}</style>
   </Layout>
-)
+)))

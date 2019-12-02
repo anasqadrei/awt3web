@@ -62,18 +62,17 @@ for (let i = 0; i < 20; i++) {
   )
 }
 
-export default function artist(ownProps) {
-
-  // getArtist query variables
+export default function Artist(props) {
+  // set query variables
   const queryVariables = {
-    id: ownProps.router.query.id
+    id: props.router.query.id
   }
 
   // excute query
   // setting notifyOnNetworkStatusChange to true will make the component rerender when
   // the "networkStatus" changes, so we are able to know if it is fetching
   // more data
-  const { loading, error, data, fetchMore, networkStatus } = useQuery (
+  const { loading, error, data, networkStatus } = useQuery (
     GET_ARTIST_QUERY,
     {
       variables: queryVariables,
@@ -100,21 +99,20 @@ export default function artist(ownProps) {
     return (<div>Artist doesn't exist (design this)</div>)
   }
 
-  // TODO: why fixSlug?? why not always?
   // fix url
-  if (ownProps.fixSlug) {
-    const regExp = new RegExp (`^${ ownProps.router.pathname }/${ ownProps.router.query.id }/${ getArtist.slug }([?].*|[#].*|/)?$`)
-    if (!decodeURIComponent(ownProps.router.asPath).match(regExp)) {
-      const href = `${ ownProps.router.pathname }?id=${ ownProps.router.query.id }&slug=${ getArtist.slug }`
-      const as = `${ ownProps.router.pathname }/${ ownProps.router.query.id }/${ getArtist.slug }`
-      ownProps.router.replace(href, as)
+  if (props.fixSlug) {
+    const regExp = new RegExp (`^${ props.router.pathname }/${ props.router.query.id }/${ getArtist.slug }([?].*|[#].*|/)?$`)
+    if (!decodeURIComponent(props.router.asPath).match(regExp)) {
+      const href = `${ props.router.pathname }?id=${ props.router.query.id }&slug=${ getArtist.slug }`
+      const as = `${ props.router.pathname }/${ props.router.query.id }/${ getArtist.slug }`
+      props.router.replace(href, as)
     }
   }
 
   // display artist
   return (
     <section>
-      <Head title={ getArtist.name } description={ getArtist.name } url={ getArtist.url } ogImage={ getArtist.imageUrl } />
+      <Head title={ getArtist.name } description={ getArtist.name } asPath={ decodeURIComponent(props.router.asPath) } ogImage={ getArtist.imageUrl } />
       <div>
         <img src={ getArtist.imageUrl?getArtist.imageUrl:`https://via.placeholder.com/100?text=no+photo?` }/>
         <h1 className="title">{ getArtist.name }</h1>

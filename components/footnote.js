@@ -8,7 +8,7 @@ const Footnote = () => (
         <a>About</a>
       </Link>
       <Link href="/blog">
-        <a>Blog</a>
+        <a>Blog | المدونة</a>
       </Link>
       <Link href="/terms">
         <a>Terms</a>

@@ -31,7 +31,7 @@ app.prepare()
     ctx.respond = false
   })
 
-  router.get('/blog/:id/:slug', async ctx => {
+  router.get('/blogpost/:id/:slug', async ctx => {
     await app.render(ctx.req, ctx.res, '/blogpost', Object.assign(ctx.params, ctx.query))
     ctx.respond = false
   })
