@@ -19,7 +19,8 @@ const LIST_BLOGPOSTS_QUERY = gql`
   }
 `
 
-let nonEmptyList = true
+// a paging flag
+let nextPage = true
 
 export default function BlogpostsList() {
   // set query variables
@@ -43,18 +44,16 @@ export default function BlogpostsList() {
   // loading more network status. fetchMore: query is currently in flight
   const loadingMore = (networkStatus === NetworkStatus.fetchMore)
 
-  // get and append new fetched blogposts
+  // get and append new fetched blogposts. also decide on paging
   const loadMoreBlogposts = () => {
     fetchMore({
       variables: {
-        page: (listBlogposts.length/queryVariables.pageSize)+1
+        page: Math.ceil(listBlogposts.length/queryVariables.pageSize)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
+        if (!fetchMoreResult || (fetchMoreResult.listBlogposts && fetchMoreResult.listBlogposts.length === 0)) {
+          nextPage = false
           return previousResult
-        }
-        if (fetchMoreResult.listBlogposts && fetchMoreResult.listBlogposts.length === 0) {
-          nonEmptyList = false
         }
         return Object.assign({}, previousResult, {
           listBlogposts: [...previousResult.listBlogposts, ...fetchMoreResult.listBlogposts],
@@ -74,22 +73,15 @@ export default function BlogpostsList() {
     return (<div>Loading... (design this)</div>)
   }
 
-  // get data and decide on paging
+  // get data
   const { listBlogposts } = data
-
-  // * listBlogposts.length % queryVariables.pageSize is > 0 means it is definitely the last page.
-  // e.g. length = 35, pageSize 10
-  // * if nonEmptyList is set to false, it means page requested returned an emptylist.
-  // e.g. length = 30, pageSize 10
-  // There is no next page in the above two cases
-  const nextPage = !(listBlogposts.length%queryVariables.pageSize) && nonEmptyList
 
   // in case no blogposts found
   if (!listBlogposts.length) {
     return (<div>no blogposts found (design this)</div>)
   }
 
-  // display blogposts
+  // display blogposts otherwise
   return (
     <section>
       { listBlogposts.map(blogpost => (

@@ -5,8 +5,8 @@ import gql from 'graphql-tag'
 import Raven from 'raven-js'
 import ErrorMessage from './errorMessage'
 
-const PAGE_SIZE = 25
-const LIST_COMMENTS_QUERY = gql`
+export const PAGE_SIZE = 25
+export const LIST_COMMENTS_QUERY = gql`
   query listComments ($reference: CommentReferenceInput!, $page: Int!, $pageSize: Int!) {
     listComments(reference: $reference, page: $page, pageSize: $pageSize) {
       id
@@ -35,7 +35,11 @@ const LIST_COMMENTS_QUERY = gql`
   }
 `
 
-let nonEmptyList = true
+// a paging flag
+let nextPage = true
+export function setNextPage(flag) {
+  nextPage = flag
+}
 
 export default function CommentsList(props) {
   // set query variables
@@ -63,18 +67,16 @@ export default function CommentsList(props) {
   // loading more network status. fetchMore: query is currently in flight
   const loadingMore = (networkStatus === NetworkStatus.fetchMore)
 
-  // get and append new fetched comments
+  // get and append new fetched comments. also decide on paging
   const loadMoreComments = () => {
     fetchMore({
       variables: {
-        page: (listComments.length/queryVariables.pageSize)+1
+        page: Math.ceil(listComments.length/queryVariables.pageSize)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
+        if (!fetchMoreResult || (fetchMoreResult.listComments && fetchMoreResult.listComments.length === 0)) {
+          nextPage = false
           return previousResult
-        }
-        if (fetchMoreResult.listComments && fetchMoreResult.listComments.length === 0) {
-          nonEmptyList = false
         }
         return Object.assign({}, previousResult, {
           listComments: [...previousResult.listComments, ...fetchMoreResult.listComments],
@@ -94,22 +96,15 @@ export default function CommentsList(props) {
     return (<div>Loading... (design this)</div>)
   }
 
-  // get data and decide on paging
+  // get data
   const { listComments } = data
-
-  // * listComments.length % queryVariables.pageSize is > 0 means it is definitely the last page.
-  // e.g. length = 35, pageSize 10
-  // * if nonEmptyList is set to false, it means page requested returned an emptylist.
-  // e.g. length = 30, pageSize 10
-  // There is no next page in the above two cases
-  const nextPage = !(listComments.length%queryVariables.pageSize) && nonEmptyList
 
   // in case no comments found
   if (!listComments.length) {
     return (<div>no comments found (design this)</div>)
   }
 
-  // display comments
+  // display comments otherwise
   return (
     <section>
       { props.total && `${ props.total } commented` }
@@ -136,6 +131,11 @@ export default function CommentsList(props) {
           <p>
             <Link href="#">
               <a>Unlike</a>
+            </Link>
+          </p>
+          <p>
+            <Link href="#">
+              <a>flag</a>
             </Link>
           </p>
           <p>
@@ -171,6 +171,11 @@ export default function CommentsList(props) {
                 </p>
                 <p>
                   <Link href="#">
+                    <a>flag</a>
+                  </Link>
+                </p>
+                <p>
+                  <Link href="#">
                     <a>X delete</a>
                   </Link>
                 </p>
@@ -188,10 +193,10 @@ export default function CommentsList(props) {
       { props.total && (
           (loadingMore || nextPage)?
           <button onClick={ () => loadMoreComments() } disabled={ loadingMore }>
-            { loadingMore ? 'Loading...' : 'Show More Comments' }
+            { loadingMore ? 'Loading... جاري عرض المزيد من التعليقات ' : 'Show More Comments المزيد' }
           </button>
           :
-          <p>all comments has been shown</p>
+          <p>all comments has been shown تم عرض جميع التعليقات</p>
         )
       }
       <style jsx>{`

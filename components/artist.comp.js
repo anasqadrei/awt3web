@@ -155,7 +155,7 @@ export default function Artist(props) {
         {allSongs}
       </div>
 
-      <Comment/>
+      <Comment collection={ ARTISTS_COLLECTION } id={ getArtist.id } />
       <CommentsList collection={ ARTISTS_COLLECTION } id={ getArtist.id } total={ getArtist.comments }/>
 
       <style jsx>{`
