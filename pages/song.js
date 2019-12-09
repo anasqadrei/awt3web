@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import Layout from '../components/layout'
 import Head from '../components/head'
-import Comment from '../components/comment.comp'
-import CommentsList from '../components/commentsList.comp'
+import Comment from '../components/comment.create.comp'
+import CommentsList from '../components/comment.list.comp'
 
 const images = []
 for (let i = 0; i < 3; i++) {

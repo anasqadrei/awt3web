@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
-import { LIST_COMMENTS_QUERY, PAGE_SIZE, setNextPage } from './commentsList.comp'
+import { LIST_COMMENTS_QUERY, PAGE_SIZE, setNextPage } from './comment.list.comp'
 import ErrorMessage from './errorMessage'
 
 const DELETE_COMMENT_MUTATION = gql`

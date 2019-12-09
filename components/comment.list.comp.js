@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
-import CommentItem from './commentItem.comp'
+import ParentComment from './comment.parent.comp'
 import ErrorMessage from './errorMessage'
 
 export const PAGE_SIZE = 25
@@ -20,6 +20,10 @@ export const LIST_COMMENTS_QUERY = gql`
       likes
       children {
         id
+        reference {
+          collection
+          id
+        }
         text
         createdDate
         likes
@@ -115,19 +119,7 @@ export default function CommentsList(props) {
       { props.total && `${ props.total } commented` }
 
       { listComments.map(comment => (
-        <div key={ comment.id }>
-          <CommentItem comment={ comment } />
-          { comment.children && comment.children.map( reply => (
-            <div key={ reply.id }>
-              <CommentItem comment={ reply } />
-            </div>
-          ))}
-          Reply
-          <textarea row="2"/>
-          <Link href="#">
-            <a>Post Reply</a>
-          </Link>
-        </div>
+        <ParentComment key={ comment.id } comment={ comment } />
       ))}
 
       { props.total && (
@@ -139,7 +131,7 @@ export default function CommentsList(props) {
           <p>all comments has been shown تم عرض جميع التعليقات</p>
         )
       }
-      
+
       <style jsx>{`
         .title, .description {
           text-align: center;
