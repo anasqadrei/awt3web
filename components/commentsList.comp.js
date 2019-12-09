@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
+import CommentItem from './commentItem.comp'
 import ErrorMessage from './errorMessage'
 
 export const PAGE_SIZE = 25
@@ -10,6 +11,10 @@ export const LIST_COMMENTS_QUERY = gql`
   query listComments ($reference: CommentReferenceInput!, $page: Int!, $pageSize: Int!) {
     listComments(reference: $reference, page: $page, pageSize: $pageSize) {
       id
+      reference {
+        collection
+        id
+      }
       text
       createdDate
       likes
@@ -43,7 +48,7 @@ export function setNextPage(flag) {
 
 export default function CommentsList(props) {
   // set query variables
-  const queryVariables = {
+  const listCommentsQueryVariables = {
     reference: {
       collection: props.collection,
       id: props.id
@@ -59,7 +64,7 @@ export default function CommentsList(props) {
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
     LIST_COMMENTS_QUERY,
     {
-      variables: queryVariables,
+      variables: listCommentsQueryVariables,
       notifyOnNetworkStatusChange: true,
     }
   )
@@ -71,7 +76,7 @@ export default function CommentsList(props) {
   const loadMoreComments = () => {
     fetchMore({
       variables: {
-        page: Math.ceil(listComments.length/queryVariables.pageSize)+1
+        page: Math.ceil(listComments.length/listCommentsQueryVariables.pageSize)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult || (fetchMoreResult.listComments && fetchMoreResult.listComments.length === 0)) {
@@ -108,85 +113,20 @@ export default function CommentsList(props) {
   return (
     <section>
       { props.total && `${ props.total } commented` }
+
       { listComments.map(comment => (
         <div key={ comment.id }>
-          <Link as={ `/user/${ comment.user.id }/${ comment.user.slug }` } href={`/user?id=${ comment.user.id }`}>
-            <img src={ comment.user.imageUrl?comment.user.imageUrl:`https://via.placeholder.com/100?text=No+Photo` } alt={ comment.user.imageUrl && comment.user.username }/>
+          <CommentItem comment={ comment } />
+          { comment.children && comment.children.map( reply => (
+            <div key={ reply.id }>
+              <CommentItem comment={ reply } />
+            </div>
+          ))}
+          Reply
+          <textarea row="2"/>
+          <Link href="#">
+            <a>Post Reply</a>
           </Link>
-          <Link as={ `/user/${ comment.user.id }/${ comment.user.slug }` } href={`/user?id=${ comment.user.id }`}>
-            <a>{ comment.user.username }</a>
-          </Link>
-
-          <p>Date { comment.createdDate }</p>
-          <div dangerouslySetInnerHTML={{ __html: comment.text }} />
-
-          <p>
-            <Link href="#">
-              <a>Like</a>
-            </Link>
-            { comment.likes &&
-              <Link href="#"><a>{ comment.likes } liked it</a></Link>
-            }
-          </p>
-          <p>
-            <Link href="#">
-              <a>Unlike</a>
-            </Link>
-          </p>
-          <p>
-            <Link href="#">
-              <a>flag</a>
-            </Link>
-          </p>
-          <p>
-            <Link href="#">
-              <a>X delete</a>
-            </Link>
-          </p>
-          <div>
-            { comment.children && comment.children.map( reply => (
-              <div key={ reply.id }>
-                <Link as={ `/user/${ comment.user.id }/${ comment.user.slug }` } href={`/user?id=${ comment.user.id }`}>
-                  <img src={ reply.user.imageUrl?reply.user.imageUrl:`https://via.placeholder.com/100?text=No+Photo` } alt={ reply.user.imageUrl && reply.user.username }/>
-                </Link>
-                <Link as={ `/user/${ comment.user.id }/${ comment.user.slug }` } href={`/user?id=${ comment.user.id }`}>
-                  <a>{ reply.user.username }</a>
-                </Link>
-
-                <p>Date { reply.createdDate }</p>
-                <div dangerouslySetInnerHTML={{ __html: reply.text }} />
-
-                <p>
-                  <Link href="#">
-                    <a>Like</a>
-                  </Link>
-                  { reply.likes &&
-                    <Link href="#"><a>{ reply.likes } liked it</a></Link>
-                  }
-                </p>
-                <p>
-                  <Link href="#">
-                    <a>Unlike</a>
-                  </Link>
-                </p>
-                <p>
-                  <Link href="#">
-                    <a>flag</a>
-                  </Link>
-                </p>
-                <p>
-                  <Link href="#">
-                    <a>X delete</a>
-                  </Link>
-                </p>
-              </div>
-            ))}
-            Reply
-            <textarea row="2"/>
-            <Link href="#">
-              <a>Post Reply</a>
-            </Link>
-          </div>
         </div>
       ))}
 
@@ -199,6 +139,7 @@ export default function CommentsList(props) {
           <p>all comments has been shown تم عرض جميع التعليقات</p>
         )
       }
+      
       <style jsx>{`
         .title, .description {
           text-align: center;
