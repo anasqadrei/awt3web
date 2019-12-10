@@ -122,7 +122,7 @@ export default function CommentsList(props) {
         <ParentComment key={ comment.id } comment={ comment } />
       ))}
 
-      { props.total && (
+      { !!(props.total) && (
           (loadingMore || nextPage)?
           <button onClick={ () => loadMoreComments() } disabled={ loadingMore }>
             { loadingMore ? 'Loading... جاري عرض المزيد من التعليقات ' : 'Show More Comments المزيد' }

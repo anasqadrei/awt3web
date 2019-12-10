@@ -5,6 +5,16 @@ import Raven from 'raven-js'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE, setNextPage } from './comment.list.comp'
 import ErrorMessage from './errorMessage'
 
+const LIKE_COMMENT_MUTATION = gql`
+  mutation likeComment ($commentId: ID!, $userId: ID!) {
+    likeComment(commentId: $commentId, userId: $userId)
+  }
+`
+const UNLIKE_COMMENT_MUTATION = gql`
+  mutation unlikeComment ($commentId: ID!, $userId: ID!) {
+    unlikeComment(commentId: $commentId, userId: $userId)
+  }
+`
 const DELETE_COMMENT_MUTATION = gql`
   mutation deleteCommentById ($id: ID!) {
     deleteCommentById(id: $id)
@@ -12,6 +22,134 @@ const DELETE_COMMENT_MUTATION = gql`
 `
 
 export default function CommentItem(props) {
+  // like comment mutation
+  const [likeComment, { loading: loadingLike, error: errorLike }] = useMutation(
+    LIKE_COMMENT_MUTATION,
+    {
+      onError: (error) => {
+        Raven.captureException(error.message, { extra: error })
+      },
+    }
+  )
+
+  // handling like event
+  const likeCommentHandler = (commentId) => {
+    // set query variables
+    const likeCommentQueryVariables = {
+      commentId: commentId,
+      userId: "1",
+    }
+    const listCommentsQueryVariables = {
+      reference: {
+        collection: props.comment.reference.collection,
+        id: props.comment.reference.id,
+      },
+      page: 1,
+      pageSize: PAGE_SIZE,
+    }
+
+    // execute likeComment and update likes in the cache
+    likeComment({
+      variables: likeCommentQueryVariables,
+      update: (proxy, { data: { likeComment } }) => {
+        // find the comment or reply(child) that was liked and update its likes counter
+        if (likeComment) {
+          const data = proxy.readQuery({
+            query: LIST_COMMENTS_QUERY,
+            variables: listCommentsQueryVariables,
+          })
+
+          // loop the parent comments first
+          const parentIndex = data.listComments.findIndex(elem => elem.id === commentId)
+          if (parentIndex >= 0) {
+            data.listComments[parentIndex].likes++
+          } else {
+            // if not found in parents, search in the children
+            for (let i = 0; i < data.listComments.length; i++) {
+              if (data.listComments[i].children) {
+                const childIndex = data.listComments[i].children.findIndex(elem => elem.id === commentId)
+                if (childIndex >= 0) {
+                  data.listComments[i].children[childIndex].likes++
+                }
+              }
+            }
+          }
+
+          // update cache
+          proxy.writeQuery({
+            query: LIST_COMMENTS_QUERY,
+            variables: listCommentsQueryVariables,
+            data: data,
+          })
+        }
+      },
+    })
+  }
+
+  // unlike comment mutation
+  const [unlikeComment, { loading: loadingUnlike, error: errorUnlike }] = useMutation(
+    UNLIKE_COMMENT_MUTATION,
+    {
+      onError: (error) => {
+        Raven.captureException(error.message, { extra: error })
+      },
+    }
+  )
+
+  // handling like event
+  const unlikeCommentHandler = (commentId) => {
+    // set query variables
+    const unlikeCommentQueryVariables = {
+      commentId: commentId,
+      userId: "1",
+    }
+    const listCommentsQueryVariables = {
+      reference: {
+        collection: props.comment.reference.collection,
+        id: props.comment.reference.id,
+      },
+      page: 1,
+      pageSize: PAGE_SIZE,
+    }
+
+    // execute unlikeComment and update likes in the cache
+    unlikeComment({
+      variables: unlikeCommentQueryVariables,
+      update: (proxy, { data: { unlikeComment } }) => {
+        // find the comment or reply(child) that was unliked and update its likes counter
+        if (unlikeComment) {
+          const data = proxy.readQuery({
+            query: LIST_COMMENTS_QUERY,
+            variables: listCommentsQueryVariables,
+          })
+
+          // loop the parent comments first
+          const parentIndex = data.listComments.findIndex(elem => elem.id === commentId)
+          if (parentIndex >= 0) {
+            data.listComments[parentIndex].likes--
+          } else {
+            // if not found in parents, search in the children
+            for (let i = 0; i < data.listComments.length; i++) {
+              if (data.listComments[i].children) {
+                const childIndex = data.listComments[i].children.findIndex(elem => elem.id === commentId)
+                if (childIndex >= 0) {
+                  data.listComments[i].children[childIndex].likes--
+                }
+              }
+            }
+          }
+
+          // update cache
+          proxy.writeQuery({
+            query: LIST_COMMENTS_QUERY,
+            variables: listCommentsQueryVariables,
+            data: data,
+          })
+        }
+      },
+    })
+  }
+
   // delete comment mutation
   const [deleteCommentById, { loading: loadingDelete, error: errorDelete }] = useMutation(
     DELETE_COMMENT_MUTATION,
@@ -65,17 +203,17 @@ export default function CommentItem(props) {
       <div dangerouslySetInnerHTML={{ __html: props.comment.text }} />
 
       <p>
-        <Link href="#">
-          <a>Like</a>
-        </Link>
-        { props.comment.likes &&
-          <Link href="#"><a>{ props.comment.likes } liked it</a></Link>
-        }
+        <button onClick={ () => likeCommentHandler(props.comment.id) } disabled={ loadingLike }>
+          Like
+        </button>
+        { !!(props.comment.likes) && <Link href="#"><a>{ props.comment.likes } liked it</a></Link> }
+        { errorLike && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
       </p>
       <p>
-        <Link href="#">
-          <a>Unlike</a>
-        </Link>
+        <button onClick={ () => unlikeCommentHandler(props.comment.id) } disabled={ loadingUnlike }>
+          Unlike
+        </button>
+        { errorUnlike && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
       </p>
       <p>
         <Link href="#">
