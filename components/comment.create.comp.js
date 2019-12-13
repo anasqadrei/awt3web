@@ -4,6 +4,12 @@ import Raven from 'raven-js'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE, setNextPage } from './comment.list.comp'
 import ErrorMessage from './errorMessage'
 
+// TEMP: until we decide on the login mechanism
+const loggedOnUser = {
+  id: "1",
+  username: "Admin",
+}
+
 const TEXTAREA_COMMENT = "comment"
 const CREATE_COMMENT_MUTATION = gql`
   mutation createComment ($text: String!, $reference: CommentReferenceInput!, $userId: ID!) {
@@ -40,7 +46,7 @@ export default function Comment(props) {
         collection: props.collection,
         id: props.id,
       },
-      userId: "1",
+      userId: loggedOnUser.id,
     }
     const listCommentsQueryVariables = {
       reference: {

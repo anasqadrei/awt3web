@@ -5,6 +5,12 @@ import { LIST_COMMENTS_QUERY, PAGE_SIZE } from './comment.list.comp'
 import CommentItem from './comment.item.comp'
 import ErrorMessage from './errorMessage'
 
+// TEMP: until we decide on the login mechanism
+const loggedOnUser = {
+  id: "1",
+  username: "Admin",
+}
+
 const TEXTAREA_REPLY = "reply"
 const CREATE_REPLY_MUTATION = gql`
   mutation createComment ($text: String!, $reference: CommentReferenceInput!, $parentId: ID!, $userId: ID!) {
@@ -55,7 +61,7 @@ export default function ParentComment(props) {
         id: props.comment.reference.id,
       },
       parentId: props.comment.id,
-      userId: "1",
+      userId: loggedOnUser.id,
     }
     const listCommentsQueryVariables = {
       reference: {
