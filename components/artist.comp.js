@@ -8,8 +8,8 @@ import Comment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
 
-const ARTISTS_COLLECTION = 'artists'
-const GET_ARTIST_QUERY = gql`
+export const ARTISTS_COLLECTION = 'artists'
+export const GET_ARTIST_QUERY = gql`
   query getArtist ($id: ID!) {
     getArtist(id: $id) {
       id

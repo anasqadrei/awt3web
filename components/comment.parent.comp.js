@@ -1,6 +1,9 @@
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
+// import { GET_SONG_QUERY, SONGS_COLLECTION } from './song.comp'
+import { GET_ARTIST_QUERY, ARTISTS_COLLECTION } from './artist.comp'
+import { GET_BLOGPOST_QUERY, BLOGPOSTS_COLLECTION } from './blogpost.comp'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE } from './comment.list.comp'
 import CommentItem from './comment.item.comp'
 import ErrorMessage from './errorMessage'
@@ -76,21 +79,78 @@ export default function ParentComment(props) {
     createComment({
       variables: createReplyQueryVariables,
       update: (proxy, { data: { createComment } }) => {
-        const data = proxy.readQuery({
-          query: LIST_COMMENTS_QUERY,
-          variables: listCommentsQueryVariables,
-        })
+        // add the newly created reply to the cache
+        {
+          const data = proxy.readQuery({
+            query: LIST_COMMENTS_QUERY,
+            variables: listCommentsQueryVariables,
+          })
 
-        // find the comment that the reply belongs to and add it
-        const parentIndex = data.listComments.findIndex(elem => elem.id === props.comment.id)
-        data.listComments[parentIndex].children = [...data.listComments[parentIndex].children || [], createComment]
+          // find the comment that the reply belongs to and add it
+          const parentIndex = data.listComments.findIndex(elem => elem.id === props.comment.id)
+          data.listComments[parentIndex].children = [...data.listComments[parentIndex].children || [], createComment]
 
-        // update cache
-        proxy.writeQuery({
-          query: LIST_COMMENTS_QUERY,
-          variables: listCommentsQueryVariables,
-          data: data,
-        })
+          // update cache
+          proxy.writeQuery({
+            query: LIST_COMMENTS_QUERY,
+            variables: listCommentsQueryVariables,
+            data: data,
+          })
+        }
+        // update the number of comments in the cache
+        {
+          // read cache
+          let query
+          switch (props.comment.reference.collection) {
+            // TODO: uncomment
+            // case SONGS_COLLECTION:
+            //   query = GET_SONG_QUERY
+            //   break
+            case ARTISTS_COLLECTION:
+              query = GET_ARTIST_QUERY
+              break
+            case BLOGPOSTS_COLLECTION:
+              query = GET_BLOGPOST_QUERY
+              break
+            default:
+              return
+          }
+          const data = proxy.readQuery({
+            query: query,
+            variables: { id: props.comment.reference.id },
+          })
+
+          // update the number of comments in the cache
+          let update = { ...data }
+          switch (props.comment.reference.collection) {
+            // TODO: uncomment
+            // case SONGS_COLLECTION:
+            //   update.getSong = {
+            //     ...data.getSong,
+            //     comments: data.getSong.comments + 1,
+            //   }
+            //   break
+            case ARTISTS_COLLECTION:
+              update.getArtist = {
+                ...data.getArtist,
+                comments: data.getArtist.comments + 1,
+              }
+              break
+            case BLOGPOSTS_COLLECTION:
+              update.getBlogpost = {
+                ...data.getBlogpost,
+                comments: data.getBlogpost.comments + 1,
+              }
+              break
+            default:
+              return
+          }
+          proxy.writeQuery({
+            query: query,
+            variables: { id: props.comment.reference.id },
+            data: update,
+          })
+        }
       },
     })
   }

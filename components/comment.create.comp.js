@@ -2,6 +2,9 @@ import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE, setNextPage } from './comment.list.comp'
+// import { GET_SONG_QUERY, SONGS_COLLECTION } from './song.comp'
+import { GET_ARTIST_QUERY, ARTISTS_COLLECTION } from './artist.comp'
+import { GET_BLOGPOST_QUERY, BLOGPOSTS_COLLECTION } from './blogpost.comp'
 import ErrorMessage from './errorMessage'
 
 // TEMP: until we decide on the login mechanism
@@ -58,10 +61,64 @@ export default function Comment(props) {
     }
 
     // execute createComment and refetch listComments from the start for the new comment to be shown
-    // updating the cache is a hassle. paging becomes complicated.
+    // updating the list of comments in the cache is a hassle. paging becomes complicated.
+    // just updating the number of comments in the cache
     setNextPage(true)
     createComment({
       variables: createCommentQueryVariables,
+      update: (proxy) => {
+        // read cache
+        let query
+        switch (props.collection) {
+          // TODO: uncomment
+          // case SONGS_COLLECTION:
+          //   query = GET_SONG_QUERY
+          //   break
+          case ARTISTS_COLLECTION:
+            query = GET_ARTIST_QUERY
+            break
+          case BLOGPOSTS_COLLECTION:
+            query = GET_BLOGPOST_QUERY
+            break
+          default:
+            return
+        }
+        const data = proxy.readQuery({
+          query: query,
+          variables: { id: props.id },
+        })
+
+        // update the number of comments in the cache
+        let update = { ...data }
+        switch (props.collection) {
+          // TODO: uncomment
+          // case SONGS_COLLECTION:
+          //   update.getSong = {
+          //     ...data.getSong,
+          //     comments: data.getSong.comments + 1,
+          //   }
+          //   break
+          case ARTISTS_COLLECTION:
+            update.getArtist = {
+              ...data.getArtist,
+              comments: data.getArtist.comments + 1,
+            }
+            break
+          case BLOGPOSTS_COLLECTION:
+            update.getBlogpost = {
+              ...data.getBlogpost,
+              comments: data.getBlogpost.comments + 1,
+            }
+            break
+          default:
+            return
+        }
+        proxy.writeQuery({
+          query: query,
+          variables: { id: props.id },
+          data: update,
+        })
+      },
       refetchQueries: () => [{
         query: LIST_COMMENTS_QUERY,
         variables: listCommentsQueryVariables

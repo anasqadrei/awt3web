@@ -8,8 +8,8 @@ import Comment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
 
-const BLOGPOSTS_COLLECTION = 'blogposts'
-const GET_BLOGPOST_QUERY = gql`
+export const BLOGPOSTS_COLLECTION = 'blogposts'
+export const GET_BLOGPOST_QUERY = gql`
   query getBlogpost ($id: ID!) {
     getBlogpost(id: $id) {
       id
@@ -23,8 +23,6 @@ const GET_BLOGPOST_QUERY = gql`
     }
   }
 `
-
-const queryVariables = {}
 
 export default function Blogpost(props) {
   // set query variables
