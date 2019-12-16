@@ -93,10 +93,10 @@ export default function CommentItem(props) {
   )
 
   // handling like event
-  const likeCommentHandler = (commentId) => {
+  const likeCommentHandler = () => {
     // set query variables
     const likeCommentQueryVariables = {
-      commentId: commentId,
+      commentId: props.comment.id,
       userId: loggedOnUser.id,
     }
 
@@ -114,14 +114,14 @@ export default function CommentItem(props) {
               variables: listCommentsQueryVariables,
             })
             // loop the parent comments first
-            const parentIndex = data.listComments.findIndex(elem => elem.id === commentId)
+            const parentIndex = data.listComments.findIndex(elem => elem.id === props.comment.id)
             if (parentIndex >= 0) {
               data.listComments[parentIndex].likes++
             } else {
               // if not found in parents, search in the children
               for (let i = 0; i < data.listComments.length; i++) {
                 if (data.listComments[i].children) {
-                  const childIndex = data.listComments[i].children.findIndex(elem => elem.id === commentId)
+                  const childIndex = data.listComments[i].children.findIndex(elem => elem.id === props.comment.id)
                   if (childIndex >= 0) {
                     data.listComments[i].children[childIndex].likes++
                   }
@@ -187,10 +187,10 @@ export default function CommentItem(props) {
   )
 
   // handling unlike event
-  const unlikeCommentHandler = (commentId) => {
+  const unlikeCommentHandler = () => {
     // set query variables
     const unlikeCommentQueryVariables = {
-      commentId: commentId,
+      commentId: props.comment.id,
       userId: loggedOnUser.id,
     }
 
@@ -208,14 +208,14 @@ export default function CommentItem(props) {
               variables: listCommentsQueryVariables,
             })
             // loop the parent comments first
-            const parentIndex = data.listComments.findIndex(elem => elem.id === commentId)
+            const parentIndex = data.listComments.findIndex(elem => elem.id === props.comment.id)
             if (parentIndex >= 0) {
               data.listComments[parentIndex].likes--
             } else {
               // if not found in parents, search in the children
               for (let i = 0; i < data.listComments.length; i++) {
                 if (data.listComments[i].children) {
-                  const childIndex = data.listComments[i].children.findIndex(elem => elem.id === commentId)
+                  const childIndex = data.listComments[i].children.findIndex(elem => elem.id === props.comment.id)
                   if (childIndex >= 0) {
                     data.listComments[i].children[childIndex].likes--
                   }
@@ -281,11 +281,11 @@ export default function CommentItem(props) {
   )
 
   // handling delete event
-  const deleteComment = (commentId) => {
+  const deleteComment = () => {
     if (confirm("Are you sure?")) {
       // set query variables
       const deleteCommentQueryVariables = {
-        id: commentId,
+        id: props.comment.id,
       }
 
       // execute deleteComment and refetch listComments from the start for the deleted comment not to be shown
@@ -369,7 +369,7 @@ export default function CommentItem(props) {
       <div dangerouslySetInnerHTML={{ __html: props.comment.text }} />
 
       <div>
-        <button hidden={ hideLike } onClick={ () => likeCommentHandler(props.comment.id) } disabled={ loadingLike }>
+        <button hidden={ hideLike } onClick={ () => likeCommentHandler() } disabled={ loadingLike }>
           Like
         </button>
         { !!(props.comment.likes) &&
@@ -378,7 +378,7 @@ export default function CommentItem(props) {
         { errorLike && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
       </div>
       <p>
-        <button hidden={ !hideLike } onClick={ () => unlikeCommentHandler(props.comment.id) } disabled={ loadingUnlike }>
+        <button hidden={ !hideLike } onClick={ () => unlikeCommentHandler() } disabled={ loadingUnlike }>
           Unlike
         </button>
         { errorUnlike && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
@@ -389,7 +389,7 @@ export default function CommentItem(props) {
         </Link>
       </p>
       <div hidden={ loggedOnUser && loggedOnUser.id != props.comment.user.id }>
-        <button onClick={ () => deleteComment(props.comment.id) } disabled={ loadingDelete }>
+        <button onClick={ () => deleteComment() } disabled={ loadingDelete }>
           X delete
         </button>
         { errorDelete && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
