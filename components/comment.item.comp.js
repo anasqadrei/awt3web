@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
 // import { GET_SONG_QUERY, SONGS_COLLECTION } from './song.comp'
@@ -15,7 +15,18 @@ const loggedOnUser = {
   username: "Admin",
   __typename: "User",
 }
+// const loggedOnUser = {
+//   id: "2",
+//   username: "Anas",
+//   __typename: "User",
+// }
+// const loggedOnUser = null
 
+const CHECK_USER_LIKE_COMMENTS_QUERY = gql`
+  query checkUserLikeComments ($userId: ID!, $commentIds: [ID]!) {
+    checkUserLikeComments(userId: $userId, commentIds: $commentIds)
+  }
+`
 const LIKE_COMMENT_MUTATION = gql`
   mutation likeComment ($commentId: ID!, $userId: ID!) {
     likeComment(commentId: $commentId, userId: $userId)
@@ -42,10 +53,33 @@ export default function CommentItem(props) {
     page: 1,
     pageSize: LIST_COMMENTS_PAGE_SIZE,
   }
+  const checkUserLikeCommentsQueryVariables = {
+    userId: loggedOnUser && loggedOnUser.id,
+    commentIds: [props.comment.id],
+  }
   const listCommentLikersQueryVariables = {
     commentId: props.comment.id,
     page: 1,
     pageSize: LIST_COMMENT_LIKERS_PAGE_SIZE,
+  }
+
+  // decide to either show or hide like and unlike buttons
+  let hideLike = false
+  if (loggedOnUser) {
+    // check if user like comment query
+    const { data }  = useQuery (
+      CHECK_USER_LIKE_COMMENTS_QUERY,
+      {
+        variables: checkUserLikeCommentsQueryVariables,
+      }
+    )
+    // hide like button if user already liked comment
+    if (data) {
+      const { checkUserLikeComments } = data
+      if (checkUserLikeComments && checkUserLikeComments.length > 0 && checkUserLikeComments[0] === props.comment.id) {
+        hideLike = true
+      }
+    }
   }
 
   // like comment mutation
@@ -99,6 +133,24 @@ export default function CommentItem(props) {
               query: LIST_COMMENTS_QUERY,
               variables: listCommentsQueryVariables,
               data: data,
+            })
+          }
+
+          // update checkUserLikeComments cache
+          {
+            // read cache
+            const data = proxy.readQuery({
+              query: CHECK_USER_LIKE_COMMENTS_QUERY,
+              variables: checkUserLikeCommentsQueryVariables,
+            })
+            // update cache by adding comment id
+            proxy.writeQuery({
+              query: CHECK_USER_LIKE_COMMENTS_QUERY,
+              variables: checkUserLikeCommentsQueryVariables,
+              data: {
+                ...data,
+                checkUserLikeComments: [...data.checkUserLikeComments, props.comment.id],
+              },
             })
           }
 
@@ -175,6 +227,24 @@ export default function CommentItem(props) {
               query: LIST_COMMENTS_QUERY,
               variables: listCommentsQueryVariables,
               data: data,
+            })
+          }
+
+          // update checkUserLikeComments cache
+          {
+            // read cache
+            const data = proxy.readQuery({
+              query: CHECK_USER_LIKE_COMMENTS_QUERY,
+              variables: checkUserLikeCommentsQueryVariables,
+            })
+            // update cache by removing comment id
+            proxy.writeQuery({
+              query: CHECK_USER_LIKE_COMMENTS_QUERY,
+              variables: checkUserLikeCommentsQueryVariables,
+              data: {
+                ...data,
+                checkUserLikeComments: data.checkUserLikeComments.filter(elem => { elem === props.comment.id }),
+              },
             })
           }
 
@@ -299,7 +369,7 @@ export default function CommentItem(props) {
       <div dangerouslySetInnerHTML={{ __html: props.comment.text }} />
 
       <div>
-        <button onClick={ () => likeCommentHandler(props.comment.id) } disabled={ loadingLike }>
+        <button hidden={ hideLike } onClick={ () => likeCommentHandler(props.comment.id) } disabled={ loadingLike }>
           Like
         </button>
         { !!(props.comment.likes) &&
@@ -308,7 +378,7 @@ export default function CommentItem(props) {
         { errorLike && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
       </div>
       <p>
-        <button onClick={ () => unlikeCommentHandler(props.comment.id) } disabled={ loadingUnlike }>
+        <button hidden={ !hideLike } onClick={ () => unlikeCommentHandler(props.comment.id) } disabled={ loadingUnlike }>
           Unlike
         </button>
         { errorUnlike && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
@@ -318,7 +388,7 @@ export default function CommentItem(props) {
           <a>flag</a>
         </Link>
       </p>
-      <div hidden={ props.comment.user.id != loggedOnUser.id }>
+      <div hidden={ loggedOnUser && loggedOnUser.id != props.comment.user.id }>
         <button onClick={ () => deleteComment(props.comment.id) } disabled={ loadingDelete }>
           X delete
         </button>
