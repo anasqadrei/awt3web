@@ -37,6 +37,11 @@ const UNLIKE_COMMENT_MUTATION = gql`
     unlikeComment(commentId: $commentId, userId: $userId)
   }
 `
+const FLAG_COMMENT_MUTATION = gql`
+  mutation flagComment ($commentId: ID!, $userId: ID!, $reason: String!) {
+    flagComment(commentId: $commentId, userId: $userId, reason: $reason)
+  }
+`
 const DELETE_COMMENT_MUTATION = gql`
   mutation deleteCommentById ($id: ID!) {
     deleteCommentById(id: $id)
@@ -270,6 +275,32 @@ export default function CommentItem(props) {
     })
   }
 
+  // flag comment mutation
+  const [flagComment, { loading: loadingFlag }] = useMutation(
+    FLAG_COMMENT_MUTATION,
+    {
+      onError: (error) => {
+        Raven.captureException(error.message, { extra: error })
+      },
+    }
+  )
+
+  // handling flag event
+  const flagCommentHandler = () => {
+    // TODO: reasons
+    // set query variables
+    const flagCommentQueryVariables = {
+      commentId: props.comment.id,
+      userId: loggedOnUser.id,
+      reason: "temp reason",
+    }
+
+    // execute flagComment
+    flagComment({
+      variables: flagCommentQueryVariables,
+    })
+  }
+
   // delete comment mutation
   const [deleteCommentById, { loading: loadingDelete, error: errorDelete }] = useMutation(
     DELETE_COMMENT_MUTATION,
@@ -281,7 +312,7 @@ export default function CommentItem(props) {
   )
 
   // handling delete event
-  const deleteComment = () => {
+  const deleteCommentHandler = () => {
     if (confirm("Are you sure?")) {
       // set query variables
       const deleteCommentQueryVariables = {
@@ -383,13 +414,13 @@ export default function CommentItem(props) {
         </button>
         { errorUnlike && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
       </p>
-      <p>
-        <Link href="#">
-          <a>flag</a>
-        </Link>
-      </p>
-      <div hidden={ loggedOnUser && loggedOnUser.id != props.comment.user.id }>
-        <button onClick={ () => deleteComment() } disabled={ loadingDelete }>
+      <div hidden={ !loggedOnUser }>
+        <button onClick={ () => flagCommentHandler() } disabled={ loadingFlag }>
+          flag
+        </button>
+      </div>
+      <div hidden={ !loggedOnUser || loggedOnUser.id != props.comment.user.id }>
+        <button onClick={ () => deleteCommentHandler() } disabled={ loadingDelete }>
           X delete
         </button>
         { errorDelete && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
