@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { useQuery } from '@apollo/react-hooks'
-import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
 import Head from './head'
@@ -69,14 +68,10 @@ export default function Artist(props) {
   }
 
   // excute query
-  // setting notifyOnNetworkStatusChange to true will make the component rerender when
-  // the "networkStatus" changes, so we are able to know if it is fetching
-  // more data
-  const { loading, error, data, networkStatus } = useQuery (
+  const { loading, error, data } = useQuery (
     GET_ARTIST_QUERY,
     {
       variables: queryVariables,
-      notifyOnNetworkStatusChange: true,
     }
   )
 
