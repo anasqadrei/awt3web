@@ -4,7 +4,7 @@ import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
 import Head from './head'
-import Comment from './comment.create.comp'
+import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
 
@@ -90,7 +90,7 @@ export default function Blogpost(props) {
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
       </div>
 
-      <Comment collection={ BLOGPOSTS_COLLECTION } id={ getBlogpost.id } />
+      <CreateComment collection={ BLOGPOSTS_COLLECTION } id={ getBlogpost.id } />
       <CommentsList collection={ BLOGPOSTS_COLLECTION } id={ getBlogpost.id } total={ getBlogpost.comments }/>
 
       <style jsx>{`

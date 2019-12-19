@@ -4,7 +4,7 @@ import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
 import Head from './head'
-import Comment from './comment.create.comp'
+import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
 
@@ -155,7 +155,7 @@ export default function Artist(props) {
         {allSongs}
       </div>
 
-      <Comment collection={ ARTISTS_COLLECTION } id={ getArtist.id } />
+      <CreateComment collection={ ARTISTS_COLLECTION } id={ getArtist.id } />
       <CommentsList collection={ ARTISTS_COLLECTION } id={ getArtist.id } total={ getArtist.comments }/>
 
       <style jsx>{`
