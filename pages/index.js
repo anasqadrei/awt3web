@@ -1,21 +1,8 @@
 import Link from 'next/link'
+import WithData from '../lib/withData'
 import Layout from '../components/layout'
 import Head from '../components/head'
-
-const recentlyAddedSongs = []
-for (let i = 0; i < 20; i++) {
-  recentlyAddedSongs.push(
-    <div key={i}>
-      <img src="https://via.placeholder.com/80?text=song+image"/>
-      <Link as="/song/1/slug" href={`/song?id=1`}>
-        <a>song title</a>
-      </Link>
-      <Link as="/artist/1/slug" href={`/artist?id=1`}>
-        <a>artist name</a>
-      </Link>
-    </div>
-  )
-}
+import NewSongs from '../components/song.new.comp'
 
 const trendingSongs = []
 for (let i = 0; i < 20; i++) {
@@ -74,16 +61,13 @@ for (let i = 0; i < 20; i++) {
   )
 }
 
-export default () => (
+export default WithData(() => (
   <Layout>
     <Head title="أوتاريكا" />
     <div>
       <h1>Awtarika</h1>
       <p>اهلا بكم في موقع اوتاريكا للاغاني حيث نتمنى ان تسعدوا بقضاء افضل الاوقات بسماع كل ما يحلوا لكم من اغاني و موسيقى.</p>
-      <div>
-        New Songs
-        {recentlyAddedSongs}
-      </div>
+      <NewSongs/>
       <div>
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
       </div>
@@ -118,4 +102,4 @@ export default () => (
       </Link>
     </div>
   </Layout>
-)
+))
