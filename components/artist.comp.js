@@ -126,7 +126,6 @@ export default function Artist() {
         { getArtist.shares ? `${ getArtist.shares } shared this` : `be the first to share` }
         <Link href="/"><a>Facebook</a></Link>
         <Link href="/"><a>Twitter</a></Link>
-        <Link href="/"><a>Google+</a></Link>
         <span dir="ltr"><input value={ getArtist.url } readOnly/></span>
       </div>
 
