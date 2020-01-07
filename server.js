@@ -21,7 +21,7 @@ app.prepare()
     ctx.respond = false
   })
 
-  router.get('/artist/:id(\\d+)/:slug?', async ctx => {
+  router.get('/artist/:id/:slug?', async ctx => {
     await app.render(ctx.req, ctx.res, '/artist', Object.assign(ctx.params, ctx.query))
     ctx.respond = false
   })

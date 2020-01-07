@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
@@ -61,10 +62,12 @@ for (let i = 0; i < 20; i++) {
   )
 }
 
-export default function Artist(props) {
+export default function Artist() {
+  const router = useRouter()
+
   // set query variables
   const queryVariables = {
-    id: props.router.query.id
+    id: router.query.id
   }
 
   // excute query
@@ -94,20 +97,18 @@ export default function Artist(props) {
     return (<div>Artist doesn't exist (design this)</div>)
   }
 
-  // fix url
-  if (props.fixSlug) {
-    const regExp = new RegExp (`^${ props.router.pathname }/${ props.router.query.id }/${ getArtist.slug }([?].*|[#].*|/)?$`)
-    if (!decodeURIComponent(props.router.asPath).match(regExp)) {
-      const href = `${ props.router.pathname }?id=${ props.router.query.id }&slug=${ getArtist.slug }`
-      const as = `${ props.router.pathname }/${ props.router.query.id }/${ getArtist.slug }`
-      props.router.replace(href, as)
-    }
+  // fix url in case it doesn't match the slug
+  const regExp = new RegExp (`^${ router.pathname }/${ router.query.id }/${ getArtist.slug }([?].*|[#].*|/)?$`)
+  if (!decodeURIComponent(router.asPath).match(regExp)) {
+    const href = `${ router.pathname }?id=${ router.query.id }&slug=${ getArtist.slug }`
+    const as = `${ router.pathname }/${ router.query.id }/${ getArtist.slug }`
+    router.replace(href, as)
   }
 
   // display artist
   return (
     <section>
-      <Head title={ getArtist.name } description={ getArtist.name } asPath={ decodeURIComponent(props.router.asPath) } ogImage={ getArtist.imageUrl } />
+      <Head title={ getArtist.name } description={ getArtist.name } asPath={ decodeURIComponent(router.asPath) } ogImage={ getArtist.imageUrl } />
       <div>
         <img src={ getArtist.imageUrl?getArtist.imageUrl:`https://via.placeholder.com/100?text=no+photo?` }/>
         <h1 className="title">{ getArtist.name }</h1>
