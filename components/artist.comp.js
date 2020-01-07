@@ -98,10 +98,10 @@ export default function Artist() {
   }
 
   // fix url in case it doesn't match the slug
-  const regExp = new RegExp (`^${ router.pathname }/${ router.query.id }/${ getArtist.slug }([?].*|[#].*|/)?$`)
+  const regExp = new RegExp (`^/artist/${ router.query.id }/${ getArtist.slug }([?].*|[#].*|/)?$`)
   if (!decodeURIComponent(router.asPath).match(regExp)) {
-    const href = `${ router.pathname }?id=${ router.query.id }&slug=${ getArtist.slug }`
-    const as = `${ router.pathname }/${ router.query.id }/${ getArtist.slug }`
+    const href = `/artist/[id]/[slug]`
+    const as = `/artist/${ router.query.id }/${ getArtist.slug }`
     router.replace(href, as)
   }
 

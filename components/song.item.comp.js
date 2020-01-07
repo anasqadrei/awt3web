@@ -8,7 +8,7 @@ export default function SongItem(props) {
         <a>{ props.song.title }</a>
       </Link>
       -
-      <Link as={ `/artist/${ props.song.artist.id }/${ props.song.artist.slug }` } href={`/artist?id=${ props.song.artist.id }`}>
+      <Link href="/artist/[id]/[slug]" as={ `/artist/${ props.song.artist.id }/${ props.song.artist.slug }` }>
         <a>{ props.song.artist.name }</a>
       </Link>
       <img src="https://via.placeholder.com/30?text=duration"/> { props.song.duration }
