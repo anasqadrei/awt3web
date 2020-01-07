@@ -110,10 +110,10 @@ export default function Artist() {
     <section>
       <Head title={ getArtist.name } description={ getArtist.name } asPath={ decodeURIComponent(router.asPath) } ogImage={ getArtist.imageUrl } />
       <div>
-        <img src={ getArtist.imageUrl?getArtist.imageUrl:`https://via.placeholder.com/100?text=no+photo?` }/>
+        <img src={ getArtist.imageUrl ? getArtist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
         <h1 className="title">{ getArtist.name }</h1>
         <Link href=""><a>Like</a></Link>
-        { getArtist.likes?`${ getArtist.likes } liked them`:`be the first to like? or empty?` }
+        { getArtist.likes ? `${ getArtist.likes } liked them` : `be the first to like? or empty?` }
       </div>
 
       <div>
@@ -123,7 +123,7 @@ export default function Artist() {
 
       <div>
         Share
-        { getArtist.shares?`${ getArtist.shares } shared this`:`be the first to share` }
+        { getArtist.shares ? `${ getArtist.shares } shared this` : `be the first to share` }
         <Link href="/"><a>Facebook</a></Link>
         <Link href="/"><a>Twitter</a></Link>
         <Link href="/"><a>Google+</a></Link>
@@ -141,8 +141,8 @@ export default function Artist() {
 
       <div>
         Data?
-        { getArtist.songUsersPlayed?`${ getArtist.songUsersPlayed } listers`:`` }
-        Songs played: { getArtist.songPlays?getArtist.songPlays:0 }
+        { getArtist.songUsersPlayed ? `${ getArtist.songUsersPlayed } listeners` : null }
+        Songs played: { getArtist.songPlays ? getArtist.songPlays : 0 }
       </div>
 
       <div>
