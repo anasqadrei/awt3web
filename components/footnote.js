@@ -38,9 +38,6 @@ const Footnote = () => (
         <a>Twitter</a>
       </Link>
       <Link href="/">
-        <a>Google+</a>
-      </Link>
-      <Link href="/">
         <a>YouTube</a>
       </Link>
     </div>
