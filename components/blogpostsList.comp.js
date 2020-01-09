@@ -1,9 +1,14 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
+import Head from './head'
 import ErrorMessage from './errorMessage'
+
+const title = "المدونة"
+const metaDescription = "مدونة موقع أوتاريكا للأغاني العربية"
 
 const SORT = '-createdDate'
 const PAGE_SIZE = 25
@@ -23,6 +28,8 @@ const LIST_BLOGPOSTS_QUERY = gql`
 let nextPage = true
 
 export default function BlogpostsList() {
+  const router = useRouter()
+
   // set query variables
   const queryVariables = {
     page: 1,
@@ -84,16 +91,19 @@ export default function BlogpostsList() {
   // display blogposts otherwise
   return (
     <section>
+      <Head title={ title } description={ metaDescription } asPath={ decodeURIComponent(router.asPath) } />
+      <h1 className="title">{ title }</h1>
+      <p>Blogposts List</p>
       { listBlogposts.map(blogpost => (
         <div key={ blogpost.id }>
-          <Link as={ `/blogpost/${ blogpost.id }/${ blogpost.slug }` } href={`/blogpost?id=${ blogpost.id }`}>
+          <Link href="/blog/[id]/[slug]" as={ `/blog/${ blogpost.id }/${ blogpost.slug }` }>
             <a>{ blogpost.title }</a>
           </Link>
           <p>Date { blogpost.createdDate }, { blogpost.comments || 0 } comments</p>
         </div>
       ))}
 
-      { (loadingMore || nextPage)?
+      { (loadingMore || nextPage) ?
         <button onClick={ () => loadMoreBlogposts() } disabled={ loadingMore }>
           { loadingMore ? 'Loading...' : 'Show More Blogposts' }
         </button>

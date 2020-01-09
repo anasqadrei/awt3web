@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
@@ -24,10 +25,12 @@ export const GET_BLOGPOST_QUERY = gql`
   }
 `
 
-export default function Blogpost(props) {
+export default function Blogpost() {
+  const router = useRouter()
+
   // set query variables
   const queryVariables = {
-    id: props.router.query.id
+    id: router.query.id
   }
 
   // excute query
@@ -61,20 +64,18 @@ export default function Blogpost(props) {
     return (<div>Blogpost doesn't exist (design this)</div>)
   }
 
-  // fix url
-  if (props.fixSlug) {
-    const regExp = new RegExp (`^${ props.router.pathname }/${ props.router.query.id }/${ getBlogpost.slug }([?].*|[#].*|/)?$`)
-    if (!decodeURIComponent(props.router.asPath).match(regExp)) {
-      const href = `${ props.router.pathname }?id=${ props.router.query.id }&slug=${ getBlogpost.slug }`
-      const as = `${ props.router.pathname }/${ props.router.query.id }/${ getBlogpost.slug }`
-      props.router.replace(href, as)
-    }
+  // fix url in case it doesn't match the slug
+  const regExp = new RegExp (`^/blog/${ router.query.id }/${ getBlogpost.slug }([?].*|[#].*|/)?$`)
+  if (!decodeURIComponent(router.asPath).match(regExp)) {
+    const href = `/blog/[id]/[slug]`
+    const as = `/blog/${ router.query.id }/${ getBlogpost.slug }`
+    router.replace(href, as)
   }
 
   // display blogpost
   return (
     <section>
-      <Head title={ getBlogpost.title } description={ getBlogpost.title } asPath={ decodeURIComponent(props.router.asPath) }/>
+      <Head title={ getBlogpost.title } description={ getBlogpost.title } asPath={ decodeURIComponent(router.asPath) }/>
       <Link href="/"><a>الرئيسية</a></Link> / <Link href="/blog"><a>المدونة</a></Link> / { getBlogpost.title }
       <h1 className="title">{ getBlogpost.title }</h1>
       <p>
