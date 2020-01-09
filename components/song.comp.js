@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import Raven from 'raven-js'
@@ -80,10 +81,12 @@ for (let i = 0; i < 10; i++) {
   )
 }
 
-export default function Song(props) {
+export default function Song() {
+  const router = useRouter()
+
   // set query variables
   const queryVariables = {
-    id: props.router.query.id
+    id: router.query.id
   }
 
   // excute query
@@ -113,27 +116,25 @@ export default function Song(props) {
     return (<div>Song doesn't exist (design this)</div>)
   }
 
-  // fix url
-  if (props.fixSlug) {
-    const regExp = new RegExp (`^${ props.router.pathname }/${ props.router.query.id }/${ getSong.slug }([?].*|[#].*|/)?$`)
-    if (!decodeURIComponent(props.router.asPath).match(regExp)) {
-      const href = `${ props.router.pathname }?id=${ props.router.query.id }&slug=${ getSong.slug }`
-      const as = `${ props.router.pathname }/${ props.router.query.id }/${ getSong.slug }`
-      props.router.replace(href, as)
-    }
+  // fix url in case it doesn't match the slug
+  const regExp = new RegExp (`^/song/${ router.query.id }/${ getSong.slug }([?].*|[#].*|/)?$`)
+  if (!decodeURIComponent(router.asPath).match(regExp)) {
+    const href = `/song/[id]/[slug]`
+    const as = `/song/${ router.query.id }/${ getSong.slug }`
+    router.replace(href, as)
   }
 
   // display song
   return (
     <section>
-      <Head title={ getSong.title } description={ getSong.title } asPath={ decodeURIComponent(props.router.asPath) } ogImage={ getSong.defaultImage && getSong.defaultImage.url } />
+      <Head title={ `${ getSong.title } - ${ getSong.artist.name }` } description={ getSong.title } asPath={ decodeURIComponent(router.asPath) } ogImage={ getSong.defaultImage && getSong.defaultImage.url } />
 
       <div>
         <Link href="#"><a>Flag</a></Link>
         <img src={ getSong.defaultImage ? getSong.defaultImage.url : `https://via.placeholder.com/100?text=no+photo?` }/>
         <h1 className="title">
           { getSong.title } -
-          <Link as={ `/artist/${ getSong.artist.id }/${ getSong.artist.slug }` } href={`/artist?id=${ getSong.artist.id }`}>
+          <Link href="/artist/[id]/[slug]" as={ `/artist/${ getSong.artist.id }/${ getSong.artist.slug }` }>
             <a>{ getSong.artist.name }</a>
           </Link>
         </h1>
@@ -161,7 +162,6 @@ export default function Song(props) {
         { getSong.shares ? `${ getSong.shares } shared this` : `be the first to share` }
         <Link href="#"><a>Facebook</a></Link>
         <Link href="#"><a>Twitter</a></Link>
-        <Link href="#"><a>Google+</a></Link>
         <span dir="ltr"><input value={ getSong.url } readOnly/></span>
       </div>
 

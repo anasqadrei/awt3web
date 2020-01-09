@@ -4,7 +4,7 @@ export default function SongItem(props) {
   return (
     <section>
       <img src={ props.song.defaultImage ? props.song.defaultImage.url : `https://via.placeholder.com/30?text=no+photo?` }/>
-      <Link as={ `/song/${ props.song.id }/${ props.song.slug }` } href={`/song?id=${ props.song.id }`}>
+      <Link href="/song/[id]/[slug]" as={ `/song/${ props.song.id }/${ props.song.slug }` }>
         <a>{ props.song.title }</a>
       </Link>
       -
