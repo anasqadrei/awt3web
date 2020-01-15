@@ -132,7 +132,7 @@ export default function Comment(props) {
     <form onSubmit={ handleSubmit }>
       <textarea name={ TEXTAREA_COMMENT } type="text" row="2" maxLength="200" placeholder="اكتب تعليقك هنا" required />
       <button type="submit" disabled={ loading }>أضف تعليقك</button>
-      { error && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
+      { error && (<ErrorMessage/>) }
       <style jsx>{`
         form {
           border-bottom: 1px solid #ececec;

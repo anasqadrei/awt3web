@@ -72,7 +72,7 @@ export default function BlogpostsList() {
   // error handling
   if (error) {
     Sentry.captureException(error)
-    return <ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />
+    return <ErrorMessage/>
   }
 
   // initial loading

@@ -100,7 +100,7 @@ export default function Song() {
   // error handling
   if (error) {
     Sentry.captureException(error)
-    return <ErrorMessage message='Error' />
+    return <ErrorMessage message='حدث خطأ ما في عرض بيانات الأغنية. الرجاء إعادة المحاولة.' />
   }
 
   // initial loading

@@ -406,13 +406,13 @@ export default function CommentItem(props) {
         { !!(props.comment.likes) &&
           <CommentLikers comment={ props.comment } />
         }
-        { errorLike && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
+        { errorLike && (<ErrorMessage/>) }
       </div>
       <p>
         <button hidden={ !hideLike } onClick={ () => unlikeCommentHandler() } disabled={ loadingUnlike }>
           Unlike
         </button>
-        { errorUnlike && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
+        { errorUnlike && (<ErrorMessage/>) }
       </p>
       <div hidden={ !loggedOnUser }>
         <button onClick={ () => flagCommentHandler() } disabled={ loadingFlag }>
@@ -423,7 +423,7 @@ export default function CommentItem(props) {
         <button onClick={ () => deleteCommentHandler() } disabled={ loadingDelete }>
           X delete
         </button>
-        { errorDelete && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
+        { errorDelete && (<ErrorMessage/>) }
       </div>
 
       <style jsx>{`

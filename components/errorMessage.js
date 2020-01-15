@@ -1,6 +1,6 @@
-export default ({message}) => (
+export default ({ message }) => (
   <aside>
-    {message}
+    { message || 'حدث خطأ ما. الرجاء إعادة المحاولة.' }
     <style jsx>{`
       aside {
         padding: 1.5em;

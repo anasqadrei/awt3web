@@ -166,7 +166,7 @@ export default function ParentComment(props) {
 
       <textarea name={ TEXTAREA_REPLY } type="text" row="2" maxLength="200" placeholder="اكتب رداً هنا" required />
       <button type="submit" disabled={ loadingCreate }>أضف رداً</button>
-      { errorCreate && (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />) }
+      { errorCreate && (<ErrorMessage/>) }
 
       <style jsx>{`
         .title, .description {
