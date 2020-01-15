@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import Raven from 'raven-js'
+import * as Sentry from '@sentry/node'
 import SongItem from './song.item.comp'
 import ErrorMessage from './errorMessage'
 
@@ -44,7 +44,7 @@ export default function NewSongs(props) {
 
   // error handling
   if (error) {
-    Raven.captureException(error.message, { extra: error })
+    Sentry.captureException(error)
     return <ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />
   }
 

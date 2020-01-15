@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
-import Raven from 'raven-js'
+import * as Sentry from '@sentry/node'
 import ParentComment from './comment.parent.comp'
 import ErrorMessage from './errorMessage'
 
@@ -95,7 +95,7 @@ export default function CommentsList(props) {
 
   // error handling
   if (error) {
-    Raven.captureException(error.message, { extra: error })
+    Sentry.captureException(error)
     return <ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />
   }
 

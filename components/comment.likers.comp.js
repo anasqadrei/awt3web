@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import Raven from 'raven-js'
+import * as Sentry from '@sentry/node'
 import ErrorMessage from './errorMessage'
 
 export const PAGE_SIZE = 10
@@ -31,7 +31,7 @@ export default function CommentLikers(props) {
 
   // error handling
   if (error) {
-    Raven.captureException(error.message, { extra: error })
+    Sentry.captureException(error)
     return (<ErrorMessage message='حدث خطأ ما. الرجاء إعادة المحاولة.' />)
   }
 

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import Raven from 'raven-js'
+import * as Sentry from '@sentry/node'
 import Head from './head'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
@@ -80,7 +80,7 @@ export default function Artist() {
 
   // error handling
   if (error) {
-    Raven.captureException(error.message, { extra: error })
+    Sentry.captureException(error)
     return <ErrorMessage message='حدث خطأ ما في عرض بيانات الفنان. الرجاء إعادة المحاولة.' />
   }
 

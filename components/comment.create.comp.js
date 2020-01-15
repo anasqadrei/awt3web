@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import Raven from 'raven-js'
+import * as Sentry from '@sentry/node'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE, setNextPage } from './comment.list.comp'
 // import { GET_SONG_QUERY, SONGS_COLLECTION } from './song.comp'
 import { GET_ARTIST_QUERY, ARTISTS_COLLECTION } from './artist.comp'
@@ -28,7 +28,7 @@ export default function Comment(props) {
     CREATE_COMMENT_MUTATION,
     {
       onError: (error) => {
-        Raven.captureException(error.message, { extra: error })
+        Sentry.captureException(error)
       },
     }
   )
