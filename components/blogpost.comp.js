@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
-import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
@@ -34,14 +33,10 @@ export default function Blogpost() {
   }
 
   // excute query
-  // setting notifyOnNetworkStatusChange to true will make the component rerender when
-  // the "networkStatus" changes, so we are able to know if it is fetching
-  // more data
-  const { loading, error, data, networkStatus } = useQuery (
+  const { loading, error, data } = useQuery (
     GET_BLOGPOST_QUERY,
     {
       variables: queryVariables,
-      notifyOnNetworkStatusChange: true,
     }
   )
 
