@@ -30,7 +30,7 @@ const Nav = () => (
     <Link href="/saved">
       <a>Saved</a>
     </Link>
-    <Link as="/user/1/xxx" href={{ pathname: '/user', query: { id: 1, slug: 'xxx' } }}>
+    <Link href="/user/[id]/[slug]" as={ `/user/1/xxx` }>
       <a>Login</a>
     </Link>
   </nav>

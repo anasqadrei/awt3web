@@ -174,7 +174,7 @@ export default function Song() {
         <p>المدة: { getSong.duration }</p>
         <p>حجم الملف: { getSong.fileSize }MB</p>
         <p>الجودة: { getSong.bitRate }kbps</p>
-        أضافها <Link as={ `/user/${ getSong.user.id }/${ getSong.user.slug }` } href={`/user?id=${ getSong.user.id }`}><a>{ getSong.user.username }</a></Link> on { getSong.createdDate }
+        أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ getSong.user.id }/${ getSong.user.slug }` }><a>{ getSong.user.username }</a></Link> on { getSong.createdDate }
         <div>
           <Link href="#"><a>Update description*</a></Link>
           <Link href="#"><a>Delete*</a></Link>
@@ -185,7 +185,7 @@ export default function Song() {
         { getSong.imagesList && getSong.imagesList.map(image => (
           <div key={ image.id }>
             <img src={ image.url } alt={ getSong.title }/>
-            أضافها <Link as={ `/user/${ image.user.id }/${ image.user.slug }` } href={`/user?id=${ image.user.id }`}><a>{ image.user.username }</a></Link> on { image.createdDate }
+            أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ image.user.id }/${ image.user.slug }` }><a>{ image.user.username }</a></Link> on { image.createdDate }
             <Link href="#"><a>Delete*</a></Link>
             <Link href="#"><a>Like</a></Link> 33,334 likes
             <Link href="#"><a>Dislike</a></Link> 23,334 dislikes
@@ -200,10 +200,10 @@ export default function Song() {
         { getSong.lyrics && (
           <div>
             <div dangerouslySetInnerHTML={{ __html: getSong.lyrics.content }} />
-            last modified on { getSong.lyrics.lastUpdatedDate } by <Link as={ `/user/${ getSong.lyrics.user.id }/${ getSong.lyrics.user.slug }` } href={`/user?id=${ getSong.lyrics.user.id }`}><a>{ getSong.lyrics.user.username }</a></Link>
+            last modified on { getSong.lyrics.lastUpdatedDate } by <Link href="/user/[id]/[slug]" as={ `/user/${ getSong.lyrics.user.id }/${ getSong.lyrics.user.slug }` }><a>{ getSong.lyrics.user.username }</a></Link>
             <Link href="#"><a>Update Lyrics</a></Link>
             <Link href="#"><a>Delete*</a></Link>
-            First added on 1/4/2016 by <Link href="/user/1/xxx"><a>username 1</a></Link>
+            ??First added on 1/4/2016 by <Link href="/user/1/xxx"><a>username 1</a></Link>
           </div>
         )}
       </div>
