@@ -23,6 +23,7 @@ export const GET_SONG_QUERY = gql`
         slug
       }
       desc
+      hashtags
       plays
       downloads
       likes
@@ -170,8 +171,14 @@ export default function Song() {
       </div>
 
       <div>
-        { /* // TODO: Link doesn't work for now */ }
-        <div dangerouslySetInnerHTML={{ __html: getSong.desc.replace(/#(\S+)/g,'<Link href="/hashtag/[hashtag]" as="/hashtag/$1"><a>#$1</a></Link>') }} />
+        <p>{ getSong.desc.replace(/#(\S+)/g,'') }</p>
+        {
+          getSong.hashtags && getSong.hashtags.map(hashtag => (
+            <div key={ hashtag }>
+              <Link href="/hashtag/[hashtag]" as={ `/hashtag/${ hashtag }` }><a>#{ hashtag }</a></Link>
+            </div>
+          ))
+        }
         <p>المدة: { getSong.duration }</p>
         <p>حجم الملف: { getSong.fileSize }MB</p>
         <p>الجودة: { getSong.bitRate }kbps</p>
