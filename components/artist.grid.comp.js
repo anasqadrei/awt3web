@@ -19,16 +19,26 @@ const LIST_ARTISTS_QUERY = gql`
   }
 `
 
-// a paging flag
+// defaults
 let nextPage = true
-export function setNextPage(flag) {
-  nextPage = flag
-}
+let sort = '-likes'
 
 export default function ArtistsGrid() {
+  // SortMenu component
+  const SortMenu = () => {
+    return (
+      <div>
+        <button onClick={ () => setSort('likes') } hidden={ sort === 'likes' || sort === 'songs' || sort === '-songs' }>likes</button>
+        <button onClick={ () => setSort('-likes') } hidden={ sort === '-likes' }>-likes</button>
+        <button onClick={ () => setSort('songs') } hidden={ sort === 'songs' || sort === 'likes' || sort === '-likes' }>songs</button>
+        <button onClick={ () => setSort('-songs') } hidden={ sort === '-songs' }>-songs</button>
+      </div>
+    )
+  }
+
   // set query variables
   const queryVariables = {
-    sort: '-songs', // TODO:  let user choose
+    sort: sort,
     page: 1,
     pageSize: PAGE_SIZE,
   }
@@ -37,7 +47,7 @@ export default function ArtistsGrid() {
   // setting notifyOnNetworkStatusChange to true will make the component rerender when
   // the "networkStatus" changes, so we are able to know if it is fetching
   // more data
-  const { loading, error, data, fetchMore, networkStatus } = useQuery (
+  const { loading, error, data, fetchMore, networkStatus, refetch } = useQuery (
     LIST_ARTISTS_QUERY,
     {
       variables: queryVariables,
@@ -66,6 +76,14 @@ export default function ArtistsGrid() {
     })
   }
 
+  // set new sort and refetch data
+  const setSort = (newSort) => {
+    sort = newSort
+    refetch({
+      sort: newSort,
+    })
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
@@ -74,7 +92,7 @@ export default function ArtistsGrid() {
 
   // initial loading
   if (loading && !loadingMore) {
-    return (<div>Loading... (design this)</div>)
+    return (<div><SortMenu/>Loading... (design this)</div>)
   }
 
   // get data
@@ -82,14 +100,13 @@ export default function ArtistsGrid() {
 
   // in case no artists found
   if (!listArtists.length) {
-    return (<div>no artists found (design this)</div>)
+    return (<div><SortMenu/>no artists found (design this)</div>)
   }
 
   // display artists otherwise
   return (
     <section>
-      { /* // TODO: sort out the sort  */ }
-      <div>sorting?? name | songs | search | liked ...?</div>
+      <SortMenu/>
       { listArtists.map(artist => (
         <ArtistGridItem key={ artist.id } artist={ artist } />
       ))}
