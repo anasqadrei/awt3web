@@ -3,6 +3,7 @@ import WithData from '../lib/withData'
 import Layout from '../components/layout'
 import Head from '../components/head'
 import NewSongs from '../components/song.new.comp'
+import TopLikedArtists from '../components/artist.topLiked.comp'
 
 const trendingSongs = []
 for (let i = 0; i < 20; i++) {
@@ -39,15 +40,6 @@ for (let i = 0; i < 20; i++) {
   hashtags.push(
     <Link key={i} as="/hashtag/XX" href={`/hashtag?id=XX`}>
       <a>#Hashtagـ{i} </a>
-    </Link>
-  )
-}
-
-const artists = []
-for (let i = 0; i < 20; i++) {
-  artists.push(
-    <Link key={i} as="/artist/0/xxx" href={{ pathname: '/artist', query: { id: 0, slug: 'xxx' } }}>
-      <a><img src="https://via.placeholder.com/80?text=Artist+Img" alt=""/>Artists {i}</a>
     </Link>
   )
 }
@@ -95,7 +87,7 @@ export default WithData(() => (
       </div>
       <div>
         popular artists
-        {artists}
+        <TopLikedArtists/>
       </div>
       <Link href="browse">
         <a>Browse More</a>
