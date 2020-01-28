@@ -3,21 +3,19 @@ import Link from 'next/link'
 import Layout from '../components/layout'
 import Head from '../components/head'
 import ArtistsGrid from '../components/artist.grid.comp'
-
-const hashtags = []
-for (let i = 0; i < 20; i++) {
-  hashtags.push(
-    <Link key={i} as="/hashtag/XX" href={`/hashtag?id=XX`}>
-      <a>#Hashtagـ{i} </a>
-    </Link>
-  )
-}
+import TopHashtagsInSongs from '../components/hashtag.topInSongs.comp'
+import TopHashtagsInPlaylists from '../components/hashtag.topInPlaylists.comp'
 
 export default WithData((props) => (
   <Layout>
     <div>Browse</div>
     <div>
-      {hashtags}
+      song hashtags
+      <TopHashtagsInSongs/>
+    </div>
+    <div>
+      playlist hashtags
+      <TopHashtagsInPlaylists/>
     </div>
     <div>
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>

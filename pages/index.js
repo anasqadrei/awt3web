@@ -5,6 +5,7 @@ import Head from '../components/head'
 import NewSongs from '../components/song.new.comp'
 import TopLikedArtists from '../components/artist.topLiked.comp'
 import TopHashtagsInSongs from '../components/hashtag.topInSongs.comp'
+import TopHashtagsInPlaylists from '../components/hashtag.topInPlaylists.comp'
 
 const trendingSongs = []
 for (let i = 0; i < 20; i++) {
@@ -76,6 +77,10 @@ export default WithData(() => (
       <div>
         song hashtags
         <TopHashtagsInSongs/>
+      </div>
+      <div>
+        playlist hashtags
+        <TopHashtagsInPlaylists/>
       </div>
       <div>
         popular artists
