@@ -4,6 +4,7 @@ import Layout from '../components/layout'
 import Head from '../components/head'
 import NewSongs from '../components/song.new.comp'
 import TopLikedArtists from '../components/artist.topLiked.comp'
+import TopHashtagsInSongs from '../components/hashtag.topInSongs.comp'
 
 const trendingSongs = []
 for (let i = 0; i < 20; i++) {
@@ -32,15 +33,6 @@ for (let i = 0; i < 20; i++) {
         <a>artist name</a>
       </Link>
     </div>
-  )
-}
-
-const hashtags = []
-for (let i = 0; i < 20; i++) {
-  hashtags.push(
-    <Link key={i} as="/hashtag/XX" href={`/hashtag?id=XX`}>
-      <a>#Hashtagـ{i} </a>
-    </Link>
   )
 }
 
@@ -82,8 +74,8 @@ export default WithData(() => (
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
       </div>
       <div>
-        hashtags
-        {hashtags}
+        song hashtags
+        <TopHashtagsInSongs/>
       </div>
       <div>
         popular artists
