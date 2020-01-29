@@ -26,7 +26,7 @@ const LIST_SONGS_QUERY = gql`
   }
 `
 
-export default function NewSongs(props) {
+export default function NewSongs() {
   // set query variables
   const queryVariables = {
     page: 1,

@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import ArtistSongs from './song.artist.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
@@ -44,21 +45,6 @@ for (let i = 0; i < 10; i++) {
     <Link key={i} as="/song/1/slug" href={`/song?id=1`}>
       <a>song title </a>
     </Link>
-  )
-}
-
-const allSongs = []
-for (let i = 0; i < 20; i++) {
-  allSongs.push(
-    <div key={i}>
-      <img src="https://via.placeholder.com/30?text=song+image"/>
-      <Link as="/song/1/slug" href={`/song?id=1`}>
-        <a>song title</a>
-      </Link>
-      <img src="https://via.placeholder.com/30?text=duration"/> 3:25
-      <img src="https://via.placeholder.com/30?text=playsCount"/> 2,323
-      <img src="https://via.placeholder.com/30?text=More+Actions"/>
-    </div>
   )
 }
 
@@ -145,9 +131,9 @@ export default function Artist() {
       </div>
 
       <div>
-        All songs (sort: alphabetically, new, most listed, most liked).
+        All songs
         Total Songs: { getArtist.songs }, Liked songs: { getArtist.songLikes }
-        {allSongs}
+        <ArtistSongs artistId={ getArtist.id }/>
       </div>
 
       <CreateComment collection={ ARTISTS_COLLECTION } id={ getArtist.id } />

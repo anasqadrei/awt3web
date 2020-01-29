@@ -25,13 +25,13 @@ let sort = '-likes'
 
 export default function ArtistsGrid() {
   // SortMenu component
-  const SortMenu = () => {
+  const SortMenu = (props) => {
     return (
       <div>
-        <button onClick={ () => setSort('likes') } hidden={ sort === 'likes' || sort === 'songs' || sort === '-songs' }>likes</button>
-        <button onClick={ () => setSort('-likes') } hidden={ sort === '-likes' }>-likes</button>
-        <button onClick={ () => setSort('songs') } hidden={ sort === 'songs' || sort === 'likes' || sort === '-likes' }>songs</button>
-        <button onClick={ () => setSort('-songs') } hidden={ sort === '-songs' }>-songs</button>
+        <button onClick={ () => setSort('likes') } hidden={ sort != '-likes' } disabled={ props.disableAll }>likes</button>
+        <button onClick={ () => setSort('-likes') } hidden={ sort === '-likes' } disabled={ props.disableAll }>-likes</button>
+        <button onClick={ () => setSort('songs') } hidden={ sort != '-songs' } disabled={ props.disableAll }>songs</button>
+        <button onClick={ () => setSort('-songs') } hidden={ sort === '-songs' } disabled={ props.disableAll }>-songs</button>
       </div>
     )
   }
@@ -92,7 +92,7 @@ export default function ArtistsGrid() {
 
   // initial loading
   if (loading && !loadingMore) {
-    return (<div><SortMenu/>Loading... (design this)</div>)
+    return (<div><SortMenu disableAll={ true }/>Loading... (design this)</div>)
   }
 
   // get data
@@ -100,13 +100,13 @@ export default function ArtistsGrid() {
 
   // in case no artists found
   if (!listArtists.length) {
-    return (<div><SortMenu/>no artists found (design this)</div>)
+    return (<div><SortMenu disableAll={ false }/>no artists found (design this)</div>)
   }
 
   // display artists otherwise
   return (
     <section>
-      <SortMenu/>
+      <SortMenu disableAll={ false }/>
       { listArtists.map(artist => (
         <ArtistGridItem key={ artist.id } artist={ artist } />
       ))}
