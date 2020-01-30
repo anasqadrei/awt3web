@@ -3,24 +3,10 @@ import WithData from '../lib/withData'
 import Layout from '../components/layout'
 import Head from '../components/head'
 import NewSongs from '../components/song.new.comp'
+import TopSongs from '../components/song.top.comp'
 import TopLikedArtists from '../components/artist.topLiked.comp'
 import TopHashtagsInSongs from '../components/hashtag.topInSongs.comp'
 import TopHashtagsInPlaylists from '../components/hashtag.topInPlaylists.comp'
-
-const trendingSongs = []
-for (let i = 0; i < 20; i++) {
-  trendingSongs.push(
-    <div key={i}>
-      <img src="https://via.placeholder.com/80?text=song+image"/>
-      <Link as="/song/1/slug" href={`/song?id=1`}>
-        <a>song title</a>
-      </Link>
-      <Link as="/artist/1/slug" href={`/artist?id=1`}>
-        <a>artist name</a>
-      </Link>
-    </div>
-  )
-}
 
 const recentlyPlayedSongs = []
 for (let i = 0; i < 20; i++) {
@@ -57,8 +43,7 @@ export default WithData(() => (
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
       </div>
       <div>
-        Trending
-        {trendingSongs}
+        <TopSongs/>
       </div>
       <div>
         Trending Searches
