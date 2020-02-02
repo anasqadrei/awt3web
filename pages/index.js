@@ -4,7 +4,7 @@ import Layout from '../components/layout'
 import Head from '../components/head'
 import NewSongs from '../components/song.new.comp'
 import TopSongs from '../components/song.top.comp'
-import UserRecentlyPlayedSongs from '../components/song.userPlayed.comp'
+import UserRecentlyPlayedSongsSummery from '../components/song.userPlayedSummery.comp'
 import TopLikedArtists from '../components/artist.topLiked.comp'
 import TopHashtagsInSongs from '../components/hashtag.topInSongs.comp'
 import TopHashtagsInPlaylists from '../components/hashtag.topInPlaylists.comp'
@@ -39,7 +39,10 @@ export default WithData(() => (
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
       </div>
       <div>
-        <UserRecentlyPlayedSongs/>
+        <UserRecentlyPlayedSongsSummery/>
+        <Link href="/recently-played">
+          <a>More</a>
+        </Link>
       </div>
       <div>
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>

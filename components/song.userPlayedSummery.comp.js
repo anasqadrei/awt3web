@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/react-hooks'
-import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import SongItem from './song.item.comp'
@@ -12,7 +11,7 @@ const loggedOnUser = {
 }
 
 const SORT = '-createdDate'
-const PAGE_SIZE = 1
+const PAGE_SIZE = 3
 const LIST_USER_PLAYED_SONGS_QUERY = gql`
   query listUserPlayedSongs ($userId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {
     listUserPlayedSongs(userId: $userId, sort: $sort, page: $page, pageSize: $pageSize) {
@@ -33,10 +32,7 @@ const LIST_USER_PLAYED_SONGS_QUERY = gql`
   }
 `
 
-// defaults
-let nextPage = true
-
-export default function UserRecentlyPlayedSongs() {
+export default function UserRecentlyPlayedSongsSummery() {
   // set query variables
   const queryVariables = {
     userId: loggedOnUser.id,
@@ -46,34 +42,12 @@ export default function UserRecentlyPlayedSongs() {
   }
 
   // excute query
-  const { loading, error, data, fetchMore, networkStatus } = useQuery (
+  const { loading, error, data } = useQuery (
     LIST_USER_PLAYED_SONGS_QUERY,
     {
       variables: queryVariables,
-      notifyOnNetworkStatusChange: true,
     }
   )
-
-  // loading more network status. fetchMore: query is currently in flight
-  const loadingMore = (networkStatus === NetworkStatus.fetchMore)
-
-  // get and append new fetched songs. also decide on paging
-  const loadMoreSongs = () => {
-    fetchMore({
-      variables: {
-        page: Math.ceil(listUserPlayedSongs.length/queryVariables.pageSize)+1
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listUserPlayedSongs || (fetchMoreResult.listUserPlayedSongs && fetchMoreResult.listUserPlayedSongs.length === 0)) {
-          nextPage = false
-          return previousResult
-        }
-        return Object.assign({}, previousResult, {
-          listUserPlayedSongs: [...previousResult.listUserPlayedSongs, ...fetchMoreResult.listUserPlayedSongs],
-        })
-      },
-    })
-  }
 
   // error handling
   if (error) {
@@ -82,7 +56,7 @@ export default function UserRecentlyPlayedSongs() {
   }
 
   // initial loading
-  if (loading && !loadingMore) {
+  if (loading) {
     return (<div>Loading... (design this)</div>)
   }
 
@@ -91,25 +65,16 @@ export default function UserRecentlyPlayedSongs() {
 
   // in case no songs found
   if (!listUserPlayedSongs || !listUserPlayedSongs.length) {
-    return (<div>no recently played songs found (design this)</div>)
+    return (<div>no recently played songs found (design this or don't show anything)</div>)
   }
 
   // display songs
   return (
     <section>
       My Recently Played
-      { listUserPlayedSongs && listUserPlayedSongs.map(song => (
+      { listUserPlayedSongs.map(song => (
         <SongItem key={ song.id } song={ song } />
       ))}
-
-      { (loadingMore || nextPage)?
-        <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
-          { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
-        </button>
-        :
-        <p>all songs has been shown</p>
-      }
-
       <style jsx>{`
         .title, .description {
           text-align: center;
