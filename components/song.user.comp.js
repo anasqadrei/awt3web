@@ -3,17 +3,22 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
+import SongItem from './song.item.comp'
 import ErrorMessage from './errorMessage'
 
-const PAGE_SIZE = 5
-const LIST_ARTIST_SONGS_QUERY = gql`
-  query listArtistSongs ($artistId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {
-    listArtistSongs(artistId: $artistId, sort: $sort, page: $page, pageSize: $pageSize) {
+const PAGE_SIZE = 3
+const LIST_USER_SONGS_QUERY = gql`
+  query listUserSongs ($userId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {
+    listUserSongs(userId: $userId, sort: $sort, page: $page, pageSize: $pageSize) {
       id
       title
       slug
+      artist {
+        id
+        name
+        slug
+      }
       plays
-      likes
       duration
       defaultImage {
         url
@@ -24,9 +29,9 @@ const LIST_ARTIST_SONGS_QUERY = gql`
 
 // defaults
 let nextPage = true
-let sort = '-createdDate'
+let sort = 'createdDate'
 
-export default function ArtistSongs(props) {
+export default function UserSongs(props) {
   // SortMenu component
   const SortMenu = (props) => {
     return (
@@ -61,7 +66,7 @@ export default function ArtistSongs(props) {
 
   // set query variables
   const queryVariables = {
-    artistId: props.artistId,
+    userId: props.userId,
     page: 1,
     pageSize: PAGE_SIZE,
     sort: sort,
@@ -69,7 +74,7 @@ export default function ArtistSongs(props) {
 
   // excute query
   const { loading, error, data, fetchMore, networkStatus, refetch } = useQuery (
-    LIST_ARTIST_SONGS_QUERY,
+    LIST_USER_SONGS_QUERY,
     {
       variables: queryVariables,
       notifyOnNetworkStatusChange: true,
@@ -83,15 +88,15 @@ export default function ArtistSongs(props) {
   const loadMoreSongs = () => {
     fetchMore({
       variables: {
-        page: Math.ceil(listArtistSongs.length/queryVariables.pageSize)+1
+        page: Math.ceil(listUserSongs.length/queryVariables.pageSize)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listArtistSongs || (fetchMoreResult.listArtistSongs && fetchMoreResult.listArtistSongs.length === 0)) {
+        if (!fetchMoreResult || !fetchMoreResult.listUserSongs || (fetchMoreResult.listUserSongs && fetchMoreResult.listUserSongs.length === 0)) {
           nextPage = false
           return previousResult
         }
         return Object.assign({}, previousResult, {
-          listArtistSongs: [...previousResult.listArtistSongs, ...fetchMoreResult.listArtistSongs],
+          listUserSongs: [...previousResult.listUserSongs, ...fetchMoreResult.listUserSongs],
         })
       },
     })
@@ -117,10 +122,10 @@ export default function ArtistSongs(props) {
   }
 
   // get data
-  const { listArtistSongs } = data
+  const { listUserSongs } = data
 
   // in case no songs found
-  if (!listArtistSongs.length) {
+  if (!listUserSongs.length) {
     return (<div><SortMenu disableAll={ false }/>no songs found (design this)</div>)
   }
 
@@ -129,17 +134,8 @@ export default function ArtistSongs(props) {
     <section>
       <SortMenu disableAll={ false }/>
 
-      { listArtistSongs.map(song => (
-          <section key={ song.id }>
-            <img src={ song.defaultImage ? song.defaultImage.url : `https://via.placeholder.com/30?text=no+photo?` }/>
-            <Link href="/song/[id]/[slug]" as={ `/song/${ song.id }/${ song.slug }` }>
-              <a>{ song.title }</a>
-            </Link>
-            <img src="https://via.placeholder.com/30?text=duration"/> { song.duration }
-            <img src="https://via.placeholder.com/30?text=plays"/> { song.plays }
-            <img src="https://via.placeholder.com/30?text=likes"/> { song.likes }
-            <img src="https://via.placeholder.com/30?text=More+Actions"/>
-          </section>
+      { listUserSongs.map(song => (
+        <SongItem key={ song.id } song={ song } />
       ))}
 
       { (loadingMore || nextPage)?

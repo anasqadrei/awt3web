@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import UserSongs from './song.user.comp'
 import ErrorMessage from './errorMessage'
 
 export const GET_USER_QUERY = gql`
@@ -83,7 +84,7 @@ export default function User() {
       </div>
 
       <p>emails: { getUser.emails }</p>
-      <p>social media: { getUser.profiles[0].provider }</p>
+      <p>social media: { getUser.profiles && getUser.profiles.length && getUser.profiles.map(elem => elem.provider).join()  }</p>
       <p>Sex: { getUser.sex }</p>
       <p>country: { getUser.country.nameAR }</p>
       <p>last login: { getUser.lastSeenDate }</p>
@@ -93,6 +94,7 @@ export default function User() {
         <a>Library</a>
       </Link>
       <p>uploads snippet. wait for the designer to finish it</p>
+      <UserSongs userId={ getUser.id }/>
       <Link as="/user/1/xxx/uploads" href={{ pathname: '/user-uploads', query: { id: 1, slug: 'xxx' } }}>
         <a>more uploads</a>
       </Link>
