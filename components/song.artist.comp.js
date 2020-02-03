@@ -87,7 +87,7 @@ export default function ArtistSongs(props) {
         page: Math.ceil(listArtistSongs.length/queryVariables.pageSize)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || (fetchMoreResult.listArtistSongs && fetchMoreResult.listArtistSongs.length === 0)) {
+        if (!fetchMoreResult || !fetchMoreResult.listArtistSongs || (fetchMoreResult.listArtistSongs && fetchMoreResult.listArtistSongs.length === 0)) {
           nextPage = false
           return previousResult
         }

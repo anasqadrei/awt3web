@@ -82,7 +82,7 @@ export default function CommentsList(props) {
         page: Math.ceil(listComments.length/listCommentsQueryVariables.pageSize)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || (fetchMoreResult.listComments && fetchMoreResult.listComments.length === 0)) {
+        if (!fetchMoreResult || !fetchMoreResult.listComments || (fetchMoreResult.listComments && fetchMoreResult.listComments.length === 0)) {
           nextPage = false
           return previousResult
         }

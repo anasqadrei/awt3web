@@ -36,7 +36,7 @@ const LIST_USER_PLAYED_SONGS_QUERY = gql`
 // defaults
 let nextPage = true
 
-export default function UserRecentlyPlayedSongs() {
+export default function UserMostPlayedSongs() {
   // set query variables
   const queryVariables = {
     userId: loggedOnUser.id,
@@ -91,14 +91,14 @@ export default function UserRecentlyPlayedSongs() {
 
   // in case no songs found
   if (!listUserPlayedSongs || !listUserPlayedSongs.length) {
-    return (<div>no recently played songs found (design this)</div>)
+    return (<div>no most played songs found (design this)</div>)
   }
 
   // display songs
   return (
     <section>
-      My Recently Played
-      { listUserPlayedSongs && listUserPlayedSongs.map(song => (
+      My Most Played
+      { listUserPlayedSongs.map(song => (
         <SongItem key={ song.id } song={ song } />
       ))}
 

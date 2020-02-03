@@ -65,7 +65,7 @@ export default function ArtistsGrid() {
         page: Math.ceil(listArtists.length/queryVariables.pageSize)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || (fetchMoreResult.listArtists && fetchMoreResult.listArtists.length === 0)) {
+        if (!fetchMoreResult || !fetchMoreResult.listArtists || (fetchMoreResult.listArtists && fetchMoreResult.listArtists.length === 0)) {
           nextPage = false
           return previousResult
         }

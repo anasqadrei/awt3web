@@ -98,7 +98,7 @@ export default function UserRecentlyPlayedSongs() {
   return (
     <section>
       My Recently Played
-      { listUserPlayedSongs && listUserPlayedSongs.map(song => (
+      { listUserPlayedSongs.map(song => (
         <SongItem key={ song.id } song={ song } />
       ))}
 

@@ -58,7 +58,7 @@ export default function BlogpostsList() {
         page: Math.ceil(listBlogposts.length/queryVariables.pageSize)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || (fetchMoreResult.listBlogposts && fetchMoreResult.listBlogposts.length === 0)) {
+        if (!fetchMoreResult || !fetchMoreResult.listBlogposts || (fetchMoreResult.listBlogposts && fetchMoreResult.listBlogposts.length === 0)) {
           nextPage = false
           return previousResult
         }

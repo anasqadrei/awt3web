@@ -64,7 +64,7 @@ export default function HashtagSongs() {
         page: Math.ceil(listHashtagSongs.length/PAGE_SIZE)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || (fetchMoreResult.listHashtagSongs && fetchMoreResult.listHashtagSongs.length === 0)) {
+        if (!fetchMoreResult || !fetchMoreResult.listHashtagSongs || (fetchMoreResult.listHashtagSongs && fetchMoreResult.listHashtagSongs.length === 0)) {
           nextPage = false
           return previousResult
         }
