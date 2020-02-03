@@ -10,7 +10,7 @@ const loggedOnUser = {
   username: "Admin",
 }
 
-const SORT = '-createdDate'
+const SORT = '-lastPlayedDate'
 const PAGE_SIZE = 3
 const LIST_USER_PLAYED_SONGS_QUERY = gql`
   query listUserPlayedSongs ($userId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {

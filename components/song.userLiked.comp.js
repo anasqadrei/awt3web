@@ -11,11 +11,11 @@ const loggedOnUser = {
   username: "Admin",
 }
 
-const SORT = '-lastPlayedDate'
+const SORT = '-likedDate'
 const PAGE_SIZE = 1
-const LIST_USER_PLAYED_SONGS_QUERY = gql`
-  query listUserPlayedSongs ($userId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {
-    listUserPlayedSongs(userId: $userId, sort: $sort, page: $page, pageSize: $pageSize) {
+const LIST_USER_LIKED_SONGS_QUERY = gql`
+  query listUserLikedSongs ($userId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {
+    listUserLikedSongs(userId: $userId, sort: $sort, page: $page, pageSize: $pageSize) {
       id
       title
       slug
@@ -36,7 +36,7 @@ const LIST_USER_PLAYED_SONGS_QUERY = gql`
 // defaults
 let nextPage = true
 
-export default function UserRecentlyPlayedSongs() {
+export default function UserLikedSongs() {
   // set query variables
   const queryVariables = {
     userId: loggedOnUser.id,
@@ -47,7 +47,7 @@ export default function UserRecentlyPlayedSongs() {
 
   // excute query
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
-    LIST_USER_PLAYED_SONGS_QUERY,
+    LIST_USER_LIKED_SONGS_QUERY,
     {
       variables: queryVariables,
       notifyOnNetworkStatusChange: true,
@@ -61,15 +61,15 @@ export default function UserRecentlyPlayedSongs() {
   const loadMoreSongs = () => {
     fetchMore({
       variables: {
-        page: Math.ceil(listUserPlayedSongs.length/queryVariables.pageSize)+1
+        page: Math.ceil(listUserLikedSongs.length/queryVariables.pageSize)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listUserPlayedSongs || (fetchMoreResult.listUserPlayedSongs && fetchMoreResult.listUserPlayedSongs.length === 0)) {
+        if (!fetchMoreResult || !fetchMoreResult.listUserLikedSongs || (fetchMoreResult.listUserLikedSongs && fetchMoreResult.listUserLikedSongs.length === 0)) {
           nextPage = false
           return previousResult
         }
         return Object.assign({}, previousResult, {
-          listUserPlayedSongs: [...previousResult.listUserPlayedSongs, ...fetchMoreResult.listUserPlayedSongs],
+          listUserLikedSongs: [...previousResult.listUserLikedSongs, ...fetchMoreResult.listUserLikedSongs],
         })
       },
     })
@@ -87,18 +87,18 @@ export default function UserRecentlyPlayedSongs() {
   }
 
   // get data
-  const { listUserPlayedSongs } = data
+  const { listUserLikedSongs } = data
 
   // in case no songs found
-  if (!listUserPlayedSongs || !listUserPlayedSongs.length) {
-    return (<div>no recently played songs found (design this)</div>)
+  if (!listUserLikedSongs || !listUserLikedSongs.length) {
+    return (<div>no liked songs found (design this)</div>)
   }
 
   // display songs
   return (
     <section>
-      My Recently Played
-      { listUserPlayedSongs.map(song => (
+      Liked Songs
+      { listUserLikedSongs.map(song => (
         <SongItem key={ song.id } song={ song } />
       ))}
 

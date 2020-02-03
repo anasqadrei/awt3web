@@ -11,11 +11,11 @@ const loggedOnUser = {
   username: "Admin",
 }
 
-const SORT = '-lastPlayedDate'
+const SORT = '-lastDownloadedDate'
 const PAGE_SIZE = 1
-const LIST_USER_PLAYED_SONGS_QUERY = gql`
-  query listUserPlayedSongs ($userId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {
-    listUserPlayedSongs(userId: $userId, sort: $sort, page: $page, pageSize: $pageSize) {
+const LIST_USER_DOWNLOADED_SONGS_QUERY = gql`
+  query listUserDownloadedSongs ($userId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {
+    listUserDownloadedSongs(userId: $userId, sort: $sort, page: $page, pageSize: $pageSize) {
       id
       title
       slug
@@ -36,7 +36,7 @@ const LIST_USER_PLAYED_SONGS_QUERY = gql`
 // defaults
 let nextPage = true
 
-export default function UserRecentlyPlayedSongs() {
+export default function UserSavedSongs() {
   // set query variables
   const queryVariables = {
     userId: loggedOnUser.id,
@@ -47,7 +47,7 @@ export default function UserRecentlyPlayedSongs() {
 
   // excute query
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
-    LIST_USER_PLAYED_SONGS_QUERY,
+    LIST_USER_DOWNLOADED_SONGS_QUERY,
     {
       variables: queryVariables,
       notifyOnNetworkStatusChange: true,
@@ -61,15 +61,15 @@ export default function UserRecentlyPlayedSongs() {
   const loadMoreSongs = () => {
     fetchMore({
       variables: {
-        page: Math.ceil(listUserPlayedSongs.length/queryVariables.pageSize)+1
+        page: Math.ceil(listUserDownloadedSongs.length/queryVariables.pageSize)+1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listUserPlayedSongs || (fetchMoreResult.listUserPlayedSongs && fetchMoreResult.listUserPlayedSongs.length === 0)) {
+        if (!fetchMoreResult || !fetchMoreResult.listUserDownloadedSongs || (fetchMoreResult.listUserDownloadedSongs && fetchMoreResult.listUserDownloadedSongs.length === 0)) {
           nextPage = false
           return previousResult
         }
         return Object.assign({}, previousResult, {
-          listUserPlayedSongs: [...previousResult.listUserPlayedSongs, ...fetchMoreResult.listUserPlayedSongs],
+          listUserDownloadedSongs: [...previousResult.listUserDownloadedSongs, ...fetchMoreResult.listUserDownloadedSongs],
         })
       },
     })
@@ -87,18 +87,18 @@ export default function UserRecentlyPlayedSongs() {
   }
 
   // get data
-  const { listUserPlayedSongs } = data
+  const { listUserDownloadedSongs } = data
 
   // in case no songs found
-  if (!listUserPlayedSongs || !listUserPlayedSongs.length) {
-    return (<div>no recently played songs found (design this)</div>)
+  if (!listUserDownloadedSongs || !listUserDownloadedSongs.length) {
+    return (<div>no saved songs found (design this)</div>)
   }
 
   // display songs
   return (
     <section>
-      My Recently Played
-      { listUserPlayedSongs.map(song => (
+      Saved Songs
+      { listUserDownloadedSongs.map(song => (
         <SongItem key={ song.id } song={ song } />
       ))}
 
