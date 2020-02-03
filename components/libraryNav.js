@@ -2,19 +2,19 @@ import Link from 'next/link'
 
 const LibraryNav = () => (
   <nav>
-    <Link href="/playlists-list">
+    <Link href="/user/playlists-list">
       <a>My Playlists</a>
     </Link>
-    <Link href="/recently-played">
+    <Link href="/user/recently-played">
       <a>Recently Played</a>
     </Link>
-    <Link href="/most-played">
+    <Link href="/user/most-played">
       <a>Most Played</a>
     </Link>
-    <Link href="/liked">
+    <Link href="/user/liked">
       <a>Liked</a>
     </Link>
-    <Link href="/saved">
+    <Link href="/user/saved">
       <a>Saved</a>
     </Link>
   </nav>

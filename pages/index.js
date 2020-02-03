@@ -40,7 +40,7 @@ export default WithData(() => (
       </div>
       <div>
         <UserRecentlyPlayedSongsSummery/>
-        <Link href="/recently-played">
+        <Link href="/user/recently-played">
           <a>More</a>
         </Link>
       </div>

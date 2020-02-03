@@ -1,7 +1,7 @@
-import WithData from '../lib/withData'
-import Layout from '../components/layout'
-import LibraryNav from '../components/libraryNav'
-import UserMostPlayedSongs from '../components/song.userMostPlayed.comp'
+import WithData from '../../lib/withData'
+import Layout from '../../components/layout'
+import LibraryNav from '../../components/libraryNav'
+import UserMostPlayedSongs from '../../components/song.userMostPlayed.comp'
 
 export default WithData(() => (
   <Layout>
