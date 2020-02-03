@@ -1,6 +1,8 @@
 import Link from 'next/link'
+import WithData from '../lib/withData'
 import Layout from '../components/layout'
 import Head from '../components/head'
+import TopSongsInClickedSearchResults from '../components/song.topInClickedSearchResults.comp'
 
 const songs = []
 for (let i = 0; i < 20; i++) {
@@ -45,7 +47,7 @@ for (let i = 0; i < 20; i++) {
   )
 }
 
-export default (props) => (
+export default WithData(() => (
   <Layout>
     <div>
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
@@ -60,10 +62,11 @@ export default (props) => (
     <div>
       <p>Tranding Searches</p>
       {trendingSearches}
+      <TopSongsInClickedSearchResults/>
     </div>
     <div>
       <p>Recent Searches</p>
       {recentSearches}
     </div>
   </Layout>
-)
+))
