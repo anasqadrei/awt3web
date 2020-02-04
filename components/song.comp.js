@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import PlaySong from './song.play.comp'
 import ShareSong from './song.share.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
@@ -143,7 +144,7 @@ export default function Song() {
       </div>
 
       <div>
-        <Link href="#"><a><img src="https://via.placeholder.com/60?text=Play" alt="Play"/></a></Link> played { getSong.plays } times
+        <PlaySong/>{ getSong.plays ? `played ${ getSong.plays } times` : `be the first to play` }
       </div>
       <div>
         <Link href="#"><a><img src="https://via.placeholder.com/60?text=Queue" alt="Queue"/>Play Next/Add to Queue</a></Link>
