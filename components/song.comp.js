@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import ShareSong from './song.share.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
@@ -161,8 +162,7 @@ export default function Song() {
       <div>
         Share
         { getSong.shares ? `${ getSong.shares } shared this` : `be the first to share` }
-        <Link href="#"><a>Facebook</a></Link>
-        <Link href="#"><a>Twitter</a></Link>
+        <ShareSong/>
         <span dir="ltr"><input value={ getSong.url } readOnly/></span>
       </div>
 

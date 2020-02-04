@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from './errorMessage'
-import { GET_ARTIST_QUERY } from './artist.comp'
+import { GET_SONG_QUERY } from './song.comp'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -12,24 +12,24 @@ const loggedOnUser = {
   __typename: "User",
 }
 
-const SHARE_ARTIST_MUTATION = gql`
-  mutation shareArtist ($artistId: ID!, $userId: ID!) {
-    shareArtist(artistId: $artistId, userId: $userId)
+const SHARE_SONG_MUTATION = gql`
+  mutation shareSong ($songId: ID!, $userId: ID!) {
+    shareSong(songId: $songId, userId: $userId)
   }
 `
 
-export default function ShareArtist() {
+export default function ShareSong() {
   const router = useRouter()
 
   // set query variables
   const queryVariables = {
     userId: loggedOnUser.id,
-    artistId: router.query.id,
+    songId: router.query.id,
   }
 
   // share mutation
-  const [shareArtist, { loading, error }] = useMutation(
-    SHARE_ARTIST_MUTATION,
+  const [shareSong, { loading, error }] = useMutation(
+    SHARE_SONG_MUTATION,
     {
       onError: (error) => {
         Sentry.captureException(error)
@@ -43,26 +43,26 @@ export default function ShareArtist() {
     // $scope.share('https://www.facebook.com/dialog/share?app_id=726940310703987&display=popup&redirect_uri=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/close.html') + '&href=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/#!' + $location.url()));
     // $scope.share('https://twitter.com/share?via=awtarika&lang=ar&text=' + $scope.data.title + '&url=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/#!' + $location.url()));
 
-    // execute shareArtist and update shares counter in the cache
-    shareArtist({
+    // execute shareSong and update shares counter in the cache
+    shareSong({
       variables: queryVariables,
-      update: (proxy, { data: { shareArtist } }) => {
-        // if successful share, update artist shares cache
-        if (shareArtist) {
+      update: (proxy, { data: { shareSong } }) => {
+        // if successful share, update song shares cache
+        if (shareSong) {
           // read cache
           const data = proxy.readQuery({
-            query: GET_ARTIST_QUERY,
+            query: GET_SONG_QUERY,
             variables: { id: router.query.id },
           })
-          // update cache by incrementing getArtist.shares
+          // update cache by incrementing getSong.shares
           proxy.writeQuery({
-            query: GET_ARTIST_QUERY,
+            query: GET_SONG_QUERY,
             variables: { id: router.query.id },
             data: {
               ...data,
-              getArtist: {
-                ...data.getArtist,
-                shares: data.getArtist.shares + 1,
+              getSong: {
+                ...data.getSong,
+                shares: data.getSong.shares + 1,
               }
             },
           })
