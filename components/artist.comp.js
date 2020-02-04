@@ -4,6 +4,8 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import LikeArtist from './artist.like.comp'
+import ShareArtist from './artist.share.comp'
 import ArtistSongs from './song.artist.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
@@ -81,7 +83,7 @@ export default function Artist() {
       <div>
         <img src={ getArtist.imageUrl ? getArtist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
         <h1 className="title">{ getArtist.name }</h1>
-        <Link href=""><a>Like</a></Link>
+        <LikeArtist/>
         { getArtist.likes ? `${ getArtist.likes } liked them` : `be the first to like? or empty?` }
       </div>
 
@@ -93,8 +95,7 @@ export default function Artist() {
       <div>
         Share
         { getArtist.shares ? `${ getArtist.shares } shared this` : `be the first to share` }
-        <Link href="/"><a>Facebook</a></Link>
-        <Link href="/"><a>Twitter</a></Link>
+        <ShareArtist/>
         <span dir="ltr"><input value={ getArtist.url } readOnly/></span>
       </div>
 
