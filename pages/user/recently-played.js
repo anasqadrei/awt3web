@@ -7,7 +7,7 @@ export default WithData(() => (
   <Layout>
     <LibraryNav/>
     <div>
-      <UserRecentlyPlayedSongs/>
+      <UserRecentlyPlayedSongs snippet={ false }/>
     </div>
     <div>
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>

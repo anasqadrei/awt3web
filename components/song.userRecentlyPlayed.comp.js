@@ -36,7 +36,7 @@ const LIST_USER_PLAYED_SONGS_QUERY = gql`
 // defaults
 let nextPage = true
 
-export default function UserRecentlyPlayedSongs() {
+export default function UserRecentlyPlayedSongs(props) {
   // set query variables
   const queryVariables = {
     userId: loggedOnUser.id,
@@ -102,12 +102,14 @@ export default function UserRecentlyPlayedSongs() {
         <SongItem key={ song.id } song={ song } />
       ))}
 
-      { (loadingMore || nextPage)?
-        <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
-          { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
-        </button>
-        :
-        <p>all songs has been shown</p>
+      { !props.snippet && (
+          (loadingMore || nextPage) ?
+          <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
+            { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
+          </button>
+          :
+          <p>all songs has been shown</p>
+        )
       }
 
       <style jsx>{`
