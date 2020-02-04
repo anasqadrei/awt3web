@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import Layout from '../components/layout'
-import Head from '../components/head'
-import LibraryNav from '../components/libraryNav'
+import Layout from '../../components/layout'
+import Head from '../../components/head'
+import LibraryNav from '../../components/libraryNav'
 
 const playlists = []
 for (let i = 0; i < 10; i++) {

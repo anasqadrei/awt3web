@@ -8,6 +8,7 @@ import ArtistSongs from './song.artist.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
+import { DISPLAY } from '../lib/constants'
 
 export const ARTISTS_COLLECTION = 'artists'
 export const GET_ARTIST_QUERY = gql`
@@ -29,24 +30,6 @@ export const GET_ARTIST_QUERY = gql`
     }
   }
 `
-
-const recentlyAddedSongs = []
-for (let i = 0; i < 10; i++) {
-  recentlyAddedSongs.push(
-    <Link key={i} as="/song/1/slug" href={`/song?id=1`}>
-      <a>song title </a>
-    </Link>
-  )
-}
-
-const popularSongs = []
-for (let i = 0; i < 10; i++) {
-  popularSongs.push(
-    <Link key={i} as="/song/1/slug" href={`/song?id=1`}>
-      <a>song title </a>
-    </Link>
-  )
-}
 
 export default function Artist() {
   const router = useRouter()
@@ -104,7 +87,7 @@ export default function Artist() {
 
       <div>
         New Songs
-        {recentlyAddedSongs}
+        <ArtistSongs artistId={ getArtist.id } sort="-createdDate" snippet={ true } display={ DISPLAY.TEXT }/>
       </div>
 
       <div>
@@ -121,7 +104,7 @@ export default function Artist() {
 
       <div>
         Popular songs
-        {popularSongs}
+        <ArtistSongs artistId={ getArtist.id } sort="-plays" snippet={ true } display={ DISPLAY.TEXT }/>
       </div>
 
       <div>
@@ -133,7 +116,7 @@ export default function Artist() {
       <div>
         All songs
         Total Songs: { getArtist.songs }, Liked songs: { getArtist.songLikes }
-        <ArtistSongs artistId={ getArtist.id }/>
+        <ArtistSongs artistId={ getArtist.id } snippet={ false } display={ DISPLAY.LIST }/>
       </div>
 
       <CreateComment collection={ ARTISTS_COLLECTION } id={ getArtist.id } />

@@ -90,7 +90,7 @@ export default function User() {
       <p>last login: { getUser.lastSeenDate }</p>
       <p>joined: { getUser.createdDate }</p>
       <p>premium: { getUser.premium || 'No'}</p>
-      <Link href="/playlists-list">
+      <Link href="/user/playlists-list">
         <a>Library</a>
       </Link>
       <p>uploads:</p>

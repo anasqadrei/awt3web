@@ -4,6 +4,7 @@ import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from './errorMessage'
+import { DISPLAY } from '../lib/constants'
 
 const PAGE_SIZE = 5
 const LIST_ARTIST_SONGS_QUERY = gql`
@@ -64,7 +65,7 @@ export default function ArtistSongs(props) {
     artistId: props.artistId,
     page: 1,
     pageSize: PAGE_SIZE,
-    sort: sort,
+    sort: props.sort || sort,
   }
 
   // excute query
@@ -113,7 +114,12 @@ export default function ArtistSongs(props) {
 
   // initial loading
   if (loading && !loadingMore) {
-    return (<div><SortMenu disableAll={ true }/>Loading... (design this)</div>)
+    return (
+      <div>
+        { !props.snippet && (<SortMenu disableAll={ true }/>)}
+        Loading... (design this)
+      </div>
+    )
   }
 
   // get data
@@ -121,15 +127,20 @@ export default function ArtistSongs(props) {
 
   // in case no songs found
   if (!listArtistSongs.length) {
-    return (<div><SortMenu disableAll={ false }/>no songs found (design this)</div>)
+    return (
+      <div>
+        { !props.snippet && (<SortMenu disableAll={ false }/>)}
+        no songs found (design this)
+      </div>
+    )
   }
 
   // display songs
   return (
     <section>
-      <SortMenu disableAll={ false }/>
+      { !props.snippet && (<SortMenu disableAll={ false }/>)}
 
-      { listArtistSongs.map(song => (
+      { props.display === DISPLAY.LIST && listArtistSongs.map(song => (
           <section key={ song.id }>
             <img src={ song.defaultImage ? song.defaultImage.url : `https://via.placeholder.com/30?text=no+photo?` }/>
             <Link href="/song/[id]/[slug]" as={ `/song/${ song.id }/${ song.slug }` }>
@@ -142,12 +153,22 @@ export default function ArtistSongs(props) {
           </section>
       ))}
 
-      { (loadingMore || nextPage)?
-        <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
-          { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
-        </button>
-        :
-        <p>all songs has been shown</p>
+      { props.display === DISPLAY.TEXT && listArtistSongs.map(song => (
+          <span key={ song.id }>
+            <Link href="/song/[id]/[slug]" as={ `/song/${ song.id }/${ song.slug }` }>
+              <a>{ song.title }</a>
+            </Link>{' '}
+          </span>
+      ))}
+
+      { !props.snippet && (
+          (loadingMore || nextPage) ?
+          <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
+            { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
+          </button>
+          :
+          <p>all songs has been shown</p>
+        )
       }
 
       <style jsx>{`
