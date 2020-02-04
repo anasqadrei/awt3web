@@ -5,6 +5,7 @@ import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
 import PlaySong from './song.play.comp'
+import DownloadSong from './song.download.comp'
 import ShareSong from './song.share.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
@@ -150,7 +151,7 @@ export default function Song() {
         <Link href="#"><a><img src="https://via.placeholder.com/60?text=Queue" alt="Queue"/>Play Next/Add to Queue</a></Link>
       </div>
       <div>
-        <Link href="#"><a><img src="https://via.placeholder.com/60?text=Download" alt="Download"/></a></Link> Downloaded { getSong.downloads } times
+        <DownloadSong/>{ getSong.downloads && `Downloaded ${ getSong.downloads } times` }
       </div>
       <div>
         <Link href="#"><a><img src="https://via.placeholder.com/60?text=Like" alt="Like"/></a></Link>{ getSong.likes } likes
