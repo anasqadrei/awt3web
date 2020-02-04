@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
@@ -29,7 +30,7 @@ const LIST_USER_SONGS_QUERY = gql`
 
 // defaults
 let nextPage = true
-let sort = 'createdDate'
+let sort = '-createdDate'
 
 export default function UserSongs(props) {
   // SortMenu component
@@ -64,9 +65,11 @@ export default function UserSongs(props) {
     )
   }
 
+  const router = useRouter()
+
   // set query variables
   const queryVariables = {
-    userId: props.userId,
+    userId: router.query.id,
     page: 1,
     pageSize: PAGE_SIZE,
     sort: sort,
@@ -118,7 +121,12 @@ export default function UserSongs(props) {
 
   // initial loading
   if (loading && !loadingMore) {
-    return (<div><SortMenu disableAll={ true }/>Loading... (design this)</div>)
+    return (
+      <div>
+        { !props.snippet && (<SortMenu disableAll={ true }/>)}
+        Loading... (design this)
+      </div>
+    )
   }
 
   // get data
@@ -126,24 +134,31 @@ export default function UserSongs(props) {
 
   // in case no songs found
   if (!listUserSongs.length) {
-    return (<div><SortMenu disableAll={ false }/>no songs found (design this)</div>)
+    return (
+      <div>
+        { !props.snippet && (<SortMenu disableAll={ false }/>)}
+        no songs found (design this)
+      </div>
+    )
   }
 
   // display songs
   return (
     <section>
-      <SortMenu disableAll={ false }/>
+      { !props.snippet && (<SortMenu disableAll={ false }/>)}
 
       { listUserSongs.map(song => (
         <SongItem key={ song.id } song={ song } />
       ))}
 
-      { (loadingMore || nextPage)?
-        <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
-          { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
-        </button>
-        :
-        <p>all songs has been shown</p>
+      { !props.snippet && (
+          (loadingMore || nextPage) ?
+          <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
+            { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
+          </button>
+          :
+          <p>all songs has been shown</p>
+        )
       }
 
       <style jsx>{`

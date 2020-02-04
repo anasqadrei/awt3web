@@ -93,9 +93,9 @@ export default function User() {
       <Link href="/playlists-list">
         <a>Library</a>
       </Link>
-      <p>uploads snippet. wait for the designer to finish it</p>
-      <UserSongs userId={ getUser.id }/>
-      <Link as="/user/1/xxx/uploads" href={{ pathname: '/user-uploads', query: { id: 1, slug: 'xxx' } }}>
+      <p>uploads:</p>
+      <UserSongs snippet={ true }/>
+      <Link href="/user/[id]/[slug]/uploads" as={`/user/${ getUser.id }/${ getUser.slug }/uploads`}>
         <a>more uploads</a>
       </Link>
 
