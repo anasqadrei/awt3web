@@ -155,7 +155,6 @@ export default function Song() {
         <DownloadSong/>{ getSong.downloads && `Downloaded ${ getSong.downloads } times` }
       </div>
       <div>
-        <Link href="#"><a><img src="https://via.placeholder.com/60?text=Like" alt="Like"/></a></Link>{ getSong.likes } likes
         <LikeSong/>
         <p>
           { getSong.likes ? `${ getSong.likes } likes` : `be the first to like` }
@@ -163,10 +162,6 @@ export default function Song() {
         <p>
           { getSong.dislikes && `${ getSong.dislikes } dislikes` }
         </p>
-      </div>
-      <div>
-        <Link href="#"><a><img src="https://via.placeholder.com/60?text=Dislike" alt="Dislike"/></a></Link>{ getSong.dislikes } dislikes
-        Report Song (reason 1, reason2, reasons3, signed by username)
       </div>
 
       <div>

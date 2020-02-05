@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from './errorMessage'
+import { GET_ARTIST_QUERY } from './artist.comp'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -69,22 +70,45 @@ export default function LikeArtist() {
     likeArtist({
       variables: queryVariables,
       update: (proxy, { data: { likeArtist } }) => {
-        // if successful like (not a repeated one), update checkUserLikeArtist cache
+        // if successful like (not a repeated one)
         if (likeArtist) {
-          // read cache
-          const data = proxy.readQuery({
-            query: CHECK_USER_LIKE_ARTIST_QUERY,
-            variables: queryVariables,
-          })
-          // update cache by making checkUserLikeArtist: true
-          proxy.writeQuery({
-            query: CHECK_USER_LIKE_ARTIST_QUERY,
-            variables: queryVariables,
-            data: {
-              ...data,
-              checkUserLikeArtist: true,
-            },
-          })
+          // update checkUserLikeArtist cache
+          {
+            // read cache
+            const data = proxy.readQuery({
+              query: CHECK_USER_LIKE_ARTIST_QUERY,
+              variables: queryVariables,
+            })
+            // update cache by making checkUserLikeArtist: true
+            proxy.writeQuery({
+              query: CHECK_USER_LIKE_ARTIST_QUERY,
+              variables: queryVariables,
+              data: {
+                ...data,
+                checkUserLikeArtist: true,
+              },
+            })
+          }
+          // update artist likes cache
+          {
+            // read cache
+            const data = proxy.readQuery({
+              query: GET_ARTIST_QUERY,
+              variables: { id: router.query.id },
+            })
+            // update cache by incrementing getArtist.likes
+            proxy.writeQuery({
+              query: GET_ARTIST_QUERY,
+              variables: { id: router.query.id },
+              data: {
+                ...data,
+                getArtist: {
+                  ...data.getArtist,
+                  likes: data.getArtist.likes + 1,
+                }
+              },
+            })
+          }
         }
       },
     })
@@ -106,22 +130,45 @@ export default function LikeArtist() {
     unlikeArtist({
       variables: queryVariables,
       update: (proxy, { data: { unlikeArtist } }) => {
-        // if successful unlike (not a repeated one), update checkUserLikeArtist cache
+        // if successful unlike (not a repeated one)
         if (unlikeArtist) {
-          // read cache
-          const data = proxy.readQuery({
-            query: CHECK_USER_LIKE_ARTIST_QUERY,
-            variables: queryVariables,
-          })
-          // update cache by making checkUserLikeArtist: false
-          proxy.writeQuery({
-            query: CHECK_USER_LIKE_ARTIST_QUERY,
-            variables: queryVariables,
-            data: {
-              ...data,
-              checkUserLikeArtist: false,
-            },
-          })
+          // update checkUserLikeArtist cache
+          {
+            // read cache
+            const data = proxy.readQuery({
+              query: CHECK_USER_LIKE_ARTIST_QUERY,
+              variables: queryVariables,
+            })
+            // update cache by making checkUserLikeArtist: false
+            proxy.writeQuery({
+              query: CHECK_USER_LIKE_ARTIST_QUERY,
+              variables: queryVariables,
+              data: {
+                ...data,
+                checkUserLikeArtist: false,
+              },
+            })
+          }
+          // update artist likes cache
+          {
+            // read cache
+            const data = proxy.readQuery({
+              query: GET_ARTIST_QUERY,
+              variables: { id: router.query.id },
+            })
+            // update cache by decrementing getArtist.likes
+            proxy.writeQuery({
+              query: GET_ARTIST_QUERY,
+              variables: { id: router.query.id },
+              data: {
+                ...data,
+                getArtist: {
+                  ...data.getArtist,
+                  likes: data.getArtist.likes - 1,
+                }
+              },
+            })
+          }
         }
       },
     })
