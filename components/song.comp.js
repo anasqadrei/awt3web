@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import LikeSong from './song.like.comp'
 import PlaySong from './song.play.comp'
 import DownloadSong from './song.download.comp'
 import ShareSong from './song.share.comp'
@@ -155,6 +156,13 @@ export default function Song() {
       </div>
       <div>
         <Link href="#"><a><img src="https://via.placeholder.com/60?text=Like" alt="Like"/></a></Link>{ getSong.likes } likes
+        <LikeSong/>
+        <p>
+          { getSong.likes ? `${ getSong.likes } likes` : `be the first to like` }
+        </p>
+        <p>
+          { getSong.dislikes && `${ getSong.dislikes } dislikes` }
+        </p>
       </div>
       <div>
         <Link href="#"><a><img src="https://via.placeholder.com/60?text=Dislike" alt="Dislike"/></a></Link>{ getSong.dislikes } dislikes
