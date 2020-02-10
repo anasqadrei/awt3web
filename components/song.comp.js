@@ -8,6 +8,7 @@ import LikeSong from './song.like.comp'
 import PlaySong from './song.play.comp'
 import DownloadSong from './song.download.comp'
 import ShareSong from './song.share.comp'
+import SendNoticeRegardingSong from './song.sendNotice.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
@@ -135,7 +136,7 @@ export default function Song() {
       <Head title={ `${ getSong.title } - ${ getSong.artist.name }` } description={ getSong.title } asPath={ decodeURIComponent(router.asPath) } ogImage={ getSong.defaultImage && getSong.defaultImage.url } />
 
       <div>
-        <Link href="#"><a>Flag</a></Link>
+        <SendNoticeRegardingSong song={ getSong }/>
         <img src={ getSong.defaultImage ? getSong.defaultImage.url : `https://via.placeholder.com/100?text=no+photo?` }/>
         <h1 className="title">
           { getSong.title } -
