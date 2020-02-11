@@ -9,6 +9,7 @@ import PlaySong from './song.play.comp'
 import DownloadSong from './song.download.comp'
 import ShareSong from './song.share.comp'
 import SendNoticeRegardingSong from './song.sendNotice.comp'
+import LikeSongImage from './songImage.like.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
@@ -49,6 +50,12 @@ export const GET_SONG_QUERY = gql`
           id
           username
           slug
+        }
+        likers {
+          id
+        }
+        dislikers {
+          id
         }
       }
       lyrics {
@@ -201,9 +208,7 @@ export default function Song() {
             <img src={ image.url } alt={ getSong.title }/>
             أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ image.user.id }/${ image.user.slug }` }><a>{ image.user.username }</a></Link> on { image.createdDate }
             <Link href="#"><a>Delete*</a></Link>
-            <Link href="#"><a>Like</a></Link> 33,334 likes
-            <Link href="#"><a>Dislike</a></Link> 23,334 dislikes
-            Report Image (reason 1, reason2, reasons3, signed by username)
+            <LikeSongImage image={ image }/>
           </div>
         ))}
         <Link href="#"><a>Add Image</a></Link>
