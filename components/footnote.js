@@ -10,16 +10,16 @@ const Footnote = () => (
       <Link href="/blog">
         <a>Blog | المدونة</a>
       </Link>
-      <Link href="/terms">
+      <Link href="/legal/terms">
         <a>Terms</a>
       </Link>
-      <Link href="/privacy">
+      <Link href="/legal/privacy">
         <a>Privacy</a>
       </Link>
-      <Link href="/cookies">
+      <Link href="/legal/cookies">
         <a>Cookies</a>
       </Link>
-      <Link href="/copyright">
+      <Link href="/legal/copyright">
         <a>Copyright</a>
       </Link>
       <Link href="/contact">
