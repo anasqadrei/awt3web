@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/node'
 import Head from './head'
 import UserSongs from './song.user.comp'
 import UserSongImages from './songImage.user.comp'
+import UserLyrics from './lyrics.user.comp'
 import ErrorMessage from './errorMessage'
 
 export const GET_USER_QUERY = gql`
@@ -98,6 +99,8 @@ export default function User() {
       <UserSongs snippet={ true }/>
       <p>song images uploads:</p>
       <UserSongImages snippet={ true }/>
+      <p>lyrics added:</p>
+      <UserLyrics snippet={ true }/>
       <p>
         <Link href="/user/[id]/[slug]/uploads" as={`/user/${ getUser.id }/${ getUser.slug }/uploads`}>
           <a>more uploads</a>
