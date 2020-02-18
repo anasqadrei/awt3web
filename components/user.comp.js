@@ -5,6 +5,7 @@ import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
 import UserSongs from './song.user.comp'
+import UserSongImages from './songImage.user.comp'
 import ErrorMessage from './errorMessage'
 
 export const GET_USER_QUERY = gql`
@@ -93,11 +94,15 @@ export default function User() {
       <Link href="/user/playlists-list">
         <a>Library</a>
       </Link>
-      <p>uploads:</p>
+      <p>song uploads:</p>
       <UserSongs snippet={ true }/>
-      <Link href="/user/[id]/[slug]/uploads" as={`/user/${ getUser.id }/${ getUser.slug }/uploads`}>
-        <a>more uploads</a>
-      </Link>
+      <p>song images uploads:</p>
+      <UserSongImages snippet={ true }/>
+      <p>
+        <Link href="/user/[id]/[slug]/uploads" as={`/user/${ getUser.id }/${ getUser.slug }/uploads`}>
+          <a>more uploads</a>
+        </Link>
+      </p>
 
       <style jsx>{`
         .title, .description {
