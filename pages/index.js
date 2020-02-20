@@ -8,15 +8,7 @@ import UserRecentlyPlayedSongs from '../components/song.userRecentlyPlayed.comp'
 import TopLikedArtists from '../components/artist.topLiked.comp'
 import TopHashtagsInSongs from '../components/hashtag.topInSongs.comp'
 import TopHashtagsInPlaylists from '../components/hashtag.topInPlaylists.comp'
-
-const trendingSearches = []
-for (let i = 0; i < 20; i++) {
-  trendingSearches.push(
-    <Link key={i} href="search-results?q=Search-Term">
-      <a>trending keyword {i} </a>
-    </Link>
-  )
-}
+import TopSearchTerms from '../components/search.topTerms.comp'
 
 export default WithData(() => (
   <Layout>
@@ -33,7 +25,7 @@ export default WithData(() => (
       </div>
       <div>
         Trending Searches
-        {trendingSearches}
+        <TopSearchTerms/>
       </div>
       <div>
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
