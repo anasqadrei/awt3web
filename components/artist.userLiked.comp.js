@@ -1,8 +1,8 @@
-import Link from 'next/link'
 import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
+import ArtistRowItem from './artist.rowItem.comp'
 import ErrorMessage from './errorMessage'
 
 // TEMP: until we decide on the login mechanism
@@ -19,6 +19,8 @@ const LIST_USER_LIKED_ARTISTS_QUERY = gql`
       id
       name
       slug
+      imageUrl
+      songPlays
     }
   }
 `
@@ -89,11 +91,7 @@ export default function UserLikedArtists() {
     <section>
       Liked Artists
       { listUserLikedArtists.map(artist => (
-        <div key={ artist.id }>
-          <Link href="/artist/[id]/[slug]" as={ `/artist/${ artist.id }/${ artist.slug }` }>
-            <a>{ artist.name }</a>
-          </Link>
-        </div>
+        <ArtistRowItem key={ artist.id } artist={ artist } />
       ))}
 
       { (loadingMore || nextPage)?
