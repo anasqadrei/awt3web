@@ -1,28 +1,26 @@
+import WithData from '../../lib/withData'
 import Link from 'next/link'
 import Layout from '../../components/layout'
-import Head from '../../components/head'
 import LibraryNav from '../../components/libraryNav'
+import Playlists from '../../components/playlist.user.comp'
 
-const playlists = []
-for (let i = 0; i < 10; i++) {
-  playlists.push(
-    <div key={i}>
-      <Link as="/playlist/1/slug" href={`/playlist?id=1`}>
-        <a><img src="https://via.placeholder.com/30"/>My Playlist {i}</a>
-      </Link>
-    </div>
-  )
-}
-
-export default (props) => (
+export default WithData(() => (
   <Layout>
     <LibraryNav/>
-    My Playlists List
     <div>
-      <Link href="">
-        <a><img src="https://via.placeholder.com/30?text=%2B"/>New playlist</a>
-      </Link>
+      My Playlists List
+      <div>
+        <Link href="">
+          <a><img src="https://via.placeholder.com/30?text=%2B"/>Create a New playlist</a>
+        </Link>
+      </div>
+      private playlists
+      <Playlists snippet={ false } private={ true }/>
+      public playlists
+      <Playlists snippet={ false } private={ false }/>
     </div>
-    {playlists}
+    <div>
+      <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
+    </div>
   </Layout>
-)
+))
