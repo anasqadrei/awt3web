@@ -5,6 +5,7 @@ import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
 import LikePlaylist from './playlist.like.comp'
+import SharePlaylist from './playlist.share.comp'
 import SongItem from './song.item.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
@@ -114,8 +115,7 @@ export default function playlist() {
       <div>
         Share
         { getPlaylist.shares ? `${ getPlaylist.shares } shared this` : `be the first to share` }
-        <Link href="/"><a>Facebook</a></Link>
-        <Link href="/"><a>Twitter</a></Link>
+        <SharePlaylist/>
         <span dir="ltr"><input value={ getPlaylist.url } readOnly/></span>
       </div>
 
