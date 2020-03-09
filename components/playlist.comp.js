@@ -4,13 +4,14 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import LikePlaylist from './playlist.like.comp'
 import SongItem from './song.item.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
 
 const PLAYLISTS_COLLECTION = 'playlists'
-const GET_PLAYLIST_QUERY = gql`
+export const GET_PLAYLIST_QUERY = gql`
   query getPlaylist ($id: ID!) {
     getPlaylist(id: $id) {
       id
@@ -102,7 +103,7 @@ export default function playlist() {
       <div>
         <img src={ getPlaylist.imageUrl ? getPlaylist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
         <h1 className="title">{ getPlaylist.name }</h1>
-        <Link href=""><a>Like</a></Link>
+        <LikePlaylist/>
         { getPlaylist.likes ? `${ getPlaylist.likes } liked them` : `be the first to like? or empty?` }
       </div>
 
