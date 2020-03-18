@@ -98,7 +98,6 @@ export default function HashtagSongs() {
   return (
     <section>
       Hashtag Songs
-      <h1 dir="ltr">#{ router.query.hashtag }</h1>
 
       { listHashtagSongs.map(song => (
         <SongItem key={ song.id } song={ song } />
