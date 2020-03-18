@@ -6,6 +6,7 @@ import TopSearchTerms from '../components/search.topTerms.comp'
 import TopSongsInClickedSearchResults from '../components/song.topInClickedSearchResults.comp'
 import TopArtistsInClickedSearchResults from '../components/artist.topInClickedSearchResults.comp'
 import TopPlaylistsInClickedSearchResults from '../components/playlist.topInClickedSearchResults.comp'
+import UserRecentlySearched from '../components/search.userRecentlySearched.comp'
 
 const songs = []
 for (let i = 0; i < 20; i++) {
@@ -32,15 +33,6 @@ for (let i = 0; i < 10; i++) {
   )
 }
 
-const recentSearches = []
-for (let i = 0; i < 20; i++) {
-  recentSearches.push(
-    <Link key={i} href="search-results?q=Search-Term">
-      <a>recent search keyword {i} </a>
-    </Link>
-  )
-}
-
 export default WithData(() => (
   <Layout>
     <div>
@@ -62,7 +54,7 @@ export default WithData(() => (
     </div>
     <div>
       <p>Recent Searches</p>
-      {recentSearches}
+      <UserRecentlySearched/>
     </div>
   </Layout>
 ))
