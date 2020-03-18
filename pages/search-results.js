@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import WithData from '../lib/withData'
 import Layout from '../components/layout'
 import Head from '../components/head'
@@ -8,43 +9,23 @@ import TopArtistsInClickedSearchResults from '../components/artist.topInClickedS
 import TopPlaylistsInClickedSearchResults from '../components/playlist.topInClickedSearchResults.comp'
 import UserRecentlySearched from '../components/search.userRecentlySearched.comp'
 
-const songs = []
-for (let i = 0; i < 20; i++) {
-  songs.push(
-    <div key={i}>
-      <img src="https://via.placeholder.com/30?text=song+image"/>
-      <Link as="/song/1/slug" href={`/song?id=1`}>
-        <a>song title</a>
-      </Link>
-      <Link as="/artist/1/slug" href={`/artist?id=1`}>
-        <a>artist name</a>
-      </Link>
-      <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing</strong> elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua....</p>
-    </div>
-  )
-}
-
-const artists = []
-for (let i = 0; i < 10; i++) {
-  artists.push(
-    <Link key={i} as="/artist/0/xxx" href={{ pathname: '/artist', query: { id: 0, slug: 'xxx' } }}>
-      <a><img src="https://via.placeholder.com/150?text=Artist+Img" alt=""/>Artists Name {i}</a>
-    </Link>
-  )
-}
-
 export default WithData(() => (
   <Layout>
     <div>
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
     </div>
     <div>
-      Results for XXX Search Term
+      Results for <b>{ useRouter().query.q }</b> Search Term
+    </div>
+
+    {/* // TEMP: until elastic search is turned on */}
+    <div>
+      <TopArtistsInClickedSearchResults/>
     </div>
     <div>
-      {artists}
+      <TopSongsInClickedSearchResults/>
     </div>
-    {songs}
+
     <div>
       <p>Tranding Searches</p>
       <TopSearchTerms/>
