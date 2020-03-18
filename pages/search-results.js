@@ -2,6 +2,7 @@ import Link from 'next/link'
 import WithData from '../lib/withData'
 import Layout from '../components/layout'
 import Head from '../components/head'
+import TopSearchTerms from '../components/search.topTerms.comp'
 import TopSongsInClickedSearchResults from '../components/song.topInClickedSearchResults.comp'
 
 const songs = []
@@ -29,15 +30,6 @@ for (let i = 0; i < 10; i++) {
   )
 }
 
-const trendingSearches = []
-for (let i = 0; i < 20; i++) {
-  trendingSearches.push(
-    <Link key={i} href="search-results?q=Search-Term">
-      <a>trending keyword {i} </a>
-    </Link>
-  )
-}
-
 const recentSearches = []
 for (let i = 0; i < 20; i++) {
   recentSearches.push(
@@ -61,7 +53,7 @@ export default WithData(() => (
     {songs}
     <div>
       <p>Tranding Searches</p>
-      {trendingSearches}
+      <TopSearchTerms/>
       <TopSongsInClickedSearchResults/>
     </div>
     <div>
