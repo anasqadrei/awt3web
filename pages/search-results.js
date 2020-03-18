@@ -5,6 +5,7 @@ import Head from '../components/head'
 import TopSearchTerms from '../components/search.topTerms.comp'
 import TopSongsInClickedSearchResults from '../components/song.topInClickedSearchResults.comp'
 import TopArtistsInClickedSearchResults from '../components/artist.topInClickedSearchResults.comp'
+import TopPlaylistsInClickedSearchResults from '../components/playlist.topInClickedSearchResults.comp'
 
 const songs = []
 for (let i = 0; i < 20; i++) {
@@ -57,6 +58,7 @@ export default WithData(() => (
       <TopSearchTerms/>
       <TopSongsInClickedSearchResults/>
       <TopArtistsInClickedSearchResults/>
+      <TopPlaylistsInClickedSearchResults/>
     </div>
     <div>
       <p>Recent Searches</p>
