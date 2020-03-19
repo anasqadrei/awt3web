@@ -9,6 +9,7 @@ import PlaySong from './song.play.comp'
 import DownloadSong from './song.download.comp'
 import ShareSong from './song.share.comp'
 import SendNoticeRegardingSong from './song.sendNotice.comp'
+import CreateSongImage from './songImage.create.comp'
 import LikeSongImage from './songImage.like.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
@@ -211,7 +212,7 @@ export default function Song() {
             <LikeSongImage image={ image }/>
           </div>
         ))}
-        <Link href="#"><a>Add Image</a></Link>
+        <CreateSongImage/>
       </div>
 
       <div>
