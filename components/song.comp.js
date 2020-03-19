@@ -10,6 +10,7 @@ import DownloadSong from './song.download.comp'
 import ShareSong from './song.share.comp'
 import SendNoticeRegardingSong from './song.sendNotice.comp'
 import CreateSongImage from './songImage.create.comp'
+import DeleteSongImage from './songImage.delete.comp'
 import LikeSongImage from './songImage.like.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
@@ -208,7 +209,7 @@ export default function Song() {
           <div key={ image.id }>
             <img src={ image.url } alt={ getSong.title }/>
             أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ image.user.id }/${ image.user.slug }` }><a>{ image.user.username }</a></Link> on { image.createdDate }
-            <Link href="#"><a>Delete*</a></Link>
+            <DeleteSongImage image={ image }/>
             <LikeSongImage image={ image }/>
           </div>
         ))}
