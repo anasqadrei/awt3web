@@ -10,8 +10,9 @@ import DownloadSong from './song.download.comp'
 import ShareSong from './song.share.comp'
 import SendNoticeRegardingSong from './song.sendNotice.comp'
 import CreateSongImage from './songImage.create.comp'
-import DeleteSongImage from './songImage.delete.comp'
 import LikeSongImage from './songImage.like.comp'
+import DeleteSongImage from './songImage.delete.comp'
+import CreateLyrics from './lyrics.create.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
@@ -217,7 +218,7 @@ export default function Song() {
       </div>
 
       <div>
-        <Link href="#"><a>Add Lyrics*</a></Link>
+        <CreateLyrics/>
         { getSong.lyrics && (
           <div>
             <div dangerouslySetInnerHTML={{ __html: getSong.lyrics.content }} />
