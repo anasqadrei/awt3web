@@ -13,6 +13,7 @@ import CreateSongImage from './songImage.create.comp'
 import LikeSongImage from './songImage.like.comp'
 import DeleteSongImage from './songImage.delete.comp'
 import CreateLyrics from './lyrics.create.comp'
+import DeleteLyrics from './lyrics.delete.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
@@ -62,6 +63,7 @@ export const GET_SONG_QUERY = gql`
         }
       }
       lyrics {
+        id
         content
         lastUpdatedDate
         user {
@@ -224,8 +226,7 @@ export default function Song() {
             <div dangerouslySetInnerHTML={{ __html: getSong.lyrics.content }} />
             last modified on { getSong.lyrics.lastUpdatedDate } by <Link href="/user/[id]/[slug]" as={ `/user/${ getSong.lyrics.user.id }/${ getSong.lyrics.user.slug }` }><a>{ getSong.lyrics.user.username }</a></Link>
             <Link href="#"><a>Update Lyrics</a></Link>
-            <Link href="#"><a>Delete*</a></Link>
-            ??First added on 1/4/2016 by <Link href="/user/1/xxx"><a>username 1</a></Link>
+            <DeleteLyrics lyrics={ getSong.lyrics }/>
           </div>
         )}
       </div>
