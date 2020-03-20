@@ -13,6 +13,7 @@ import CreateSongImage from './songImage.create.comp'
 import LikeSongImage from './songImage.like.comp'
 import DeleteSongImage from './songImage.delete.comp'
 import CreateLyrics from './lyrics.create.comp'
+import UpdateLyrics from './lyrics.update.comp'
 import DeleteLyrics from './lyrics.delete.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
@@ -65,6 +66,7 @@ export const GET_SONG_QUERY = gql`
       lyrics {
         id
         content
+        createdDate
         lastUpdatedDate
         user {
           id
@@ -224,8 +226,8 @@ export default function Song() {
         { getSong.lyrics && (
           <div>
             <div dangerouslySetInnerHTML={{ __html: getSong.lyrics.content }} />
-            last modified on { getSong.lyrics.lastUpdatedDate } by <Link href="/user/[id]/[slug]" as={ `/user/${ getSong.lyrics.user.id }/${ getSong.lyrics.user.slug }` }><a>{ getSong.lyrics.user.username }</a></Link>
-            <Link href="#"><a>Update Lyrics</a></Link>
+            { getSong.lyrics.createdDate && `created on ${ getSong.lyrics.createdDate }` } { getSong.lyrics.lastUpdatedDate && `last modified on ${ getSong.lyrics.lastUpdatedDate }` } by <Link href="/user/[id]/[slug]" as={ `/user/${ getSong.lyrics.user.id }/${ getSong.lyrics.user.slug }` }><a>{ getSong.lyrics.user.username }</a></Link>
+            <UpdateLyrics lyrics={ getSong.lyrics }/>
             <DeleteLyrics lyrics={ getSong.lyrics }/>
           </div>
         )}
