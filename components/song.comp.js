@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import UpdateSong from './song.update.comp'
 import LikeSong from './song.like.comp'
 import PlaySong from './song.play.comp'
 import DownloadSong from './song.download.comp'
@@ -204,7 +205,7 @@ export default function Song() {
         <p>الجودة: { getSong.bitRate }kbps</p>
         أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ getSong.user.id }/${ getSong.user.slug }` }><a>{ getSong.user.username }</a></Link> on { getSong.createdDate }
         <div>
-          <Link href="#"><a>Update description*</a></Link>
+          <UpdateSong song={ getSong }/>
           <Link href="#"><a>Delete*</a></Link>
         </div>
       </div>
