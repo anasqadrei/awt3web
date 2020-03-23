@@ -13,8 +13,9 @@ const loggedOnUser = {
   username: "Admin",
 }
 
-const PAGE_SIZE = 3
-const LIST_USER_PLAYLISTS_QUERY = gql`
+export const DEFAULT_SORT = '-createdDate'
+export const PAGE_SIZE = 3
+export const LIST_USER_PLAYLISTS_QUERY = gql`
   query listUserPlaylists ($userId: ID!, $private: Boolean!, $sort: String!, $page: Int!, $pageSize: Int!) {
     listUserPlaylists(userId: $userId, private: $private, sort: $sort, page: $page, pageSize: $pageSize) {
       id
@@ -29,7 +30,7 @@ const LIST_USER_PLAYLISTS_QUERY = gql`
 
 // defaults
 let nextPage = true
-let sort = '-createdDate'
+let sort = DEFAULT_SORT
 
 export default function UserPlaylists(props) {
   // SortMenu component

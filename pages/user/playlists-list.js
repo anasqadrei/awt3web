@@ -10,7 +10,7 @@ export default WithData(() => (
     <div>
       My Playlists List
       <div>
-        <Link href="">
+        <Link href="/playlist/create">
           <a><img src="https://via.placeholder.com/30?text=%2B"/>Create a New playlist</a>
         </Link>
       </div>
