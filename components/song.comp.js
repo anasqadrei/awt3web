@@ -9,6 +9,7 @@ import LikeSong from './song.like.comp'
 import PlaySong from './song.play.comp'
 import DownloadSong from './song.download.comp'
 import ShareSong from './song.share.comp'
+import DeleteSong from './song.delete.comp'
 import SendNoticeRegardingSong from './song.sendNotice.comp'
 import CreateSongImage from './songImage.create.comp'
 import LikeSongImage from './songImage.like.comp'
@@ -206,7 +207,7 @@ export default function Song() {
         أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ getSong.user.id }/${ getSong.user.slug }` }><a>{ getSong.user.username }</a></Link> on { getSong.createdDate }
         <div>
           <UpdateSong song={ getSong }/>
-          <Link href="#"><a>Delete*</a></Link>
+          <DeleteSong song={ getSong }/>
         </div>
       </div>
 

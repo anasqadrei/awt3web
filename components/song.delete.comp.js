@@ -2,7 +2,6 @@ import { useRouter } from 'next/router'
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { GET_SONG_QUERY } from './song.comp'
 import ErrorMessage from './errorMessage'
 
 // TEMP: until we decide on the login mechanism
@@ -11,19 +10,22 @@ const loggedOnUser = {
   username: "Admin",
 }
 
-const DELETE_LYRICS_MUTATION = gql`
-  mutation deleteLyrics ($lyricsId: ID!, $userId: ID!) {
-    deleteLyrics(lyricsId: $lyricsId, userId: $userId)
+const DELETE_SONG_MUTATION = gql`
+  mutation deleteSong ($songId: ID!, $userId: ID!) {
+    deleteSong(songId: $songId, userId: $userId)
   }
 `
 
-export default function DeleteLyrics(props) {
+export default function DeleteSong(props) {
   const router = useRouter()
 
   // mutation
-  const [deleteLyrics, { loading, error }] = useMutation(
-    DELETE_LYRICS_MUTATION,
+  const [deleteSong, { loading, error }] = useMutation(
+    DELETE_SONG_MUTATION,
     {
+      onCompleted: (data) => {
+        // TODO: redirect or what?
+      },
       onError: (error) => {
         Sentry.captureException(error)
       },
@@ -35,29 +37,23 @@ export default function DeleteLyrics(props) {
     if (confirm("Are you sure?")) {
       // set query variables
       const queryVariables = {
-        lyricsId: props.lyrics.id,
+        songId: router.query.id,
         userId: loggedOnUser.id,
       }
 
-      // execute deleteLyrics and refetch getSong from the start for the deleted lyrics to be removed
-      // update the cache is not easy
-      deleteLyrics({
+      // execute deleteSong
+      deleteSong({
         variables: queryVariables,
-        refetchQueries: () => [{
-          query: GET_SONG_QUERY,
-          variables: { id: router.query.id },
-        }],
-        awaitRefetchQueries: true,
       })
     }
   }
 
-  // show delete lyrics button
+  // show delete song button
   return (
     <div>
-      <div hidden={ !loggedOnUser || loggedOnUser.id != props.lyrics.user.id }>
+      <div hidden={ !loggedOnUser || loggedOnUser.id != props.song.user.id }>
         <button onClick={ () => deleteHandler() } disabled={ loading }>
-          Delete Lyrics
+          Delete Song
         </button>
         { error && (<ErrorMessage/>) }
       </div>
