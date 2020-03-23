@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
@@ -20,7 +21,19 @@ const UPDATE_LYRICS_MUTATION = gql`
   }
 `
 
+// to track changes in props.lyrics.content
+let oldPropsLyricsContent
+
 export default function UpdateLyrics(props) {
+  // set props.lyrics.content in a state variable (stateContent)
+  const [stateContent, setStateContent] = useState(props.lyrics.content.replace(/<br\/>/g, '\n'))
+
+  // if props.lyrics.content changes from outside then reset state variable (stateContent) to the new props.lyrics.content
+  // it does not automaically happen
+  if (oldPropsLyricsContent != props.lyrics.content) {
+    oldPropsLyricsContent = props.lyrics.content
+    setStateContent(props.lyrics.content.replace(/<br\/>/g, '\n'))
+  }
   const router = useRouter()
 
   // mutation
@@ -32,6 +45,11 @@ export default function UpdateLyrics(props) {
       },
     }
   )
+
+  // handling change in content. "onChange" must be used with "value" at textarea
+  const contentChangeHandler = event => {
+    setStateContent(event.target.value)
+  }
 
   // handling submit event
   const handleSubmit = event => {
@@ -61,11 +79,10 @@ export default function UpdateLyrics(props) {
   }
 
   // show update lyrics form
-  // TODO: defaultValue doesn't change after adding lyrics. it is an uncontrolled form component atm. find a solution
   return (
     <form onSubmit={ handleSubmit }>
       <div hidden={ !loggedOnUser || loggedOnUser.id != props.lyrics.user.id }>
-        <textarea name={ FORM_CONTENT } type="text" disabled={ loading } row="20" maxLength="500" defaultValue={ props.lyrics.content.replace(/<br\/>/g, '\n') } placeholder="lyrics here" required/>
+        <textarea name={ FORM_CONTENT } type="text" disabled={ loading } row="20" maxLength="500" value={ stateContent } onChange={ contentChangeHandler } placeholder="lyrics here" required/>
         <button type="submit" disabled={ loading }>update lyrics</button>
         { error && (<ErrorMessage/>) }
       </div>
