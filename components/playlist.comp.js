@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import UpdatePlaylist from './playlist.update.comp'
 import LikePlaylist from './playlist.like.comp'
 import PlayPlaylist from './playlist.play.comp'
 import SharePlaylist from './playlist.share.comp'
@@ -110,7 +111,7 @@ export default function playlist() {
       </div>
 
       <div>
-        <PlayPlaylist shuffle={ false }/> | <PlayPlaylist shuffle={ true }/> | <Link href=""><a>Edit</a></Link> | <Link href=""><a>Delete</a></Link>
+        <PlayPlaylist shuffle={ false }/> | <PlayPlaylist shuffle={ true }/> | <UpdatePlaylist playlist={ getPlaylist }/> | <Link href=""><a>Delete</a></Link>
       </div>
 
       <div>
@@ -126,6 +127,7 @@ export default function playlist() {
 
       <div>
         Data?
+        { getPlaylist.desc }
         { getPlaylist.usersPlayed ? `${ getPlaylist.usersPlayed } listeners` : null }
         Played: { getPlaylist.plays ? getPlaylist.plays : 0 }
 
