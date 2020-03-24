@@ -8,6 +8,7 @@ import UpdatePlaylist from './playlist.update.comp'
 import LikePlaylist from './playlist.like.comp'
 import PlayPlaylist from './playlist.play.comp'
 import SharePlaylist from './playlist.share.comp'
+import DeletePlaylist from './playlist.delete.comp'
 import SongItem from './song.item.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
@@ -111,7 +112,7 @@ export default function playlist() {
       </div>
 
       <div>
-        <PlayPlaylist shuffle={ false }/> | <PlayPlaylist shuffle={ true }/> | <UpdatePlaylist playlist={ getPlaylist }/> | <Link href=""><a>Delete</a></Link>
+        <PlayPlaylist shuffle={ false }/> | <PlayPlaylist shuffle={ true }/> | <UpdatePlaylist playlist={ getPlaylist }/> | <DeletePlaylist playlist={ getPlaylist }/>
       </div>
 
       <div>
