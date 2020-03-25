@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import WithData from '../lib/withData'
 import Layout from '../components/layout'
 import Head from '../components/head'
+import SearchArtists from '../components/artist.search.comp'
 import TopSearchTerms from '../components/search.topTerms.comp'
 import TopSongsInClickedSearchResults from '../components/song.topInClickedSearchResults.comp'
 import TopArtistsInClickedSearchResults from '../components/artist.topInClickedSearchResults.comp'
@@ -20,7 +21,7 @@ export default WithData(() => (
 
     {/* // TEMP: until elastic search is turned on */}
     <div>
-      <TopArtistsInClickedSearchResults/>
+      <SearchArtists/>
     </div>
     <div>
       <TopSongsInClickedSearchResults/>

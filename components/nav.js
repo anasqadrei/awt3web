@@ -1,14 +1,12 @@
 import Link from 'next/link'
+import Search from './search.comp'
 
 const Nav = () => (
   <nav>
     <Link href="/">
       <a>Awtarika</a>
     </Link>
-    <input type="text"/>
-    <Link href="/search-results?q=Search-Term">
-      <a>Search</a>
-    </Link>
+    <Search/>
     <Link href="/song/upload">
       <a>Upload</a>
     </Link>
