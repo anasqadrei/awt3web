@@ -4,6 +4,7 @@ import WithData from '../lib/withData'
 import Layout from '../components/layout'
 import Head from '../components/head'
 import SearchArtists from '../components/artist.search.comp'
+import SearchSongs from '../components/song.search.comp'
 import TopSearchTerms from '../components/search.topTerms.comp'
 import TopSongsInClickedSearchResults from '../components/song.topInClickedSearchResults.comp'
 import TopArtistsInClickedSearchResults from '../components/artist.topInClickedSearchResults.comp'
@@ -18,15 +19,12 @@ export default WithData(() => (
     <div>
       Results for <b>{ useRouter().query.q }</b> Search Term
     </div>
-
-    {/* // TEMP: until elastic search is turned on */}
     <div>
       <SearchArtists/>
     </div>
     <div>
-      <TopSongsInClickedSearchResults/>
+      <SearchSongs/>
     </div>
-
     <div>
       <p>Tranding Searches</p>
       <TopSearchTerms/>
