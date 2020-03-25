@@ -5,6 +5,7 @@ import Layout from '../components/layout'
 import Head from '../components/head'
 import SearchArtists from '../components/artist.search.comp'
 import SearchSongs from '../components/song.search.comp'
+import SearchPlaylists from '../components/playlist.search.comp'
 import TopSearchTerms from '../components/search.topTerms.comp'
 import TopSongsInClickedSearchResults from '../components/song.topInClickedSearchResults.comp'
 import TopArtistsInClickedSearchResults from '../components/artist.topInClickedSearchResults.comp'
@@ -24,6 +25,9 @@ export default WithData(() => (
     </div>
     <div>
       <SearchSongs/>
+    </div>
+    <div>
+      <SearchPlaylists/>
     </div>
     <div>
       <p>Tranding Searches</p>
