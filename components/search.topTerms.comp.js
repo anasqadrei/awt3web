@@ -11,11 +11,15 @@ const LIST_TOP_SEARCHES_QUERY = gql`
   }
 `
 
-// set since date
-const since = new Date()
-since.setMonth(since.getMonth() - 12)
-
 export default function TopSearchTerms() {
+  // set since date
+  const since = new Date()
+  since.setMilliseconds(0)
+  since.setSeconds(0)
+  since.setMinutes(0)
+  since.setHours(0)
+  since.setMonth(since.getMonth() - 12)
+
   // set query variables
   const queryVariables = {
     page: 1,
