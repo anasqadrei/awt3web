@@ -10,6 +10,7 @@ import PlayPlaylist from './playlist.play.comp'
 import SharePlaylist from './playlist.share.comp'
 import DeletePlaylist from './playlist.delete.comp'
 import SongItem from './song.item.comp'
+import RemoveSongFromPlaylist from './playlist.removeSong.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
@@ -136,8 +137,11 @@ export default function playlist() {
       </div>
 
       <div>
-        { getPlaylist.songs && getPlaylist.songs.map(song => (
-          <SongItem key={ song.id } song={ song } />
+        { getPlaylist.songs && getPlaylist.songs.map((song, index) => (
+          <div key={ `${ index }-${ song.id }` }>
+            <SongItem song={ song }/>
+            <RemoveSongFromPlaylist playlist={ getPlaylist } song={ song } index={ index }/>
+          </div>
         )) }
       </div>
 
