@@ -21,10 +21,7 @@ const LIST_TOP_LIKED_ARTISTS_QUERY = gql`
 export default function TopLikedArtists() {
   // set since date
   const since = new Date()
-  since.setMilliseconds(0)
-  since.setSeconds(0)
-  since.setMinutes(0)
-  since.setHours(0)
+  since.setHours(0, 0, 0, 0)
   since.setMonth(since.getMonth() - 6)
 
   // set query variables

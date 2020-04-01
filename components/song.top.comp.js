@@ -28,10 +28,7 @@ const LIST_TOP_SONGS_QUERY = gql`
 export default function TopSongs() {
   // set since date
   const since = new Date()
-  since.setMilliseconds(0)
-  since.setSeconds(0)
-  since.setMinutes(0)
-  since.setHours(0)
+  since.setHours(0, 0, 0, 0)
   since.setMonth(since.getMonth() - 60)
 
   // set query variables
