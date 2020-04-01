@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import Modal from 'react-modal'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
@@ -11,6 +13,8 @@ import DownloadSong from './song.download.comp'
 import ShareSong from './song.share.comp'
 import DeleteSong from './song.delete.comp'
 import SendNoticeRegardingSong from './song.sendNotice.comp'
+import AddSongToCreatedPlaylist from './playlist.addSong.create.comp'
+import AddSongToListedPlaylist from './playlist.addSong.list.comp'
 import CreateSongImage from './songImage.create.comp'
 import LikeSongImage from './songImage.like.comp'
 import DeleteSongImage from './songImage.delete.comp'
@@ -20,6 +24,20 @@ import DeleteLyrics from './lyrics.delete.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
+import { ROOT_APP_ELEMENT } from '../lib/constants'
+
+// TODO: scrolling overflow?
+// https://github.com/reactjs/react-modal/issues/283
+const modalStyles = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+}
 
 export const SONGS_COLLECTION = 'songs'
 export const GET_SONG_QUERY = gql`
@@ -106,6 +124,23 @@ for (let i = 0; i < 10; i++) {
 export default function Song() {
   const router = useRouter()
 
+  // for accessibility
+  Modal.setAppElement(ROOT_APP_ELEMENT)
+
+  // state variables
+  const [addSongToPlaylistModalIsOpen, setAddSongToPlaylistModalIsOpen] = useState(false)
+  const [showCreatePlaylist, setShowCreatePlaylist] = useState(false)
+
+  // open and close modals
+  function openAddSongToPlaylistModal() {
+    setAddSongToPlaylistModalIsOpen(true)
+    setShowCreatePlaylist(false)
+  }
+  function closeAddSongToPlaylistModal() {
+    setAddSongToPlaylistModalIsOpen(false)
+    setShowCreatePlaylist(false)
+  }
+
   // set query variables
   const queryVariables = {
     id: router.query.id
@@ -179,6 +214,22 @@ export default function Song() {
         <p>
           { getSong.dislikes && `${ getSong.dislikes } dislikes` }
         </p>
+      </div>
+
+      <div>
+        <button onClick={ openAddSongToPlaylistModal }>Add to a playlist</button>
+        <Modal isOpen={ addSongToPlaylistModalIsOpen } onRequestClose={ closeAddSongToPlaylistModal } style={ modalStyles } contentLabel="Add song to playlist modal">
+          <button onClick={ closeAddSongToPlaylistModal }>close</button>
+          <h2>Add { getSong.title } to a playlist</h2>
+          <button onClick={ () => setShowCreatePlaylist(!showCreatePlaylist) }>+ new playlist</button>
+          { showCreatePlaylist && (
+            <div>
+              <AddSongToCreatedPlaylist song={ getSong }/>
+            </div>
+          )}
+          <AddSongToListedPlaylist private={ true } song={ getSong }/>
+          <AddSongToListedPlaylist private={ false } song={ getSong }/>
+        </Modal>
       </div>
 
       <div>

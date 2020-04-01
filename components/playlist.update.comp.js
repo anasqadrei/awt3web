@@ -96,7 +96,7 @@ export default function UpdatePlaylist(props) {
     <form onSubmit={ handleSubmit }>
       <div hidden={ !loggedOnUser || loggedOnUser.id != props.playlist.user.id }>
         playlist name: <input name={ FORM_NAME } type="text" disabled={ loading } maxLength="50" defaultValue={ props.playlist.name } placeholder="playlist name here" required/>
-        description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" defaultValue={ props.playlist.desc.replace(/<br\/>/g, '\n') } placeholder="desc here"/>
+        description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" defaultValue={ props.playlist.desc && props.playlist.desc.replace(/<br\/>/g, '\n') } placeholder="desc here"/>
         <input name={ FORM_PRIVACY } type="checkbox" disabled={ loading } defaultChecked={ props.playlist.private }/> private playlist
         <button type="submit" disabled={ loading }>update playlist</button>
         { error && (<ErrorMessage/>) }

@@ -1,4 +1,5 @@
 {
+  "ROOT_APP_ELEMENT": "#__next",
   "DISPLAY": {
     "TEXT": "TEXT",
     "LIST": "LIST",
