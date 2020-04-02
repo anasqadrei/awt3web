@@ -128,10 +128,17 @@ export default function Song() {
   Modal.setAppElement(ROOT_APP_ELEMENT)
 
   // state variables
+  const [reportSongModalIsOpen, setReportSongModalIsOpen] = useState(false)
   const [addSongToPlaylistModalIsOpen, setAddSongToPlaylistModalIsOpen] = useState(false)
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false)
 
   // open and close modals
+  function openReportSongModal() {
+    setReportSongModalIsOpen(true)
+  }
+  function closeReportSongModal() {
+    setReportSongModalIsOpen(false)
+  }
   function openAddSongToPlaylistModal() {
     setAddSongToPlaylistModalIsOpen(true)
     setShowCreatePlaylist(false)
@@ -187,7 +194,15 @@ export default function Song() {
       <Head title={ `${ getSong.title } - ${ getSong.artist.name }` } description={ getSong.title } asPath={ decodeURIComponent(router.asPath) } ogImage={ getSong.defaultImage && getSong.defaultImage.url } />
 
       <div>
-        <SendNoticeRegardingSong song={ getSong }/>
+        <div>
+          <button onClick={ openReportSongModal }>Report Song</button>
+          <Modal isOpen={ reportSongModalIsOpen } onRequestClose={ closeReportSongModal } style={ modalStyles } contentLabel="report song modal">
+            <button onClick={ closeReportSongModal }>close</button>
+            <h2>Report { getSong.title }</h2>
+            <SendNoticeRegardingSong song={ getSong }/>
+          </Modal>
+        </div>
+
         <img src={ getSong.defaultImage ? getSong.defaultImage.url : `https://via.placeholder.com/100?text=no+photo?` }/>
         <h1 className="title">
           { getSong.title } -

@@ -35,7 +35,7 @@ export default function SendNoticeRegardingSong(props) {
   const router = useRouter()
 
   // mutation
-  const [sendCopyrightInfringementNotice, { loading, error }] = useMutation(
+  const [sendCopyrightInfringementNotice, { loading, error, data }] = useMutation(
     SEND_COPYRIGHT_INFRINGEMENT_NOTICE_MUTATION,
     {
       onError: (error) => {
@@ -87,18 +87,9 @@ export default function SendNoticeRegardingSong(props) {
     })
   }
 
-  // handling event
-  const showFormHandler = () => {
-    // TODO: show modal somehow
-  }
-
   // Send Notice Form
   return (
     <section>
-      <button onClick={ () => showFormHandler() }>
-        Flag
-      </button>
-      
       <form onSubmit={ sendNoticeHandler }>
         الإسم: <input name={ FORM_NAME } type="text" maxLength="100" placeholder="الإسم" required /><br/>
         الشركة: <input name={ FORM_COMPANY } type="text" maxLength="100" placeholder="الشركة" /><br/>
@@ -110,8 +101,15 @@ export default function SendNoticeRegardingSong(props) {
         العنوان الالكتروني: <input name={ FORM_SONG_URL } type="text" value={ props.song.url } readOnly /><br/>
         song description: <textarea name={ FORM_SONG_DESC } type="text" row="3" maxLength="200" value={ props.song.desc } readOnly /><br/>
         message: <textarea name={ FORM_MESSAGE } type="text" row="5" minLength="50" maxLength="500" placeholder="اكتب الرسالة" required /><br/>
-        <button type="submit" disabled={ loading }>Send Notice</button>
+        <button type="submit" disabled={ loading || (data && data.sendCopyrightInfringementNotice) }>Send Notice</button>
         { error && (<ErrorMessage/>) }
+        {
+          (data && data.sendCopyrightInfringementNotice) && (
+            <div>
+              report sent
+            </div>
+          )
+        }
       </form>
     </section>
   )
