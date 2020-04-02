@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
@@ -21,19 +21,20 @@ const UPDATE_LYRICS_MUTATION = gql`
   }
 `
 
-// to track changes in props.lyrics.content
-let oldPropsLyricsContent
-
 export default function UpdateLyrics(props) {
   // set props.lyrics.content in a state variable (stateContent)
   const [stateContent, setStateContent] = useState(props.lyrics.content.replace(/<br\/>/g, '\n'))
 
+  // to track changes in props.lyrics.content
+  const [oldContent, setOldContent] = useState(props.lyrics.content)
+
   // if props.lyrics.content changes from outside then reset state variable (stateContent) to the new props.lyrics.content
   // it does not automaically happen
-  if (oldPropsLyricsContent != props.lyrics.content) {
-    oldPropsLyricsContent = props.lyrics.content
+  if (oldContent != props.lyrics.content) {
+    setOldContent(props.lyrics.content)
     setStateContent(props.lyrics.content.replace(/<br\/>/g, '\n'))
   }
+
   const router = useRouter()
 
   // mutation
