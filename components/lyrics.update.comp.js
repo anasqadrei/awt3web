@@ -38,7 +38,7 @@ export default function UpdateLyrics(props) {
   const router = useRouter()
 
   // mutation
-  const [updateLyrics, { loading, error }] = useMutation(
+  const [updateLyrics, { loading, error, data }] = useMutation(
     UPDATE_LYRICS_MUTATION,
     {
       onError: (error) => {
@@ -84,8 +84,13 @@ export default function UpdateLyrics(props) {
     <form onSubmit={ handleSubmit }>
       <div hidden={ !loggedOnUser || loggedOnUser.id != props.lyrics.user.id }>
         <textarea name={ FORM_CONTENT } type="text" disabled={ loading } row="20" maxLength="500" value={ stateContent } onChange={ contentChangeHandler } placeholder="lyrics here" required/>
-        <button type="submit" disabled={ loading }>update lyrics</button>
+        <button type="submit" disabled={ loading || (data && data.updateLyrics) }>update lyrics</button>
         { error && (<ErrorMessage/>) }
+        {
+          (data && data.updateLyrics) && (
+            <div>Lyrics updated</div>
+          )
+        }
       </div>
       <style jsx>{`
         form {

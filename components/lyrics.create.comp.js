@@ -24,7 +24,7 @@ export default function CreateLyrics() {
   const router = useRouter()
 
   // mutation
-  const [createLyrics, { loading, error }] = useMutation(
+  const [createLyrics, { loading, error, data }] = useMutation(
     CREATE_LYRICS_MUTATION,
     {
       onError: (error) => {
@@ -65,8 +65,13 @@ export default function CreateLyrics() {
   return (
     <form onSubmit={ handleSubmit }>
       <textarea name={ FORM_CONTENT } type="text" row="20" maxLength="500" placeholder="lyrics here" required />
-      <button type="submit" disabled={ loading }>add lyrics</button>
+      <button type="submit" disabled={ loading || (data && data.createLyrics) }>add lyrics</button>
       { error && (<ErrorMessage/>) }
+      {
+        (data && data.createLyrics) && (
+          <div>Lyrics Added</div>
+        )
+      }
       <style jsx>{`
         form {
           border-bottom: 1px solid #ececec;

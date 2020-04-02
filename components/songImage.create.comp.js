@@ -24,7 +24,7 @@ export default function CreateSongImage() {
   const router = useRouter()
 
   // mutation
-  const [createSongImage, { loading, error }] = useMutation(
+  const [createSongImage, { loading, error, data }] = useMutation(
     CREATE_SONG_IMAGE_MUTATION,
     {
       onError: (error) => {
@@ -65,8 +65,13 @@ export default function CreateSongImage() {
   return (
     <form onSubmit={ handleSubmit }>
       <input name={ FORM_FILE } type="file" accept="image/png, image/jpeg" required/>
-      <button type="submit" disabled={ loading }>add a song image</button>
+      <button type="submit" disabled={ loading || (data && data.createSongImage) }>add a song image</button>
       { error && (<ErrorMessage/>) }
+      {
+        (data && data.createSongImage) && (
+          <div>Image Added</div>
+        )
+      }
       <style jsx>{`
         form {
           border-bottom: 1px solid #ececec;

@@ -131,14 +131,12 @@ export default function Song() {
   const [reportSongModalIsOpen, setReportSongModalIsOpen] = useState(false)
   const [addSongToPlaylistModalIsOpen, setAddSongToPlaylistModalIsOpen] = useState(false)
   const [showCreatePlaylist, setShowCreatePlaylist] = useState(false)
+  const [updateSongModalIsOpen, setUpdateSongModalIsOpen] = useState(false)
+  const [createSongImageModalIsOpen, setCreateSongImageModalIsOpen] = useState(false)
+  const [createLyricsModalIsOpen, setCreateLyricsModalIsOpen] = useState(false)
+  const [updateLyricsModalIsOpen, setUpdateLyricsModalIsOpen] = useState(false)
 
   // open and close modals
-  function openReportSongModal() {
-    setReportSongModalIsOpen(true)
-  }
-  function closeReportSongModal() {
-    setReportSongModalIsOpen(false)
-  }
   function openAddSongToPlaylistModal() {
     setAddSongToPlaylistModalIsOpen(true)
     setShowCreatePlaylist(false)
@@ -195,9 +193,9 @@ export default function Song() {
 
       <div>
         <div>
-          <button onClick={ openReportSongModal }>Report Song</button>
-          <Modal isOpen={ reportSongModalIsOpen } onRequestClose={ closeReportSongModal } style={ modalStyles } contentLabel="report song modal">
-            <button onClick={ closeReportSongModal }>close</button>
+          <button onClick={ () => { setReportSongModalIsOpen(true) } }>Report Song</button>
+          <Modal isOpen={ reportSongModalIsOpen } onRequestClose={ () => { setReportSongModalIsOpen(false) } } style={ modalStyles } contentLabel="report song modal">
+            <button onClick={ () => { setReportSongModalIsOpen(false) } }>close</button>
             <h2>Report { getSong.title }</h2>
             <SendNoticeRegardingSong song={ getSong }/>
           </Modal>
@@ -272,7 +270,14 @@ export default function Song() {
         <p>الجودة: { getSong.bitRate }kbps</p>
         أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ getSong.user.id }/${ getSong.user.slug }` }><a>{ getSong.user.username }</a></Link> on { getSong.createdDate }
         <div>
-          <UpdateSong song={ getSong }/>
+          <div>
+            <button onClick={ () => { setUpdateSongModalIsOpen(true) } }>Update Song</button>
+            <Modal isOpen={ updateSongModalIsOpen } onRequestClose={ () => { setUpdateSongModalIsOpen(false) } } style={ modalStyles } contentLabel="update song modal">
+              <button onClick={ () => { setUpdateSongModalIsOpen(false) } }>close</button>
+              <h2>Update Song</h2>
+              <UpdateSong song={ getSong }/>
+            </Modal>
+          </div>
           <DeleteSong song={ getSong }/>
         </div>
       </div>
@@ -286,16 +291,37 @@ export default function Song() {
             <LikeSongImage image={ image }/>
           </div>
         ))}
-        <CreateSongImage/>
+        <div>
+          <button onClick={ () => { setCreateSongImageModalIsOpen(true) } }>Add Song Image</button>
+          <Modal isOpen={ createSongImageModalIsOpen } onRequestClose={ () => { setCreateSongImageModalIsOpen(false) } } style={ modalStyles } contentLabel="add song image modal">
+            <button onClick={ () => { setCreateSongImageModalIsOpen(false) } }>close</button>
+            <h2>Add Song Image</h2>
+            <CreateSongImage/>
+          </Modal>
+        </div>
       </div>
 
       <div>
-        <CreateLyrics/>
+        <div>
+          <button onClick={ () => { setCreateLyricsModalIsOpen(true) } }>Add Lyrics</button>
+          <Modal isOpen={ createLyricsModalIsOpen } onRequestClose={ () => { setCreateLyricsModalIsOpen(false) } } style={ modalStyles } contentLabel="add lyrics modal">
+            <button onClick={ () => { setCreateLyricsModalIsOpen(false) } }>close</button>
+            <h2>Add lyrics</h2>
+            <CreateLyrics/>
+          </Modal>
+        </div>
         { getSong.lyrics && (
           <div>
             <div dangerouslySetInnerHTML={{ __html: getSong.lyrics.content }} />
             { getSong.lyrics.createdDate && `created on ${ getSong.lyrics.createdDate }` } { getSong.lyrics.lastUpdatedDate && `last modified on ${ getSong.lyrics.lastUpdatedDate }` } by <Link href="/user/[id]/[slug]" as={ `/user/${ getSong.lyrics.user.id }/${ getSong.lyrics.user.slug }` }><a>{ getSong.lyrics.user.username }</a></Link>
-            <UpdateLyrics lyrics={ getSong.lyrics }/>
+            <div>
+              <button onClick={ () => { setUpdateLyricsModalIsOpen(true) } }>Update Lyrics</button>
+              <Modal isOpen={ updateLyricsModalIsOpen } onRequestClose={ () => { setUpdateLyricsModalIsOpen(false) } } style={ modalStyles } contentLabel="update lyrics modal">
+                <button onClick={ () => { setUpdateLyricsModalIsOpen(false) } }>close</button>
+                <h2>update lyrics</h2>
+                <UpdateLyrics lyrics={ getSong.lyrics }/>
+              </Modal>
+            </div>
             <DeleteLyrics lyrics={ getSong.lyrics }/>
           </div>
         )}

@@ -26,7 +26,7 @@ export default function UpdateSong(props) {
   const router = useRouter()
 
   // mutation
-  const [updateSong, { loading, error }] = useMutation(
+  const [updateSong, { loading, error, data }] = useMutation(
     UPDATE_SONG_MUTATION,
     {
       onError: (error) => {
@@ -81,8 +81,13 @@ export default function UpdateSong(props) {
         song title: <input name={ FORM_TITLE } type="text" disabled={ loading } maxLength="50" defaultValue={ props.song.title } placeholder="title here" required/>
         artist name: <input name={ FORM_ARTIST } type="text" disabled={ loading } maxLength="50" defaultValue={ props.song.artist.name } placeholder="artist here" required/>
         description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" defaultValue={ props.song.desc.replace(/<br\/>/g, '\n') } placeholder="desc here" required />
-        <button type="submit" disabled={ loading }>update song</button>
+        <button type="submit" disabled={ loading || (data && data.updateSong) }>update song</button>
         { error && (<ErrorMessage/>) }
+        {
+          (data && data.updateSong) && (
+            <div>Song Updated</div>
+          )
+        }
       </div>
       <style jsx>{`
         form {
