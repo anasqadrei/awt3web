@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
@@ -26,11 +27,11 @@ const LIST_USER_SONG_IMAGES_QUERY = gql`
   }
 `
 
-// defaults
-let nextPage = true
-
 export default function UserSongImages(props) {
   const router = useRouter()
+
+  // paging
+  const [nextPage, setNextPage] = useState(true)
 
   // set query variables
   const queryVariables = {
@@ -59,7 +60,7 @@ export default function UserSongImages(props) {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult || !fetchMoreResult.listUserSongImages || (fetchMoreResult.listUserSongImages && fetchMoreResult.listUserSongImages.length === 0)) {
-          nextPage = false
+          setNextPage(false)
           return previousResult
         }
         return Object.assign({}, previousResult, {
@@ -114,7 +115,7 @@ export default function UserSongImages(props) {
       ))}
 
       { !props.snippet && (
-          (loadingMore || nextPage) ?
+          nextPage ?
           <button onClick={ () => loadMoreSongImages() } disabled={ loadingMore }>
             { loadingMore ? 'Loading...' : 'Show More Song Images المزيد' }
           </button>

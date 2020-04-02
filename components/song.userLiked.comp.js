@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
@@ -33,10 +34,10 @@ const LIST_USER_LIKED_SONGS_QUERY = gql`
   }
 `
 
-// defaults
-let nextPage = true
-
 export default function UserLikedSongs() {
+  // paging
+  const [nextPage, setNextPage] = useState(true)
+
   // set query variables
   const queryVariables = {
     userId: loggedOnUser.id,
@@ -65,7 +66,7 @@ export default function UserLikedSongs() {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult || !fetchMoreResult.listUserLikedSongs || (fetchMoreResult.listUserLikedSongs && fetchMoreResult.listUserLikedSongs.length === 0)) {
-          nextPage = false
+          setNextPage(false)
           return previousResult
         }
         return Object.assign({}, previousResult, {
@@ -102,7 +103,7 @@ export default function UserLikedSongs() {
         <SongItem key={ song.id } song={ song } />
       ))}
 
-      { (loadingMore || nextPage)?
+      { nextPage ?
         <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
           { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
         </button>

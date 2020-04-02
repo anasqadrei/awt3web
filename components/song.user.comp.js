@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
@@ -28,37 +29,33 @@ const LIST_USER_SONGS_QUERY = gql`
   }
 `
 
-// defaults
-let nextPage = true
-let sort = '-createdDate'
-
 export default function UserSongs(props) {
   // SortMenu component
   const SortMenu = (props) => {
     return (
       <div>
-        <button onClick={ () => setSort('likes') } hidden={ sort != '-likes' } disabled={ props.disableAll }>
+        <button onClick={ () => setNewSort('likes') } hidden={ sort != '-likes' } disabled={ props.disableAll }>
           likes
         </button>
-        <button onClick={ () => setSort('-likes') } hidden={ sort === '-likes' } disabled={ props.disableAll }>
+        <button onClick={ () => setNewSort('-likes') } hidden={ sort === '-likes' } disabled={ props.disableAll }>
           -likes
         </button>
-        <button onClick={ () => setSort('plays') } hidden={ sort != '-plays' } disabled={ props.disableAll }>
+        <button onClick={ () => setNewSort('plays') } hidden={ sort != '-plays' } disabled={ props.disableAll }>
           plays
         </button>
-        <button onClick={ () => setSort('-plays') } hidden={ sort === '-plays' } disabled={ props.disableAll }>
+        <button onClick={ () => setNewSort('-plays') } hidden={ sort === '-plays' } disabled={ props.disableAll }>
           -plays
         </button>
-        <button onClick={ () => setSort('createdDate') } hidden={ sort != '-createdDate' } disabled={ props.disableAll }>
+        <button onClick={ () => setNewSort('createdDate') } hidden={ sort != '-createdDate' } disabled={ props.disableAll }>
           createdDate
         </button>
-        <button onClick={ () => setSort('-createdDate') } hidden={ sort === '-createdDate' } disabled={ props.disableAll }>
+        <button onClick={ () => setNewSort('-createdDate') } hidden={ sort === '-createdDate' } disabled={ props.disableAll }>
           -createdDate
         </button>
-        <button onClick={ () => setSort('title') } hidden={ sort != '-title' } disabled={ props.disableAll }>
+        <button onClick={ () => setNewSort('title') } hidden={ sort != '-title' } disabled={ props.disableAll }>
           title
         </button>
-        <button onClick={ () => setSort('-title') } hidden={ sort === '-title' } disabled={ props.disableAll }>
+        <button onClick={ () => setNewSort('-title') } hidden={ sort === '-title' } disabled={ props.disableAll }>
           -title
         </button>
       </div>
@@ -66,6 +63,12 @@ export default function UserSongs(props) {
   }
 
   const router = useRouter()
+
+  // paging
+  const [nextPage, setNextPage] = useState(true)
+
+  // sorting
+  const [sort, setSort] = useState('-createdDate')
 
   // set query variables
   const queryVariables = {
@@ -95,7 +98,7 @@ export default function UserSongs(props) {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult || !fetchMoreResult.listUserSongs || (fetchMoreResult.listUserSongs && fetchMoreResult.listUserSongs.length === 0)) {
-          nextPage = false
+          setNextPage(false)
           return previousResult
         }
         return Object.assign({}, previousResult, {
@@ -106,8 +109,9 @@ export default function UserSongs(props) {
   }
 
   // set new sort and refetch data
-  const setSort = (newSort) => {
-    sort = newSort
+  const setNewSort = (newSort) => {
+    setNextPage(true)
+    setSort(newSort)
     refetch({
       sort: newSort,
     })
@@ -152,7 +156,7 @@ export default function UserSongs(props) {
       ))}
 
       { !props.snippet && (
-          (loadingMore || nextPage) ?
+          nextPage ?
           <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
             { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
           </button>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
@@ -29,15 +30,12 @@ const SEARCH_QUERY = gql`
   }
 `
 
-// defaults
-let nextPage = true
-export function setNextPage(flag) {
-  nextPage = flag
-}
-
 export default function SearchSongs() {
   // search in case there is a query otherwise return nothing
   if (useRouter().query.q) {
+    // paging
+    const [nextPage, setNextPage] = useState(true)
+
     // set query variables
     const queryVariables = {
       query: useRouter().query.q,
@@ -67,7 +65,7 @@ export default function SearchSongs() {
         },
         updateQuery: (previousResult, { fetchMoreResult }) => {
           if (!fetchMoreResult || !fetchMoreResult.search || (fetchMoreResult.search && fetchMoreResult.search.length === 0)) {
-            nextPage = false
+            setNextPage(false)
             return previousResult
           }
           return Object.assign({}, previousResult, {
@@ -110,7 +108,7 @@ export default function SearchSongs() {
           </div>
         ))}
 
-        { (loadingMore || nextPage) ?
+        { nextPage ?
           <button onClick={ () => loadMoreSearchResults() } disabled={ loadingMore }>
             { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
           </button>

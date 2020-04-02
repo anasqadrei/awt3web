@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
@@ -19,22 +20,24 @@ const LIST_ARTISTS_QUERY = gql`
   }
 `
 
-// defaults
-let nextPage = true
-let sort = '-likes'
-
 export default function ArtistsGrid() {
   // SortMenu component
   const SortMenu = (props) => {
     return (
       <div>
-        <button onClick={ () => setSort('likes') } hidden={ sort != '-likes' } disabled={ props.disableAll }>likes</button>
-        <button onClick={ () => setSort('-likes') } hidden={ sort === '-likes' } disabled={ props.disableAll }>-likes</button>
-        <button onClick={ () => setSort('songs') } hidden={ sort != '-songs' } disabled={ props.disableAll }>songs</button>
-        <button onClick={ () => setSort('-songs') } hidden={ sort === '-songs' } disabled={ props.disableAll }>-songs</button>
+        <button onClick={ () => setNewSort('likes') } hidden={ sort != '-likes' } disabled={ props.disableAll }>likes</button>
+        <button onClick={ () => setNewSort('-likes') } hidden={ sort === '-likes' } disabled={ props.disableAll }>-likes</button>
+        <button onClick={ () => setNewSort('songs') } hidden={ sort != '-songs' } disabled={ props.disableAll }>songs</button>
+        <button onClick={ () => setNewSort('-songs') } hidden={ sort === '-songs' } disabled={ props.disableAll }>-songs</button>
       </div>
     )
   }
+
+  // paging
+  const [nextPage, setNextPage] = useState(true)
+
+  // sorting
+  const [sort, setSort] = useState('-likes')
 
   // set query variables
   const queryVariables = {
@@ -66,7 +69,7 @@ export default function ArtistsGrid() {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult || !fetchMoreResult.listArtists || (fetchMoreResult.listArtists && fetchMoreResult.listArtists.length === 0)) {
-          nextPage = false
+          setNextPage(false)
           return previousResult
         }
         return Object.assign({}, previousResult, {
@@ -77,8 +80,9 @@ export default function ArtistsGrid() {
   }
 
   // set new sort and refetch data
-  const setSort = (newSort) => {
-    sort = newSort
+  const setNewSort = (newSort) => {
+    setNextPage(true)
+    setSort(newSort)
     refetch({
       sort: newSort,
     })
@@ -111,7 +115,7 @@ export default function ArtistsGrid() {
         <ArtistGridItem key={ artist.id } artist={ artist } />
       ))}
 
-      { (loadingMore || nextPage)?
+      { nextPage ?
         <button onClick={ () => loadMoreArtists() } disabled={ loadingMore }>
           { loadingMore ? 'Loading...' : 'Show More Artists المزيد' }
         </button>

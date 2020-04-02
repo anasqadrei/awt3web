@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
@@ -43,13 +44,10 @@ export const LIST_COMMENTS_QUERY = gql`
   }
 `
 
-// a paging flag
-let nextPage = true
-export function setNextPage(flag) {
-  nextPage = flag
-}
-
 export default function CommentsList(props) {
+  // paging
+  const [nextPage, setNextPage] = useState(true)
+
   // set query variables
   const listCommentsQueryVariables = {
     reference: {
@@ -83,7 +81,7 @@ export default function CommentsList(props) {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult || !fetchMoreResult.listComments || (fetchMoreResult.listComments && fetchMoreResult.listComments.length === 0)) {
-          nextPage = false
+          setNextPage(false)
           return previousResult
         }
         return Object.assign({}, previousResult, {
@@ -122,7 +120,7 @@ export default function CommentsList(props) {
       ))}
 
       { !!(props.total) && (
-          (loadingMore || nextPage)?
+          nextPage ?
           <button onClick={ () => loadMoreComments() } disabled={ loadingMore }>
             { loadingMore ? 'Loading... جاري عرض المزيد من التعليقات ' : 'Show More Comments المزيد' }
           </button>

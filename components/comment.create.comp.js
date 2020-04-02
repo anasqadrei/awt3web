@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { LIST_COMMENTS_QUERY, PAGE_SIZE, setNextPage } from './comment.list.comp'
+import { LIST_COMMENTS_QUERY, PAGE_SIZE } from './comment.list.comp'
 // import { GET_SONG_QUERY, SONGS_COLLECTION } from './song.comp'
 import { GET_ARTIST_QUERY, ARTISTS_COLLECTION } from './artist.comp'
 import { GET_BLOGPOST_QUERY, BLOGPOSTS_COLLECTION } from './blogpost.comp'
@@ -63,7 +63,6 @@ export default function Comment(props) {
     // execute createComment and refetch listComments from the start for the new comment to be shown
     // updating the list of comments in the cache is a hassle. paging becomes complicated.
     // just updating the number of comments in the cache
-    setNextPage(true)
     createComment({
       variables: createCommentQueryVariables,
       update: (proxy) => {

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
@@ -24,11 +25,11 @@ const LIST_BLOGPOSTS_QUERY = gql`
   }
 `
 
-// a paging flag
-let nextPage = true
-
 export default function BlogpostsList() {
   const router = useRouter()
+
+  // paging
+  const [nextPage, setNextPage] = useState(true)
 
   // set query variables
   const queryVariables = {
@@ -59,7 +60,7 @@ export default function BlogpostsList() {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult || !fetchMoreResult.listBlogposts || (fetchMoreResult.listBlogposts && fetchMoreResult.listBlogposts.length === 0)) {
-          nextPage = false
+          setNextPage(false)
           return previousResult
         }
         return Object.assign({}, previousResult, {
@@ -103,7 +104,7 @@ export default function BlogpostsList() {
         </div>
       ))}
 
-      { (loadingMore || nextPage) ?
+      { nextPage ?
         <button onClick={ () => loadMoreBlogposts() } disabled={ loadingMore }>
           { loadingMore ? 'Loading...' : 'Show More Blogposts' }
         </button>

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
@@ -28,11 +29,11 @@ const LIST_HASHTAG_SONGS_QUERY = gql`
   }
 `
 
-// a paging flag
-let nextPage = true
-
 export default function HashtagSongs() {
   const router = useRouter()
+
+  // paging
+  const [nextPage, setNextPage] = useState(true)
 
   // set query variables
   const queryVariables = {
@@ -65,7 +66,7 @@ export default function HashtagSongs() {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult || !fetchMoreResult.listHashtagSongs || (fetchMoreResult.listHashtagSongs && fetchMoreResult.listHashtagSongs.length === 0)) {
-          nextPage = false
+          setNextPage(false)
           return previousResult
         }
         return Object.assign({}, previousResult, {
@@ -103,7 +104,7 @@ export default function HashtagSongs() {
         <SongItem key={ song.id } song={ song } />
       ))}
 
-      { (loadingMore || nextPage) ?
+      { nextPage ?
         <button onClick={ () => loadMoreHashtagSongs() } disabled={ loadingMore }>
           { loadingMore ? 'Loading... جاري عرض المزيد من الاغاني ' : 'Show More Songs المزيد' }
         </button>

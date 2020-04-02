@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
@@ -21,11 +22,11 @@ const LIST_HASHTAG_PLAYLISTS_QUERY = gql`
   }
 `
 
-// a paging flag
-let nextPage = true
-
 export default function HashtagPlaylists() {
   const router = useRouter()
+
+  // paging
+  const [nextPage, setNextPage] = useState(true)
 
   // set query variables
   const queryVariables = {
@@ -58,7 +59,7 @@ export default function HashtagPlaylists() {
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult || !fetchMoreResult.listHashtagPlaylists || (fetchMoreResult.listHashtagPlaylists && fetchMoreResult.listHashtagPlaylists.length === 0)) {
-          nextPage = false
+          setNextPage(false)
           return previousResult
         }
         return Object.assign({}, previousResult, {
@@ -91,12 +92,12 @@ export default function HashtagPlaylists() {
   return (
     <section>
       Hashtag Playlists
-      
+
       { listHashtagPlaylists.map(playlist => (
         <PlaylistItem key={ playlist.id } playlist={ playlist } />
       ))}
 
-      { (loadingMore || nextPage) ?
+      { nextPage ?
         <button onClick={ () => loadMoreHashtagPlaylists() } disabled={ loadingMore }>
           { loadingMore ? 'Loading... جاري عرض المزيد من الاغاني ' : 'Show More Playlists المزيد' }
         </button>

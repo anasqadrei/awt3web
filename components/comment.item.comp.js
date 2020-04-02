@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/node'
 // import { GET_SONG_QUERY, SONGS_COLLECTION } from './song.comp'
 import { GET_ARTIST_QUERY, ARTISTS_COLLECTION } from './artist.comp'
 import { GET_BLOGPOST_QUERY, BLOGPOSTS_COLLECTION } from './blogpost.comp'
-import { LIST_COMMENTS_QUERY, PAGE_SIZE as LIST_COMMENTS_PAGE_SIZE, setNextPage } from './comment.list.comp'
+import { LIST_COMMENTS_QUERY, PAGE_SIZE as LIST_COMMENTS_PAGE_SIZE } from './comment.list.comp'
 import CommentLikers, { LIST_COMMENT_LIKERS_QUERY, PAGE_SIZE as LIST_COMMENT_LIKERS_PAGE_SIZE } from './comment.Likers.comp'
 import ErrorMessage from './errorMessage'
 
@@ -321,7 +321,6 @@ export default function CommentItem(props) {
 
       // execute deleteComment and refetch listComments from the start for the deleted comment not to be shown
       // updating the cache is a hassle. paging becomes complicated.
-      setNextPage(true)
       deleteCommentById({
         variables: deleteCommentQueryVariables,
         update: (proxy) => {
