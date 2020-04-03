@@ -28,7 +28,7 @@ export default function UpdatePlaylist(props) {
   const router = useRouter()
 
   // mutation
-  const [updatePlaylist, { loading, error }] = useMutation(
+  const [updatePlaylist, { loading, error, data }] = useMutation(
     UPDATE_PLAYLIST_MUTATION,
     {
       onError: (error) => {
@@ -98,8 +98,13 @@ export default function UpdatePlaylist(props) {
         playlist name: <input name={ FORM_NAME } type="text" disabled={ loading } maxLength="50" defaultValue={ props.playlist.name } placeholder="playlist name here" required/>
         description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" defaultValue={ props.playlist.desc && props.playlist.desc.replace(/<br\/>/g, '\n') } placeholder="desc here"/>
         <input name={ FORM_PRIVACY } type="checkbox" disabled={ loading } defaultChecked={ props.playlist.private }/> private playlist
-        <button type="submit" disabled={ loading }>update playlist</button>
+        <button type="submit" disabled={ loading || (data && data.updatePlaylist) }>update playlist</button>
         { error && (<ErrorMessage/>) }
+        {
+          (data && data.updatePlaylist) && (
+            <div>Playlist Updated</div>
+          )
+        }
       </div>
       <style jsx>{`
         form {

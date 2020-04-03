@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import Modal from 'react-modal'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
@@ -14,6 +16,20 @@ import RemoveSongFromPlaylist from './playlist.removeSong.comp'
 import CreateComment from './comment.create.comp'
 import CommentsList from './comment.list.comp'
 import ErrorMessage from './errorMessage'
+import { ROOT_APP_ELEMENT } from '../lib/constants'
+
+// TODO: scrolling overflow?
+// https://github.com/reactjs/react-modal/issues/283
+const modalStyles = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+}
 
 const PLAYLISTS_COLLECTION = 'playlists'
 export const GET_PLAYLIST_QUERY = gql`
@@ -60,6 +76,12 @@ export const GET_PLAYLIST_QUERY = gql`
 
 export default function playlist() {
   const router = useRouter()
+
+  // for accessibility
+  Modal.setAppElement(ROOT_APP_ELEMENT)
+
+  // state variables
+  const [updatePlaylistModalIsOpen, setUpdatePlaylistModalIsOpen] = useState(false)
 
   // set query variables
   const queryVariables = {
@@ -113,8 +135,14 @@ export default function playlist() {
       </div>
 
       <div>
-        <PlayPlaylist shuffle={ false }/> | <PlayPlaylist shuffle={ true }/> | <UpdatePlaylist playlist={ getPlaylist }/> | <DeletePlaylist playlist={ getPlaylist }/>
+        <PlayPlaylist shuffle={ false }/> | <PlayPlaylist shuffle={ true }/> | <button onClick={ () => { setUpdatePlaylistModalIsOpen(true) } }>Update Playlist</button> | <DeletePlaylist playlist={ getPlaylist }/>
       </div>
+        
+      <Modal isOpen={ updatePlaylistModalIsOpen } onRequestClose={ () => { setUpdatePlaylistModalIsOpen(false) } } style={ modalStyles } contentLabel="update playlist modal">
+        <button onClick={ () => { setUpdatePlaylistModalIsOpen(false) } }>close</button>
+        <h2>Update Playlist</h2>
+        <UpdatePlaylist playlist={ getPlaylist }/>
+      </Modal>
 
       <div>
         Share
