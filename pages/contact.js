@@ -1,16 +1,12 @@
-import Link from 'next/link'
+import WithData from '../lib/withData'
 import Layout from '../components/layout'
 import Head from '../components/head'
+import ContactUs from '../components/contactUs.comp'
 
-export default (props) => (
+export default WithData(() => (
   <Layout>
     <Head/>
     contact us page
-    <div>
-      <textarea row="5"/>
-      <Link href="#">
-        <a>Send</a>
-      </Link>
-    </div>
+    <ContactUs/>
   </Layout>
-)
+))
