@@ -85,7 +85,9 @@ export default function User() {
         <h1 className="title">{ getUser.username }</h1>
       </div>
 
-      <p>emails: { getUser.emails }</p>
+      <div>emails: { getUser.emails && getUser.emails.map(email => (
+        <p key={ email }>{ email }</p>
+      )) }</div>
       <p>social media: { getUser.profiles && getUser.profiles.length && getUser.profiles.map(elem => elem.provider).join()  }</p>
       <p>Sex: { getUser.sex }</p>
       <p>country: { getUser.country.nameAR }</p>
