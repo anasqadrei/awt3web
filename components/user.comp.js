@@ -1,13 +1,30 @@
+import { useState } from 'react'
+import Modal from 'react-modal'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import UpdateUserImage from './user.updateImage.comp'
 import UserSongs from './song.user.comp'
 import UserSongImages from './songImage.user.comp'
 import UserLyrics from './lyrics.user.comp'
 import ErrorMessage from './errorMessage'
+import { ROOT_APP_ELEMENT } from '../lib/constants'
+
+// TODO: scrolling overflow?
+// https://github.com/reactjs/react-modal/issues/283
+const modalStyles = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+}
 
 export const GET_USER_QUERY = gql`
   query getUser ($id: ID!) {
@@ -34,6 +51,12 @@ export const GET_USER_QUERY = gql`
 
 export default function User() {
   const router = useRouter()
+
+  // for accessibility
+  Modal.setAppElement(ROOT_APP_ELEMENT)
+
+  // state variables
+  const [updateUserImageModalIsOpen, setUpdateUserImageModalIsOpen] = useState(false)
 
   // set query variables
   const queryVariables = {
@@ -82,6 +105,12 @@ export default function User() {
       <p>User Profile</p>
       <div>
         <img src={ getUser.imageUrl ? getUser.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
+        <button onClick={ () => { setUpdateUserImageModalIsOpen(true) } }>Update User Image</button>
+        <Modal isOpen={ updateUserImageModalIsOpen } onRequestClose={ () => { setUpdateUserImageModalIsOpen(false) } } style={ modalStyles } contentLabel="update user image modal">
+          <button onClick={ () => { setUpdateUserImageModalIsOpen(false) } }>close</button>
+          <h2>Update User Image</h2>
+          <UpdateUserImage/>
+        </Modal>
         <h1 className="title">{ getUser.username }</h1>
       </div>
 
@@ -91,7 +120,7 @@ export default function User() {
       <p>social media: { getUser.profiles && getUser.profiles.length && getUser.profiles.map(elem => elem.provider).join()  }</p>
       <p>Sex: { getUser.sex }</p>
       <p>country: { getUser.country.nameAR }</p>
-      <p>last login: { getUser.lastSeenDate }</p>
+      <p>last seen: { getUser.lastSeenDate }</p>
       <p>joined: { getUser.createdDate }</p>
       <p>premium: { getUser.premium || 'No'}</p>
       <Link href="/user/playlists-list">
