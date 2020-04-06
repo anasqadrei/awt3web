@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
+import RemoveUserEmail from './user.removeEmail.comp'
 import { GET_USER_QUERY } from './user.comp'
 import ErrorMessage from './errorMessage'
 
@@ -112,6 +113,15 @@ export default function UpdateUser(props) {
   return (
     <form onSubmit={ handleSubmit }>
       <input name={ FORM_USERNAME } type="text" disabled={ loadingUpdate } minLength="5" maxLength="50" defaultValue={ props.user.username } placeholder="username here" required/>
+      <div>
+        emails:
+        { props.user.emails && props.user.emails.map(email => (
+          <div key={ email }>
+            { email }
+            <RemoveUserEmail email={ email }/>
+          </div>
+        )) }
+      </div>
       <input name={ FORM_BIRTH_DATE } type="text" disabled={ loadingUpdate } defaultValue={ props.user.birthDate } placeholder="birthDate here" required/>
       <div>
         <select name={ FORM_SEX } disabled={ loadingUpdate } defaultValue={ props.user.sex || "" } required>
