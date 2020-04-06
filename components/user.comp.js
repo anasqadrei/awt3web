@@ -6,6 +6,7 @@ import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import Head from './head'
+import UpdateUser from './user.update.comp'
 import UpdateUserImage from './user.updateImage.comp'
 import UserSongs from './song.user.comp'
 import UserSongImages from './songImage.user.comp'
@@ -38,8 +39,10 @@ export const GET_USER_QUERY = gql`
         provider
         providerId
       }
+      birthDate
       sex
       country {
+        id
         nameAR
       }
       createdDate
@@ -56,6 +59,7 @@ export default function User() {
   Modal.setAppElement(ROOT_APP_ELEMENT)
 
   // state variables
+  const [updateUserModalIsOpen, setUpdateUserModalIsOpen] = useState(false)
   const [updateUserImageModalIsOpen, setUpdateUserImageModalIsOpen] = useState(false)
 
   // set query variables
@@ -118,11 +122,20 @@ export default function User() {
         <p key={ email }>{ email }</p>
       )) }</div>
       <p>social media: { getUser.profiles && getUser.profiles.length && getUser.profiles.map(elem => elem.provider).join()  }</p>
+      <p>birthDate: { getUser.birthDate }</p>
       <p>Sex: { getUser.sex }</p>
       <p>country: { getUser.country.nameAR }</p>
       <p>last seen: { getUser.lastSeenDate }</p>
       <p>joined: { getUser.createdDate }</p>
       <p>premium: { getUser.premium || 'No'}</p>
+      <div>
+        <button onClick={ () => { setUpdateUserModalIsOpen(true) } }>Update User</button>
+        <Modal isOpen={ updateUserModalIsOpen } onRequestClose={ () => { setUpdateUserModalIsOpen(false) } } style={ modalStyles } contentLabel="update user modal">
+          <button onClick={ () => { setUpdateUserModalIsOpen(false) } }>close</button>
+          <h2>Update User</h2>
+          <UpdateUser user={ getUser }/>
+        </Modal>
+      </div>
       <Link href="/user/playlists-list">
         <a>Library</a>
       </Link>
