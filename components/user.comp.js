@@ -127,7 +127,7 @@ export default function User() {
       <p>social media: { getUser.profiles && getUser.profiles.length && getUser.profiles.map(elem => elem.provider).join()  }</p>
       <p>birthDate: { getUser.birthDate }</p>
       <p>Sex: { getUser.sex }</p>
-      <p>country: { getUser.country.nameAR }</p>
+      <p>country: { getUser.country && getUser.country.nameAR }</p>
       <p>last seen: { getUser.lastSeenDate }</p>
       <p>joined: { getUser.createdDate }</p>
       <p>premium: { getUser.premium || 'No'}</p>
