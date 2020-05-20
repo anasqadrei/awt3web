@@ -1,8 +1,8 @@
-import WithData from '../../../lib/withData'
+import { withApollo } from '../../../lib/withApollo'
 import Layout from '../../../components/layout'
 import Blogpost from '../../../components/blogpost.comp'
 
-export default WithData(() => (
+export default withApollo()(() => (
   <Layout>
     <Blogpost/>
   </Layout>

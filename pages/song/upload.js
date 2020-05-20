@@ -1,9 +1,9 @@
-import WithData from '../../lib/withData'
+import { withApollo } from '../../lib/withApollo'
 import Layout from '../../components/layout'
 import Head from '../../components/head'
 import CreateSong from '../../components/song.create.comp'
 
-export default WithData(() => (
+export default withApollo()(() => (
   <Layout>
     <Head/>
     upload page

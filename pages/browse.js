@@ -1,4 +1,4 @@
-import WithData from '../lib/withData'
+import { withApollo } from '../lib/withApollo'
 import Link from 'next/link'
 import Layout from '../components/layout'
 import Head from '../components/head'
@@ -6,7 +6,7 @@ import ArtistsGrid from '../components/artist.grid.comp'
 import TopHashtagsInSongs from '../components/hashtag.topInSongs.comp'
 import TopHashtagsInPlaylists from '../components/hashtag.topInPlaylists.comp'
 
-export default WithData((props) => (
+export default withApollo()((props) => (
   <Layout>
     <div>Browse</div>
     <div>

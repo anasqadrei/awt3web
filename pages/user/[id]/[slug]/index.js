@@ -1,8 +1,8 @@
-import WithData from '../../../../lib/withData'
+import { withApollo } from '../../../../lib/withApollo'
 import Layout from '../../../../components/layout'
 import User from '../../../../components/user.comp'
 
-export default WithData(() => (
+export default withApollo()(() => (
   <Layout>
     <User/>
   </Layout>

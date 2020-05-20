@@ -1,10 +1,10 @@
-import WithData from '../../../../lib/withData'
+import { withApollo } from '../../../../lib/withApollo'
 import Layout from '../../../../components/layout'
 import UserSongs from '../../../../components/song.user.comp'
 import UserSongImages from '../../../../components/songImage.user.comp'
 import UserLyrics from '../../../../components/lyrics.user.comp'
 
-export default WithData(() => (
+export default withApollo()(() => (
   <Layout>
     <p>User Uploads</p>
     <p>Songs</p>

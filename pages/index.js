@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import WithData from '../lib/withData'
+import { withApollo } from '../lib/withApollo'
 import Layout from '../components/layout'
 import Head from '../components/head'
 import NewSongs from '../components/song.new.comp'
@@ -10,7 +10,7 @@ import TopHashtagsInSongs from '../components/hashtag.topInSongs.comp'
 import TopHashtagsInPlaylists from '../components/hashtag.topInPlaylists.comp'
 import TopSearchTerms from '../components/search.topTerms.comp'
 
-export default WithData(() => (
+export default withApollo()(() => (
   <Layout>
     <Head/>
     <div>

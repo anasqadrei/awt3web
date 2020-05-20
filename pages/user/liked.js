@@ -1,11 +1,11 @@
-import WithData from '../../lib/withData'
+import { withApollo } from '../../lib/withApollo'
 import Layout from '../../components/layout'
 import LibraryNav from '../../components/libraryNav'
 import UserLikedSongs from '../../components/song.userLiked.comp'
 import UserLikedArtists from '../../components/artist.userLiked.comp'
 import UserLikedPlaylists from '../../components/playlist.userLiked.comp'
 
-export default WithData(() => (
+export default withApollo()(() => (
   <Layout>
     <LibraryNav/>
     <div>
