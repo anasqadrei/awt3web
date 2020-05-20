@@ -4,6 +4,9 @@
 # testing
 /coverage
 
+# env
+.env*.local
+
 # production
 /build
 /dist

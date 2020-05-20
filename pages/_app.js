@@ -3,7 +3,7 @@ import App from 'next/app'
 import * as Sentry from '@sentry/node'
 
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 })
 
 class AwtarikaApp extends App {
