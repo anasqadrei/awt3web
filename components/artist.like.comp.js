@@ -2,8 +2,8 @@ import { useRouter } from 'next/router'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from './errorMessage'
-import { GET_ARTIST_QUERY } from './artist.comp'
+import ErrorMessage from 'components/errorMessage'
+import { GET_ARTIST_QUERY } from 'components/artist.comp'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {

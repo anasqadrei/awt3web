@@ -2,12 +2,12 @@ import Link from 'next/link'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-// import { GET_SONG_QUERY, SONGS_COLLECTION } from './song.comp'
-import { GET_ARTIST_QUERY, ARTISTS_COLLECTION } from './artist.comp'
-import { GET_BLOGPOST_QUERY, BLOGPOSTS_COLLECTION } from './blogpost.comp'
-import { LIST_COMMENTS_QUERY, PAGE_SIZE as LIST_COMMENTS_PAGE_SIZE } from './comment.list.comp'
-import CommentLikers, { LIST_COMMENT_LIKERS_QUERY, PAGE_SIZE as LIST_COMMENT_LIKERS_PAGE_SIZE } from './comment.Likers.comp'
-import ErrorMessage from './errorMessage'
+// import { GET_SONG_QUERY, SONGS_COLLECTION } from 'components/song.comp'
+import { GET_ARTIST_QUERY, ARTISTS_COLLECTION } from 'components/artist.comp'
+import { GET_BLOGPOST_QUERY, BLOGPOSTS_COLLECTION } from 'components/blogpost.comp'
+import { LIST_COMMENTS_QUERY, PAGE_SIZE as LIST_COMMENTS_PAGE_SIZE } from 'components/comment.list.comp'
+import CommentLikers, { LIST_COMMENT_LIKERS_QUERY, PAGE_SIZE as LIST_COMMENT_LIKERS_PAGE_SIZE } from 'components/comment.Likers.comp'
+import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {

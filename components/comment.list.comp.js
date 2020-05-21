@@ -3,8 +3,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import ParentComment from './comment.parent.comp'
-import ErrorMessage from './errorMessage'
+import ParentComment from 'components/comment.parent.comp'
+import ErrorMessage from 'components/errorMessage'
 
 export const PAGE_SIZE = 25
 export const LIST_COMMENTS_QUERY = gql`

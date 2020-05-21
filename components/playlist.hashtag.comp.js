@@ -4,8 +4,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import PlaylistItem from './playlist.item.comp'
-import ErrorMessage from './errorMessage'
+import PlaylistItem from 'components/playlist.item.comp'
+import ErrorMessage from 'components/errorMessage'
 
 const SORT = '-createdDate'
 const PAGE_SIZE = 5

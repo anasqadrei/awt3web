@@ -3,8 +3,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from './errorMessage'
-import ArtistGridItem from './artist.gridItem.comp'
+import ErrorMessage from 'components/errorMessage'
+import ArtistGridItem from 'components/artist.gridItem.comp'
 
 const PAGE_SIZE = 5
 const LIST_ARTISTS_QUERY = gql`

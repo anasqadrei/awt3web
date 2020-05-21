@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from './errorMessage'
+import ErrorMessage from 'components/errorMessage'
 
 export const PAGE_SIZE = 10
 export const LIST_COMMENT_LIKERS_QUERY = gql`

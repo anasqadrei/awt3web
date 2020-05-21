@@ -1,8 +1,8 @@
-import { withApollo } from '../../../../lib/withApollo'
-import Layout from '../../../../components/layout'
-import UserSongs from '../../../../components/song.user.comp'
-import UserSongImages from '../../../../components/songImage.user.comp'
-import UserLyrics from '../../../../components/lyrics.user.comp'
+import { withApollo } from 'lib/withApollo'
+import Layout from 'components/layout'
+import UserSongs from 'components/song.user.comp'
+import UserSongImages from 'components/songImage.user.comp'
+import UserLyrics from 'components/lyrics.user.comp'
 
 export default withApollo()(() => (
   <Layout>

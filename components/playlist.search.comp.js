@@ -5,7 +5,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from './errorMessage'
+import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {

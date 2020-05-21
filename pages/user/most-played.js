@@ -1,8 +1,8 @@
-import { withApollo } from '../../lib/withApollo'
-import Layout from '../../components/layout'
-import LibraryNav from '../../components/libraryNav'
-import UserMostPlayedSongs from '../../components/song.userMostPlayed.comp'
-import UserMostPlayedArtists from '../../components/artist.userMostPlayed.comp'
+import { withApollo } from 'lib/withApollo'
+import Layout from 'components/layout'
+import LibraryNav from 'components/libraryNav'
+import UserMostPlayedSongs from 'components/song.userMostPlayed.comp'
+import UserMostPlayedArtists from 'components/artist.userMostPlayed.comp'
 
 export default withApollo()(() => (
   <Layout>

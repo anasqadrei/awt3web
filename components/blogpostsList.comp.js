@@ -5,8 +5,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import Head from './head'
-import ErrorMessage from './errorMessage'
+import Head from 'components/head'
+import ErrorMessage from 'components/errorMessage'
 
 const title = "المدونة"
 const metaDescription = "مدونة موقع أوتاريكا للأغاني العربية"

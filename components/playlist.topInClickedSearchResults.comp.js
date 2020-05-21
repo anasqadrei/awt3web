@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import PlaylistItem from './playlist.item.comp'
-import ErrorMessage from './errorMessage'
+import PlaylistItem from 'components/playlist.item.comp'
+import ErrorMessage from 'components/errorMessage'
 
 const PAGE_SIZE = 5
 const LIST_TOP_PLAYLISTS_QUERY = gql`

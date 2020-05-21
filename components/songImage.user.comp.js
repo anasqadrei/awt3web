@@ -5,7 +5,7 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from './errorMessage'
+import ErrorMessage from 'components/errorMessage'
 
 const PAGE_SIZE = 1
 const LIST_USER_SONG_IMAGES_QUERY = gql`

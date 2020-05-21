@@ -1,8 +1,8 @@
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { GET_PLAYLIST_QUERY } from './playlist.comp'
-import ErrorMessage from './errorMessage'
+import { GET_PLAYLIST_QUERY } from 'components/playlist.comp'
+import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {

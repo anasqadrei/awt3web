@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Search from './search.comp'
+import Search from 'components/search.comp'
 
 const Nav = () => (
   <nav>

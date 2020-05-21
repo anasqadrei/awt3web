@@ -1,11 +1,11 @@
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { LIST_COMMENTS_QUERY, PAGE_SIZE } from './comment.list.comp'
-// import { GET_SONG_QUERY, SONGS_COLLECTION } from './song.comp'
-import { GET_ARTIST_QUERY, ARTISTS_COLLECTION } from './artist.comp'
-import { GET_BLOGPOST_QUERY, BLOGPOSTS_COLLECTION } from './blogpost.comp'
-import ErrorMessage from './errorMessage'
+import { LIST_COMMENTS_QUERY, PAGE_SIZE } from 'components/comment.list.comp'
+// import { GET_SONG_QUERY, SONGS_COLLECTION } from 'components/song.comp'
+import { GET_ARTIST_QUERY, ARTISTS_COLLECTION } from 'components/artist.comp'
+import { GET_BLOGPOST_QUERY, BLOGPOSTS_COLLECTION } from 'components/blogpost.comp'
+import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {

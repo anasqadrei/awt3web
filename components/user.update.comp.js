@@ -1,9 +1,9 @@
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import RemoveUserEmail from './user.removeEmail.comp'
-import { GET_USER_QUERY } from './user.comp'
-import ErrorMessage from './errorMessage'
+import RemoveUserEmail from 'components/user.removeEmail.comp'
+import { GET_USER_QUERY } from 'components/user.comp'
+import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {

@@ -1,4 +1,4 @@
-import Head from './head'
+import Head from 'components/head'
 import Link from 'next/link'
 
 const Footnote = () => (

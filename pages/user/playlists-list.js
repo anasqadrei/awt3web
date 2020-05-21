@@ -1,8 +1,8 @@
-import { withApollo } from '../../lib/withApollo'
+import { withApollo } from 'lib/withApollo'
 import Link from 'next/link'
-import Layout from '../../components/layout'
-import LibraryNav from '../../components/libraryNav'
-import Playlists from '../../components/playlist.user.comp'
+import Layout from 'components/layout'
+import LibraryNav from 'components/libraryNav'
+import Playlists from 'components/playlist.user.comp'
 
 export default withApollo()(() => (
   <Layout>

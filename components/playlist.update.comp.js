@@ -2,9 +2,9 @@ import { useRouter } from 'next/router'
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { GET_PLAYLIST_QUERY } from './playlist.comp'
-import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from './playlist.user.comp'
-import ErrorMessage from './errorMessage'
+import { GET_PLAYLIST_QUERY } from 'components/playlist.comp'
+import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'
+import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {

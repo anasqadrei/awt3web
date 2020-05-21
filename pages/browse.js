@@ -1,10 +1,10 @@
-import { withApollo } from '../lib/withApollo'
+import { withApollo } from 'lib/withApollo'
 import Link from 'next/link'
-import Layout from '../components/layout'
-import Head from '../components/head'
-import ArtistsGrid from '../components/artist.grid.comp'
-import TopHashtagsInSongs from '../components/hashtag.topInSongs.comp'
-import TopHashtagsInPlaylists from '../components/hashtag.topInPlaylists.comp'
+import Layout from 'components/layout'
+import Head from 'components/head'
+import ArtistsGrid from 'components/artist.grid.comp'
+import TopHashtagsInSongs from 'components/hashtag.topInSongs.comp'
+import TopHashtagsInPlaylists from 'components/hashtag.topInPlaylists.comp'
 
 export default withApollo()((props) => (
   <Layout>

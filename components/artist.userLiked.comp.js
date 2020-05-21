@@ -3,8 +3,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import ArtistRowItem from './artist.rowItem.comp'
-import ErrorMessage from './errorMessage'
+import ArtistRowItem from 'components/artist.rowItem.comp'
+import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {

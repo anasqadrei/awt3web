@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from './errorMessage'
+import ErrorMessage from 'components/errorMessage'
 
 const PAGE_SIZE = 10
 const LIST_TOP_SEARCHES_QUERY = gql`

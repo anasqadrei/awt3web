@@ -5,8 +5,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import SongItem from './song.item.comp'
-import ErrorMessage from './errorMessage'
+import SongItem from 'components/song.item.comp'
+import ErrorMessage from 'components/errorMessage'
 
 const PAGE_SIZE = 3
 const LIST_USER_SONGS_QUERY = gql`
