@@ -14,6 +14,36 @@ import ArtistSongs from 'components/song.artist.comp'
 import CreateComment from 'components/comment.create.comp'
 import CommentsList from 'components/comment.list.comp'
 
+export async function getStaticProps(context) {
+  try {
+    // apollo client for the build time
+    const client = await createApolloClient()
+    // query
+    const { data } = await client.query({
+      query: GET_ARTIST_QUERY,
+      variables: { id: context.params.id }
+    })
+    // return apollo cache and artist
+    return {
+      props: {
+        apolloState: client.cache.extract(),
+        artist: data.getArtist,
+      },
+    }
+  } catch (error) {
+    Sentry.captureException(error)
+    return { props: {} }
+  }
+}
+
+export async function getStaticPaths() {
+  // because we have so many paths, we'll return nothing and let it build at production time
+  return {
+    paths: [],
+    fallback: true,
+  }
+}
+
 export default withApollo()(({ artist }) => {
   const router = useRouter()
 
@@ -79,33 +109,3 @@ export default withApollo()(({ artist }) => {
     </Layout>
   )
 })
-
-export async function getStaticProps(context) {
-  try {
-    // apollo client for the build time
-    const client = await createApolloClient()
-    // query
-    const { data } = await client.query({
-      query: GET_ARTIST_QUERY,
-      variables: { id: context.params.id }
-    })
-    // return apollo cache and artist
-    return {
-      props: {
-        apolloState: client.cache.extract(),
-        artist: data.getArtist,
-      },
-    }
-  } catch (error) {
-    Sentry.captureException(error)
-    return { props: {} }
-  }
-}
-
-export async function getStaticPaths() {
-  // because we have so many paths, we'll return nothing and let it build at production time
-  return {
-    paths: [],
-    fallback: true,
-  }
-}
