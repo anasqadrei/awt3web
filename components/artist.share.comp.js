@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from 'components/errorMessage'
-import { GET_ARTIST_QUERY } from 'components/artist.comp'
+import { GET_ARTIST_QUERY } from 'lib/graphql'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -20,6 +19,16 @@ const SHARE_ARTIST_MUTATION = gql`
 
 export default function ShareArtist() {
   const router = useRouter()
+
+  // this is to get number of shares
+  // the query will most likey use cache
+  const { data }  = useQuery (
+    GET_ARTIST_QUERY,
+    {
+      variables: { id: router.query.id },
+    }
+  )
+  const { getArtist } = data
 
   // set query variables
   const queryVariables = {
@@ -71,15 +80,24 @@ export default function ShareArtist() {
     })
   }
 
-  // share buttons
+  // share section
   return (
     <section>
-      <button onClick={ () => shareHandler('Facebook') } disabled={ loading }>
-        Facebook
-      </button>
-      <button onClick={ () => shareHandler('Twitter') } disabled={ loading }>
-        Twitter
-      </button>
+      <div>
+        { getArtist.shares ? `${ getArtist.shares } shared this` : `be the first to share` }
+      </div>
+      <div>
+        Share
+        <button onClick={ () => shareHandler('Facebook') } disabled={ loading }>
+          Facebook
+        </button>
+        <button onClick={ () => shareHandler('Twitter') } disabled={ loading }>
+          Twitter
+        </button>
+      </div>
+      <div>
+        <span dir="ltr"><input value={ getArtist.url } readOnly/></span>
+      </div>
     </section>
   )
 }

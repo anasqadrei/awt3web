@@ -2,8 +2,8 @@ import { useRouter } from 'next/router'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
+import { GET_ARTIST_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
-import { GET_ARTIST_QUERY } from 'components/artist.comp'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -30,6 +30,16 @@ const UNLIKE_ARTIST_MUTATION = gql`
 
 export default function LikeArtist() {
   const router = useRouter()
+
+  // this is to get number of likes
+  // the query will most likey use cache
+  const { data }  = useQuery (
+    GET_ARTIST_QUERY,
+    {
+      variables: { id: router.query.id },
+    }
+  )
+  const { getArtist } = data
 
   // set query variables (common for all)
   const queryVariables = {
@@ -177,14 +187,19 @@ export default function LikeArtist() {
   // like and unlike buttons
   return (
     <section>
-      <button hidden={ hideLike } onClick={ () => likeHandler() } disabled={ loadingLike }>
-        Like
-      </button>
-      { errorLike && (<ErrorMessage/>) }
-      <button hidden={ !hideLike } onClick={ () => unlikeHandler() } disabled={ loadingUnlike }>
-        Unlike
-      </button>
-      { errorUnlike && (<ErrorMessage/>) }
+      <div>
+        <button hidden={ hideLike } onClick={ () => likeHandler() } disabled={ loadingLike }>
+          Like
+        </button>
+        { errorLike && (<ErrorMessage/>) }
+        <button hidden={ !hideLike } onClick={ () => unlikeHandler() } disabled={ loadingUnlike }>
+          Unlike
+        </button>
+        { errorUnlike && (<ErrorMessage/>) }
+      </div>
+      <div>
+        { getArtist.likes ? `${ getArtist.likes } liked them` : `be the first to like? or empty?` }
+      </div>
     </section>
   )
 }
