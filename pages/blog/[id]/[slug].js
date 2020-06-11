@@ -79,7 +79,7 @@ export default withApollo()(({ blogpost }) => {
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
       </div>
       <CreateComment collection={ BLOGPOSTS_COLLECTION } id={ blogpost.id } />
-      <CommentsList collection={ BLOGPOSTS_COLLECTION } id={ blogpost.id } total={ blogpost.comments }/>
+      <CommentsList collection={ BLOGPOSTS_COLLECTION } id={ blogpost.id } />
       <style jsx>{`
         .title, .description {
           text-align: center;

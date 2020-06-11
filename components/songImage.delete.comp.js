@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { GET_SONG_QUERY } from 'components/song.comp'
+import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
@@ -21,7 +21,7 @@ export default function DeleteSongImage(props) {
   const router = useRouter()
 
   // mutation
-  const [deleteSongImage, { loading, error }] = useMutation(
+  const [deleteSongImage, { loading, error, data }] = useMutation(
     DELETE_SONG_IMAGE_MUTATION,
     {
       onError: (error) => {
@@ -56,10 +56,15 @@ export default function DeleteSongImage(props) {
   return (
     <div>
       <div hidden={ !loggedOnUser || loggedOnUser.id != props.image.user.id }>
-        <button onClick={ () => deleteHandler() } disabled={ loading }>
+        <button onClick={ () => deleteHandler() } disabled={ loading || (data && data.deleteSongImage) }>
           X delete
         </button>
         { error && (<ErrorMessage/>) }
+        {
+          (data && data.deleteSongImage) && (
+            <div>songImage is being Deleted. Check later(won't show instantly)</div>
+          )
+        }
       </div>
     </div>
   )

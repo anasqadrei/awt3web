@@ -3,6 +3,9 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
+import { validateCommentCollection } from 'lib/validateCommentCollection'
+import { GET_SONG_QUERY, GET_ARTIST_QUERY, GET_BLOGPOST_QUERY } from 'lib/graphql'
+import { SONGS_COLLECTION, ARTISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
 import ParentComment from 'components/comment.parent.comp'
 import ErrorMessage from 'components/errorMessage'
 
@@ -45,8 +48,49 @@ export const LIST_COMMENTS_QUERY = gql`
 `
 
 export default function CommentsList(props) {
+  // validate collection name
+  if (!validateCommentCollection(props.collection)) {
+    return <ErrorMessage message='invalid collection name' />
+  }
+  
   // paging
   const [nextPage, setNextPage] = useState(true)
+
+  // this is to get number of comments
+  // the query will most likey use cache
+  // 1. decide which query based on collection
+  let query
+  switch (props.collection) {
+    case SONGS_COLLECTION:
+      query = GET_SONG_QUERY
+      break
+    case ARTISTS_COLLECTION:
+      query = GET_ARTIST_QUERY
+      break
+    case BLOGPOSTS_COLLECTION:
+      query = GET_BLOGPOST_QUERY
+      break
+  }
+  // 2. query
+  const { data: dataCollection }  = useQuery (
+    query,
+    {
+      variables: { id: props.id },
+    }
+  )
+  // 3. decide total based on collection and query data
+  let total
+  switch (props.collection) {
+    case SONGS_COLLECTION:
+      total = dataCollection.getSong.comments
+      break
+    case ARTISTS_COLLECTION:
+      total = dataCollection.getArtist.comments
+      break
+    case BLOGPOSTS_COLLECTION:
+      total = dataCollection.getBlogpost.comments
+      break
+  }
 
   // set query variables
   const listCommentsQueryVariables = {
@@ -113,13 +157,13 @@ export default function CommentsList(props) {
   // display comments otherwise
   return (
     <section>
-      { props.total && `${ props.total } commented` }
+      { total && `${ total } commented` }
 
       { listComments.map(comment => (
         <ParentComment key={ comment.id } comment={ comment } />
       ))}
 
-      { !!(props.total) && (
+      { !!(total) && (
           nextPage ?
           <button onClick={ () => loadMoreComments() } disabled={ loadingMore }>
             { loadingMore ? 'Loading... جاري عرض المزيد من التعليقات ' : 'Show More Comments المزيد' }

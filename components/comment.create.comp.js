@@ -1,12 +1,10 @@
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { GET_ARTIST_QUERY, GET_BLOGPOST_QUERY } from 'lib/graphql'
+import { validateCommentCollection } from 'lib/validateCommentCollection'
+import { GET_SONG_QUERY, GET_ARTIST_QUERY, GET_BLOGPOST_QUERY } from 'lib/graphql'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE } from 'components/comment.list.comp'
-// import { GET_SONG_QUERY } from 'components/song.comp'
-// import { GET_ARTIST_QUERY } from 'components/artist.comp'
-// import { GET_BLOGPOST_QUERY } from 'components/blogpost.comp'
 import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
@@ -25,6 +23,11 @@ const CREATE_COMMENT_MUTATION = gql`
 `
 
 export default function Comment(props) {
+  // validate collection name
+  if (!validateCommentCollection(props.collection)) {
+    return <ErrorMessage message='invalid collection name' />
+  }
+
   // mutation
   const [createComment, { loading, error }] = useMutation(
     CREATE_COMMENT_MUTATION,
@@ -71,18 +74,15 @@ export default function Comment(props) {
         // read cache
         let query
         switch (props.collection) {
-          // TODO: uncomment
-          // case SONGS_COLLECTION:
-          //   query = GET_SONG_QUERY
-          //   break
+          case SONGS_COLLECTION:
+            query = GET_SONG_QUERY
+            break
           case ARTISTS_COLLECTION:
             query = GET_ARTIST_QUERY
             break
           case BLOGPOSTS_COLLECTION:
             query = GET_BLOGPOST_QUERY
             break
-          default:
-            return
         }
         const data = proxy.readQuery({
           query: query,
@@ -92,13 +92,12 @@ export default function Comment(props) {
         // update the number of comments in the cache
         let update = { ...data }
         switch (props.collection) {
-          // TODO: uncomment
-          // case SONGS_COLLECTION:
-          //   update.getSong = {
-          //     ...data.getSong,
-          //     comments: data.getSong.comments + 1,
-          //   }
-          //   break
+          case SONGS_COLLECTION:
+            update.getSong = {
+              ...data.getSong,
+              comments: data.getSong.comments + 1,
+            }
+            break
           case ARTISTS_COLLECTION:
             update.getArtist = {
               ...data.getArtist,
@@ -111,8 +110,6 @@ export default function Comment(props) {
               comments: data.getBlogpost.comments + 1,
             }
             break
-          default:
-            return
         }
         proxy.writeQuery({
           query: query,

@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
-import { GET_SONG_QUERY } from 'components/song.comp'
+import { GET_SONG_QUERY } from 'lib/graphql'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -20,6 +20,16 @@ const DOWNLOAD_SONG_MUTATION = gql`
 
 export default function DownloadSong() {
   const router = useRouter()
+
+  // this is to get number of downloads
+  // the query will most likey use cache
+  const { data }  = useQuery (
+    GET_SONG_QUERY,
+    {
+      variables: { id: router.query.id },
+    }
+  )
+  const { getSong } = data
 
   // set query variables
   const queryVariables = {
@@ -74,6 +84,7 @@ export default function DownloadSong() {
       <button onClick={ () => downloadHandler() } disabled={ loading }>
         Download
       </button>
+      { getSong.downloads && `Downloaded ${ getSong.downloads } times` }
     </section>
   )
 }

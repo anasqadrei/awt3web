@@ -3,7 +3,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
-import { GET_SONG_QUERY } from 'components/song.comp'
+import { GET_SONG_QUERY } from 'lib/graphql'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -45,6 +45,16 @@ const UNDISLIKE_SONG_MUTATION = gql`
 
 export default function LikeSong() {
   const router = useRouter()
+
+  // this is to get number of likes
+  // the query will most likey use cache
+  const { data }  = useQuery (
+    GET_SONG_QUERY,
+    {
+      variables: { id: router.query.id },
+    }
+  )
+  const { getSong } = data
 
   // TODO: loggedOnUser is used is not logged in?
   // set query variables (common for all)
@@ -355,6 +365,12 @@ export default function LikeSong() {
       <button hidden={ !hideDislike } onClick={ () => undislikeHandler() } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideLike }>
         Undislike
       </button>
+      <p>
+        { getSong.likes ? `${ getSong.likes } likes` : `be the first to like` }
+      </p>
+      <p>
+        { getSong.dislikes && `${ getSong.dislikes } dislikes` }
+      </p>
       { errorUndislike && (<ErrorMessage/>) }
     </section>
   )

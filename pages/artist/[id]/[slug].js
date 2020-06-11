@@ -99,7 +99,7 @@ export default withApollo()(({ artist }) => {
           <ArtistSongs artistId={ artist.id } snippet={ false } display={ DISPLAY.LIST }/>
         </div>
         <CreateComment collection={ ARTISTS_COLLECTION } id={ artist.id } />
-        <CommentsList collection={ ARTISTS_COLLECTION } id={ artist.id } total={ artist.comments }/>
+        <CommentsList collection={ ARTISTS_COLLECTION } id={ artist.id } />
       </section>
       <style jsx>{`
         .title, .description {

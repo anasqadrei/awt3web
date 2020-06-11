@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { GET_SONG_QUERY } from 'components/song.comp'
+import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
@@ -85,7 +85,7 @@ export default function UpdateSong(props) {
         { error && (<ErrorMessage/>) }
         {
           (data && data.updateSong) && (
-            <div>Song Updated</div>
+            <div>Song Updated. Check later(won't show instantly)</div>
           )
         }
       </div>

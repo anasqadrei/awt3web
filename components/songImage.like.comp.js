@@ -3,7 +3,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
-import { GET_SONG_QUERY } from 'components/song.comp'
+import { GET_SONG_QUERY } from 'lib/graphql'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -45,6 +45,17 @@ const UNDISLIKE_SONG_IMAGE_MUTATION = gql`
 
 export default function LikeSongImage(props) {
   const router = useRouter()
+
+  // this is mainly to get imagesList
+  // the query will most likey use cache
+  const { data }  = useQuery (
+    GET_SONG_QUERY,
+    {
+      variables: { id: router.query.id },
+    }
+  )
+  const { getSong } = data
+  const imageIndex = getSong.imagesList ? getSong.imagesList.findIndex(elem => elem.id === props.image.id) : -1
 
   // TODO: loggedOnUser is used is not logged in?
   // set query variables (common for all)
@@ -125,22 +136,19 @@ export default function LikeSongImage(props) {
           }
           // update song image likers cache
           {
-            // read cache
-            const data = proxy.readQuery({
-              query: GET_SONG_QUERY,
-              variables: { id: router.query.id },
-            })
             // find image and add user to its likers
-            const imageIndex = data.getSong.imagesList.findIndex(elem => elem.id === props.image.id)
-            if (!data.getSong.imagesList[imageIndex].likers) {
-              data.getSong.imagesList[imageIndex].likers = []
+            if (!getSong.imagesList[imageIndex].likers) {
+              getSong.imagesList[imageIndex].likers = []
             }
-            data.getSong.imagesList[imageIndex].likers.push(loggedOnUser)
+            getSong.imagesList[imageIndex].likers.push(loggedOnUser)
             // update cache
             proxy.writeQuery({
               query: GET_SONG_QUERY,
               variables: { id: router.query.id },
-              data: data,
+              data: {
+                ...data,
+                getSong: getSong,
+              },
             })
           }
         }
@@ -185,20 +193,17 @@ export default function LikeSongImage(props) {
           }
           // update song image likers cache
           {
-            // read cache
-            const data = proxy.readQuery({
-              query: GET_SONG_QUERY,
-              variables: { id: router.query.id },
-            })
             // find image and remove user from its likers
-            const imageIndex = data.getSong.imagesList.findIndex(elem => elem.id === props.image.id)
-            const likerIndex = data.getSong.imagesList[imageIndex].likers.findIndex(elem => elem.id === loggedOnUser.id)
-            data.getSong.imagesList[imageIndex].likers.splice(likerIndex, 1)
+            const likerIndex = getSong.imagesList[imageIndex].likers.findIndex(elem => elem.id === loggedOnUser.id)
+            getSong.imagesList[imageIndex].likers.splice(likerIndex, 1)
             // update cache
             proxy.writeQuery({
               query: GET_SONG_QUERY,
               variables: { id: router.query.id },
-              data: data,
+              data: {
+                ...data,
+                getSong: getSong,
+              },
             })
           }
         }
@@ -247,22 +252,19 @@ export default function LikeSongImage(props) {
           }
           // update song image dislikers cache
           {
-            // read cache
-            const data = proxy.readQuery({
-              query: GET_SONG_QUERY,
-              variables: { id: router.query.id },
-            })
             // find image and add user to its dislikers
-            const imageIndex = data.getSong.imagesList.findIndex(elem => elem.id === props.image.id)
-            if (!data.getSong.imagesList[imageIndex].dislikers) {
-              data.getSong.imagesList[imageIndex].dislikers = []
+            if (!getSong.imagesList[imageIndex].dislikers) {
+              getSong.imagesList[imageIndex].dislikers = []
             }
-            data.getSong.imagesList[imageIndex].dislikers.push(loggedOnUser)
+            getSong.imagesList[imageIndex].dislikers.push(loggedOnUser)
             // update cache
             proxy.writeQuery({
               query: GET_SONG_QUERY,
               variables: { id: router.query.id },
-              data: data,
+              data: {
+                ...data,
+                getSong: getSong,
+              },
             })
           }
         }
@@ -307,20 +309,17 @@ export default function LikeSongImage(props) {
           }
           // update song image dislikers cache
           {
-            // read cache
-            const data = proxy.readQuery({
-              query: GET_SONG_QUERY,
-              variables: { id: router.query.id },
-            })
             // find image and remove user from its likers
-            const imageIndex = data.getSong.imagesList.findIndex(elem => elem.id === props.image.id)
-            const dislikerIndex = data.getSong.imagesList[imageIndex].dislikers.findIndex(elem => elem.id === loggedOnUser.id)
-            data.getSong.imagesList[imageIndex].dislikers.splice(dislikerIndex, 1)
+            const dislikerIndex = getSong.imagesList[imageIndex].dislikers.findIndex(elem => elem.id === loggedOnUser.id)
+            getSong.imagesList[imageIndex].dislikers.splice(dislikerIndex, 1)
             // update cache
             proxy.writeQuery({
               query: GET_SONG_QUERY,
               variables: { id: router.query.id },
-              data: data,
+              data: {
+                ...data,
+                getSong: getSong,
+              },
             })
           }
         }
@@ -331,8 +330,8 @@ export default function LikeSongImage(props) {
   // like, unlike, dislike, undislike buttons
   return (
     <section>
-      <p>likes: { props.image.likers && props.image.likers.length }</p>
-      <p>dislikes: { props.image.dislikers && props.image.dislikers.length }</p>
+      <p>likes: { imageIndex > -1 && getSong.imagesList[imageIndex].likers && getSong.imagesList[imageIndex].likers.length }</p>
+      <p>dislikes: { imageIndex > -1 && getSong.imagesList[imageIndex].dislikers && getSong.imagesList[imageIndex].dislikers.length }</p>
       <button hidden={ hideLike } onClick={ () => likeHandler() } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideDislike }>
         Like
       </button>
