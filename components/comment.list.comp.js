@@ -3,9 +3,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { validateCommentCollection } from 'lib/validateCommentCollection'
-import { GET_SONG_QUERY, GET_ARTIST_QUERY, GET_BLOGPOST_QUERY } from 'lib/graphql'
-import { SONGS_COLLECTION, ARTISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
+import { validateCommentsCollection, getCommentsCollectionQuery } from 'lib/commentsCollection'
+import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
 import ParentComment from 'components/comment.parent.comp'
 import ErrorMessage from 'components/errorMessage'
 
@@ -49,36 +48,24 @@ export const LIST_COMMENTS_QUERY = gql`
 
 export default function CommentsList(props) {
   // validate collection name
-  if (!validateCommentCollection(props.collection)) {
+  if (!validateCommentsCollection(props.collection)) {
     return <ErrorMessage message='invalid collection name' />
   }
-  
+
   // paging
   const [nextPage, setNextPage] = useState(true)
 
   // this is to get number of comments
   // the query will most likey use cache
-  // 1. decide which query based on collection
-  let query
-  switch (props.collection) {
-    case SONGS_COLLECTION:
-      query = GET_SONG_QUERY
-      break
-    case ARTISTS_COLLECTION:
-      query = GET_ARTIST_QUERY
-      break
-    case BLOGPOSTS_COLLECTION:
-      query = GET_BLOGPOST_QUERY
-      break
-  }
-  // 2. query
+  // 1. query
+  const query = getCommentsCollectionQuery(props.collection)
   const { data: dataCollection }  = useQuery (
     query,
     {
       variables: { id: props.id },
     }
   )
-  // 3. decide total based on collection and query data
+  // 2. decide total based on collection and query data
   let total
   switch (props.collection) {
     case SONGS_COLLECTION:
@@ -86,6 +73,9 @@ export default function CommentsList(props) {
       break
     case ARTISTS_COLLECTION:
       total = dataCollection.getArtist.comments
+      break
+    case PLAYLISTS_COLLECTION:
+      total = dataCollection.getPlaylist.comments
       break
     case BLOGPOSTS_COLLECTION:
       total = dataCollection.getBlogpost.comments

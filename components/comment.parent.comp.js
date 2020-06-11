@@ -1,8 +1,8 @@
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { GET_SONG_QUERY, GET_ARTIST_QUERY, GET_BLOGPOST_QUERY } from 'lib/graphql'
-import { SONGS_COLLECTION, ARTISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
+import { getCommentsCollectionQuery } from 'lib/commentsCollection'
+import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE } from 'components/comment.list.comp'
 import CommentItem from 'components/comment.item.comp'
 import ErrorMessage from 'components/errorMessage'
@@ -99,18 +99,7 @@ export default function ParentComment(props) {
         // update the number of comments in the cache
         {
           // read cache
-          let query
-          switch (props.comment.reference.collection) {
-            case SONGS_COLLECTION:
-              query = GET_SONG_QUERY
-              break
-            case ARTISTS_COLLECTION:
-              query = GET_ARTIST_QUERY
-              break
-            case BLOGPOSTS_COLLECTION:
-              query = GET_BLOGPOST_QUERY
-              break
-          }
+          const query = getCommentsCollectionQuery(props.comment.reference.collection)
           const data = proxy.readQuery({
             query: query,
             variables: { id: props.comment.reference.id },
@@ -129,6 +118,12 @@ export default function ParentComment(props) {
               update.getArtist = {
                 ...data.getArtist,
                 comments: data.getArtist.comments + 1,
+              }
+              break
+            case PLAYLISTS_COLLECTION:
+              update.getPlaylist = {
+                ...data.getPlaylist,
+                comments: data.getPlaylist.comments + 1,
               }
               break
             case BLOGPOSTS_COLLECTION:

@@ -1,6 +1,7 @@
 {
   "SONGS_COLLECTION": "songs",
   "ARTISTS_COLLECTION": "artists",
+  "PLAYLISTS_COLLECTION": "playlists",
   "BLOGPOSTS_COLLECTION": "blogposts",
   "ROOT_APP_ELEMENT": "#__next",
   "DISPLAY": {

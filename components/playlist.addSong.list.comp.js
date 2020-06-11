@@ -5,7 +5,7 @@ import { NetworkStatus } from 'apollo-client'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
-import { GET_PLAYLIST_QUERY } from 'components/playlist.comp'
+import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -62,25 +62,30 @@ export default function AddSongToListedPlaylist(props) {
     addSongToPlaylist({
       variables: addSongQueryVariables,
       update: (proxy, { data: { addSongToPlaylist } }) => {
-        // read cache
-        const data = proxy.readQuery({
-          query: GET_PLAYLIST_QUERY,
-          variables: { id: playlistId },
-        })
-        // update cache
-        proxy.writeQuery({
-          query: GET_PLAYLIST_QUERY,
-          variables: { id: playlistId },
-          data: {
-            ...data,
-            getPlaylist: {
-              ...data.getPlaylist,
-              duration: addSongToPlaylist.duration,
-              lastUpdatedDate: addSongToPlaylist.lastUpdatedDate,
-              songs: [...data.getPlaylist.songs, props.song]
-            }
-          },
-        })
+        try {
+          // read cache
+          const data = proxy.readQuery({
+            query: GET_PLAYLIST_QUERY,
+            variables: { id: playlistId },
+          })
+          // update cache
+          proxy.writeQuery({
+            query: GET_PLAYLIST_QUERY,
+            variables: { id: playlistId },
+            data: {
+              ...data,
+              getPlaylist: {
+                ...data.getPlaylist,
+                duration: addSongToPlaylist.duration,
+                lastUpdatedDate: addSongToPlaylist.lastUpdatedDate,
+                songs: [...data.getPlaylist.songs, props.song]
+              }
+            },
+          })
+        } catch (error) {
+          // error will be thrown if GET_PLAYLIST_QUERY hasn't been cached yet
+          // in this case cache doesn't need to be updated
+        }
       },
     })
   }

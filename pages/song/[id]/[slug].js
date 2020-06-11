@@ -175,7 +175,9 @@ export default withApollo()(({ song }) => {
       </div>
 
       <div>
-        <div dangerouslySetInnerHTML={{ __html: song.desc.replace(/#[^\s<]+/g,'') }} />
+        { song.desc && (
+          <div dangerouslySetInnerHTML={{ __html: song.desc.replace(/#[^\s<]+/g,'') }} />
+        )}
         {
           song.hashtags && song.hashtags.map(hashtag => (
             <div key={ hashtag }>

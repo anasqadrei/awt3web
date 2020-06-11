@@ -5,6 +5,8 @@ import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
+import { GET_PLAYLIST_QUERY } from 'lib/graphql'
+import { PLAYLISTS_COLLECTION } from 'lib/constants'
 import Head from 'components/head'
 import UpdatePlaylist from 'components/playlist.update.comp'
 import LikePlaylist from 'components/playlist.like.comp'
@@ -30,49 +32,6 @@ const modalStyles = {
     transform             : 'translate(-50%, -50%)'
   }
 }
-
-const PLAYLISTS_COLLECTION = 'playlists'
-export const GET_PLAYLIST_QUERY = gql`
-  query getPlaylist ($id: ID!) {
-    getPlaylist(id: $id) {
-      id
-      name
-      slug
-      url
-      imageUrl
-      desc
-      hashtags
-      private
-      duration
-      createdDate
-      lastUpdatedDate
-      user {
-        id
-        username
-        slug
-      }
-      songs {
-        id
-        title
-        slug
-        artist {
-          id
-          name
-          slug
-        }
-        duration
-        defaultImage {
-          url
-        }
-      }
-      comments
-      plays
-      usersPlayed
-      likes
-      shares
-    }
-  }
-`
 
 export default function playlist() {
   const router = useRouter()
@@ -137,30 +96,50 @@ export default function playlist() {
       <div>
         <PlayPlaylist shuffle={ false }/> | <PlayPlaylist shuffle={ true }/> | <button onClick={ () => { setUpdatePlaylistModalIsOpen(true) } }>Update Playlist</button> | <DeletePlaylist playlist={ getPlaylist }/>
       </div>
-        
+
       <Modal isOpen={ updatePlaylistModalIsOpen } onRequestClose={ () => { setUpdatePlaylistModalIsOpen(false) } } style={ modalStyles } contentLabel="update playlist modal">
         <button onClick={ () => { setUpdatePlaylistModalIsOpen(false) } }>close</button>
         <h2>Update Playlist</h2>
         <UpdatePlaylist playlist={ getPlaylist }/>
       </Modal>
 
-      <div>
-        Share
-        { getPlaylist.shares ? `${ getPlaylist.shares } shared this` : `be the first to share` }
-        <SharePlaylist/>
-        <span dir="ltr"><input value={ getPlaylist.url } readOnly/></span>
-      </div>
+      { getPlaylist.private ? (
+          <div>
+            { getPlaylist.shares && `${ getPlaylist.shares } shared this` }
+          </div>
+        )
+        :
+        (
+          <div>
+            Share
+            { getPlaylist.shares ? `${ getPlaylist.shares } shared this` : `be the first to share` }
+            <SharePlaylist/>
+            <span dir="ltr"><input value={ getPlaylist.url } readOnly/></span>
+          </div>
+        )
+      }
 
       <div>
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
       </div>
 
       <div>
-        Data?
-        { getPlaylist.desc }
+        Data:
+        { getPlaylist.desc && (
+          <div dangerouslySetInnerHTML={{ __html: getPlaylist.desc.replace(/#[^\s<]+/g,'') }} />
+        )}
+        {
+          getPlaylist.hashtags && getPlaylist.hashtags.map(hashtag => (
+            <div key={ hashtag }>
+              <Link href="/hashtag/[hashtag]" as={ `/hashtag/${ hashtag }` }><a>#{ hashtag }</a></Link>
+            </div>
+          ))
+        }
         { getPlaylist.usersPlayed ? `${ getPlaylist.usersPlayed } listeners` : null }
         Played: { getPlaylist.plays ? getPlaylist.plays : 0 }
-
+        <br/>
+        private: { getPlaylist.private.toString() }
+        <br/>
         Added by: <Link href="/user/[id]/[slug]" as={ `/user/${ getPlaylist.user.id }/${ getPlaylist.user.slug }` }><a>{ getPlaylist.user.username }</a></Link> on { getPlaylist.createdDate }
       </div>
 
@@ -173,8 +152,10 @@ export default function playlist() {
         )) }
       </div>
 
-      <CreateComment collection={ PLAYLISTS_COLLECTION } id={ getPlaylist.id } />
-      <CommentsList collection={ PLAYLISTS_COLLECTION } id={ getPlaylist.id } total={ getPlaylist.comments }/>
+      { !getPlaylist.private && (
+        <CreateComment collection={ PLAYLISTS_COLLECTION } id={ getPlaylist.id } />
+      )}
+      <CommentsList collection={ PLAYLISTS_COLLECTION } id={ getPlaylist.id } />
 
       <style jsx>{`
         .title, .description {

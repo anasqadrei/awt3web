@@ -1,9 +1,8 @@
 import { useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
-import { validateCommentCollection } from 'lib/validateCommentCollection'
-import { GET_SONG_QUERY, GET_ARTIST_QUERY, GET_BLOGPOST_QUERY } from 'lib/graphql'
-import { SONGS_COLLECTION, ARTISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
+import { validateCommentsCollection, getCommentsCollectionQuery } from 'lib/commentsCollection'
+import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE } from 'components/comment.list.comp'
 import ErrorMessage from 'components/errorMessage'
 
@@ -24,7 +23,7 @@ const CREATE_COMMENT_MUTATION = gql`
 
 export default function Comment(props) {
   // validate collection name
-  if (!validateCommentCollection(props.collection)) {
+  if (!validateCommentsCollection(props.collection)) {
     return <ErrorMessage message='invalid collection name' />
   }
 
@@ -72,18 +71,7 @@ export default function Comment(props) {
       variables: createCommentQueryVariables,
       update: (proxy) => {
         // read cache
-        let query
-        switch (props.collection) {
-          case SONGS_COLLECTION:
-            query = GET_SONG_QUERY
-            break
-          case ARTISTS_COLLECTION:
-            query = GET_ARTIST_QUERY
-            break
-          case BLOGPOSTS_COLLECTION:
-            query = GET_BLOGPOST_QUERY
-            break
-        }
+        const query = getCommentsCollectionQuery(props.collection)
         const data = proxy.readQuery({
           query: query,
           variables: { id: props.id },
@@ -102,6 +90,12 @@ export default function Comment(props) {
             update.getArtist = {
               ...data.getArtist,
               comments: data.getArtist.comments + 1,
+            }
+            break
+          case PLAYLISTS_COLLECTION:
+            update.getPlaylist = {
+              ...data.getPlaylist,
+              comments: data.getPlaylist.comments + 1,
             }
             break
           case BLOGPOSTS_COLLECTION:
