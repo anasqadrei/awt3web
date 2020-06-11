@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
+import { validateUrl } from 'lib/validateUrl'
 import Head from 'components/head'
 import UpdateUser from 'components/user.update.comp'
 import UpdateUserImage from 'components/user.updateImage.comp'
@@ -95,12 +96,7 @@ export default function User() {
   }
 
   // fix url in case it doesn't match the slug
-  const regExp = new RegExp (`^/user/${ router.query.id }/${ getUser.slug }([?].*|[#].*|/)?$`)
-  if (!decodeURIComponent(router.asPath).match(regExp)) {
-    const href = `/user/[id]/[slug]`
-    const as = `/user/${ router.query.id }/${ getUser.slug }`
-    router.replace(href, as)
-  }
+  validateUrl(router, 'user', getUser.id, getUser.slug)
 
   // display user
   return (

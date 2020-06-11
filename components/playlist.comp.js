@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import * as Sentry from '@sentry/node'
+import { validateUrl } from 'lib/validateUrl'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import { PLAYLISTS_COLLECTION } from 'lib/constants'
 import Head from 'components/head'
@@ -75,12 +76,7 @@ export default function playlist() {
   }
 
   // fix url in case it doesn't match the slug
-  const regExp = new RegExp (`^/playlist/${ router.query.id }/${ getPlaylist.slug }([?].*|[#].*|/)?$`)
-  if (!decodeURIComponent(router.asPath).match(regExp)) {
-    const href = `/playlist/[id]/[slug]`
-    const as = `/playlist/${ router.query.id }/${ getPlaylist.slug }`
-    router.replace(href, as)
-  }
+  validateUrl(router, 'playlist', getPlaylist.id, getPlaylist.slug)
 
   // display playlist
   return (
