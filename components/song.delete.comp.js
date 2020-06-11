@@ -20,7 +20,7 @@ export default function DeleteSong(props) {
   const router = useRouter()
 
   // mutation
-  const [deleteSong, { loading, error }] = useMutation(
+  const [deleteSong, { loading, error, data }] = useMutation(
     DELETE_SONG_MUTATION,
     {
       onCompleted: (data) => {
@@ -52,10 +52,15 @@ export default function DeleteSong(props) {
   return (
     <div>
       <div hidden={ !loggedOnUser || loggedOnUser.id != props.song.user.id }>
-        <button onClick={ () => deleteHandler() } disabled={ loading }>
+        <button onClick={ () => deleteHandler() } disabled={ loading || (data && data.deleteSong) }>
           Delete Song
         </button>
         { error && (<ErrorMessage/>) }
+        {
+          (data && data.deleteSong) && (
+            <div>song is being Deleted. Check later(won't show instantly)</div>
+          )
+        }
       </div>
     </div>
   )
