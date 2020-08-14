@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Search from 'components/search.comp'
+import AuthUser from 'components/user.auth.comp'
 
 const Nav = () => (
   <nav>
@@ -28,9 +29,7 @@ const Nav = () => (
     <Link href="/user/saved">
       <a>Saved</a>
     </Link>
-    <Link href="/user/[id]/[slug]" as={ `/user/1/xxx` }>
-      <a>Login</a>
-    </Link>
+    <AuthUser/>
   </nav>
 )
 
