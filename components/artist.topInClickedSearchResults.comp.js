@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ArtistGridItem from 'components/artist.gridItem.comp'
 import ErrorMessage from 'components/errorMessage'
@@ -18,7 +17,7 @@ const LIST_TOP_ARTISTS_QUERY = gql`
   }
 `
 
-export default function TopArtistsInClickedSearchResults() {
+export default () => {
   // set since date
   const since = new Date()
   since.setHours(0, 0, 0, 0)
@@ -39,32 +38,41 @@ export default function TopArtistsInClickedSearchResults() {
     }
   )
 
+  // initial loading
+  if (loading) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listTopArtistsInClickedSearchResult?.length) {
+    return (
+      <div>
+        no artists found (design this)
+      </div>
+    )
   }
 
   // get data
   const { listTopArtistsInClickedSearchResult } = data
 
-  // in case no artists found
-  if (!listTopArtistsInClickedSearchResult || !listTopArtistsInClickedSearchResult.length) {
-    return (<div>no artists found (design this)</div>)
-  }
-
-  // display artists
+  // display data
   return (
     <section>
       Top artists in clicked search results
       { listTopArtistsInClickedSearchResult.map(artist => (
         <ArtistGridItem key={ artist.id } artist={ artist } />
       ))}
+
       <style jsx>{`
         .title, .description {
           text-align: center;

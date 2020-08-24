@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
 
@@ -18,7 +17,7 @@ const LIST_USER_SEARCHES_QUERY = gql`
   }
 `
 
-export default function UserRecentlySearched() {
+export default () => {
   // set query variables
   const queryVariables = {
     userId: loggedOnUser.id,
@@ -35,26 +34,34 @@ export default function UserRecentlySearched() {
     }
   )
 
+  // initial loading
+  if (loading) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listUserSearches?.length) {
+    return (
+      <div>
+        no search terms found (design this)
+      </div>
+    )
   }
 
   // get data
   const { listUserSearches } = data
 
-  // in case no search terms found
-  if (!listUserSearches.length) {
-    return (<div>no search terms found (design this)</div>)
-  }
-
-  // display search terms otherwise
+  // display data
   return (
     <section>
       { listUserSearches.map(term => (

@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import PlaylistItem from 'components/playlist.item.comp'
 import ErrorMessage from 'components/errorMessage'
@@ -18,7 +17,7 @@ const LIST_TOP_PLAYLISTS_QUERY = gql`
   }
 `
 
-export default function TopPlaylistsInClickedSearchResults() {
+export default () => {
   // set since date
   const since = new Date()
   since.setHours(0, 0, 0, 0)
@@ -39,32 +38,41 @@ export default function TopPlaylistsInClickedSearchResults() {
     }
   )
 
+  // initial loading
+  if (loading) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listTopPlaylistsInClickedSearchResult?.length) {
+    return (
+      <div>
+        no playlists found (design this)
+      </div>
+    )
   }
 
   // get data
   const { listTopPlaylistsInClickedSearchResult } = data
 
-  // in case no playlists found
-  if (!listTopPlaylistsInClickedSearchResult || !listTopPlaylistsInClickedSearchResult.length) {
-    return (<div>no playlists found (design this)</div>)
-  }
-
-  // display playlists
+  // display data
   return (
     <section>
       Top playlists in clicked search results
       { listTopPlaylistsInClickedSearchResult.map(playlist => (
         <PlaylistItem key={ playlist.id } playlist={ playlist } />
       ))}
+      
       <style jsx>{`
         .title, .description {
           text-align: center;

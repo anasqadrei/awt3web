@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
 
@@ -11,7 +10,7 @@ const LIST_TOP_SEARCHES_QUERY = gql`
   }
 `
 
-export default function TopSearchTerms() {
+export default () => {
   // set since date
   const since = new Date()
   since.setHours(0, 0, 0, 0)
@@ -32,26 +31,34 @@ export default function TopSearchTerms() {
     }
   )
 
+  // initial loading
+  if (loading) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listTopSearches?.length) {
+    return (
+      <div>
+        no search terms found (design this)
+      </div>
+    )
   }
 
   // get data
   const { listTopSearches } = data
 
-  // in case no search terms found
-  if (!listTopSearches.length) {
-    return (<div>no search terms found (design this)</div>)
-  }
-
-  // display search terms otherwise
+  // display data
   return (
     <section>
       { listTopSearches.map(term => (

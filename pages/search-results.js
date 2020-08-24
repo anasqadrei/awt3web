@@ -1,6 +1,4 @@
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { withApollo } from 'lib/withApollo'
 import Layout from 'components/layout'
 import Head from 'components/head'
 import SearchArtists from 'components/artist.search.comp'
@@ -12,8 +10,14 @@ import TopArtistsInClickedSearchResults from 'components/artist.topInClickedSear
 import TopPlaylistsInClickedSearchResults from 'components/playlist.topInClickedSearchResults.comp'
 import UserRecentlySearched from 'components/search.userRecentlySearched.comp'
 
-export default withApollo()(() => (
+const META = {
+  title: `بحث:`,
+  description: `نتائج البحث`,
+}
+
+export default () => (
   <Layout>
+    <Head title={ `${ META.title } ${ useRouter().query.q }` } description={ META.description }/>
     <div>
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
     </div>
@@ -21,13 +25,13 @@ export default withApollo()(() => (
       Results for <b>{ useRouter().query.q }</b> Search Term
     </div>
     <div>
-      <SearchArtists/>
+      {/* <SearchArtists/> */}
     </div>
     <div>
-      <SearchSongs/>
+      {/* <SearchSongs/> */}
     </div>
     <div>
-      <SearchPlaylists/>
+      {/* <SearchPlaylists/> */}
     </div>
     <div>
       <p>Tranding Searches</p>
@@ -41,4 +45,4 @@ export default withApollo()(() => (
       <UserRecentlySearched/>
     </div>
   </Layout>
-))
+)
