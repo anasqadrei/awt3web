@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
 
@@ -11,7 +10,7 @@ const LIST_PLAYLIST_HASHTAGS_QUERY = gql`
   }
 `
 
-export default function TopHashtagsInPlaylists() {
+export default () => {
   // set query variables
   const queryVariables = {
     page: 1,
@@ -26,26 +25,34 @@ export default function TopHashtagsInPlaylists() {
     }
   )
 
+  // initial loading
+  if (loading) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listPlaylistHashtags?.length) {
+    return (
+      <div>
+        no hashtags found (design this)
+      </div>
+    )
   }
 
   // get data
   const { listPlaylistHashtags } = data
 
-  // in case no hashtags found
-  if (!listPlaylistHashtags.length) {
-    return (<div>no hashtags found (design this)</div>)
-  }
-
-  // display hashtags otherwise
+  // display data
   return (
     <section>
       { listPlaylistHashtags.map(hashtag => (

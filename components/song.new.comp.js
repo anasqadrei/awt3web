@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import SongItem from 'components/song.item.comp'
 import ErrorMessage from 'components/errorMessage'
@@ -26,7 +25,7 @@ const LIST_SONGS_QUERY = gql`
   }
 `
 
-export default function NewSongs() {
+export default () => {
   // set query variables
   const queryVariables = {
     page: 1,
@@ -42,27 +41,41 @@ export default function NewSongs() {
     }
   )
 
+  // initial loading
+  if (loading) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listSongs?.length) {
+    return (
+      <div>
+        no songs found (design this)
+      </div>
+    )
   }
 
   // get data
   const { listSongs } = data
 
-  // display songs
+  // display data
   return (
     <section>
       NewSongs
       { listSongs.map(song => (
         <SongItem key={ song.id } song={ song } />
       ))}
+      
       <style jsx>{`
         .title, .description {
           text-align: center;

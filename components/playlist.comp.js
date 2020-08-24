@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import Modal from 'react-modal'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import Modal from 'react-modal'
 import { validateUrl } from 'lib/validateUrl'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
-import { PLAYLISTS_COLLECTION } from 'lib/constants'
+import { PLAYLISTS_COLLECTION, ROOT_APP_ELEMENT } from 'lib/constants'
+// TODO: does head work here?
 import Head from 'components/head'
 import UpdatePlaylist from 'components/playlist.update.comp'
 import LikePlaylist from 'components/playlist.like.comp'
@@ -19,7 +19,6 @@ import RemoveSongFromPlaylist from 'components/playlist.removeSong.comp'
 import CreateComment from 'components/comment.create.comp'
 import CommentsList from 'components/comment.list.comp'
 import ErrorMessage from 'components/errorMessage'
-import { ROOT_APP_ELEMENT } from 'lib/constants'
 
 // TODO: scrolling overflow?
 // https://github.com/reactjs/react-modal/issues/283
@@ -34,7 +33,7 @@ const modalStyles = {
   }
 }
 
-export default function playlist() {
+export default () => {
   const router = useRouter()
 
   // for accessibility
@@ -56,32 +55,41 @@ export default function playlist() {
     }
   )
 
+  // initial loading
+  if (loading) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
     return <ErrorMessage />
   }
 
-  // initial loading
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.getPlaylist) {
+    return (
+      <div>
+        Playlist doesn't exist (design this)
+      </div>
+    )
   }
 
   // get data
   const { getPlaylist } = data
 
-  // in case playlist not found
-  if (!getPlaylist) {
-    return (<div>Playlist doesn't exist (design this)</div>)
-  }
-
   // fix url in case it doesn't match the slug
   validateUrl(router, 'playlist', getPlaylist.id, getPlaylist.slug)
 
-  // display playlist
+  // display data
   return (
     <section>
       <Head title={ getPlaylist.name } description={ getPlaylist.name } asPath={ decodeURIComponent(router.asPath) } ogImage={ getPlaylist.imageUrl } />
+
       <div>
         <img src={ getPlaylist.imageUrl ? getPlaylist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
         <h1 className="title">{ getPlaylist.name }</h1>
@@ -121,9 +129,7 @@ export default function playlist() {
 
       <div>
         Data:
-        { getPlaylist.desc && (
-          <div dangerouslySetInnerHTML={{ __html: getPlaylist.desc.replace(/#[^\s<]+/g,'') }} />
-        )}
+        { getPlaylist.desc && <div dangerouslySetInnerHTML={{ __html: getPlaylist.desc.replace(/#[^\s<]+/g,'') }}/> }
         {
           getPlaylist.hashtags && getPlaylist.hashtags.map(hashtag => (
             <div key={ hashtag }>
@@ -148,10 +154,8 @@ export default function playlist() {
         )) }
       </div>
 
-      { !getPlaylist.private && (
-        <CreateComment collection={ PLAYLISTS_COLLECTION } id={ getPlaylist.id } />
-      )}
-      <CommentsList collection={ PLAYLISTS_COLLECTION } id={ getPlaylist.id } />
+      { !getPlaylist.private && <CreateComment collection={ PLAYLISTS_COLLECTION } id={ getPlaylist.id }/> }
+      <CommentsList collection={ PLAYLISTS_COLLECTION } id={ getPlaylist.id }/>
 
       <style jsx>{`
         .title, .description {

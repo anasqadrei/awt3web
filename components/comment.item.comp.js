@@ -390,8 +390,8 @@ export default function CommentItem(props) {
         <button hidden={ hideLike } onClick={ () => likeCommentHandler() } disabled={ loadingLike }>
           Like
         </button>
-        { !!(props.comment.likes) &&
-          <CommentLikers comment={ props.comment } />
+        { // TODO:  fix cache update after like/unlike comment. display at CommentLikers comp    !!(props.comment.likes) &&
+          <CommentLikers commentId={ props.comment.id } />
         }
         { errorLike && (<ErrorMessage/>) }
       </div>

@@ -69,16 +69,16 @@ export default function CommentsList(props) {
   let total
   switch (props.collection) {
     case SONGS_COLLECTION:
-      total = dataCollection.getSong.comments
+      total = dataCollection?.getSong?.comments ?? 0
       break
     case ARTISTS_COLLECTION:
-      total = dataCollection.getArtist.comments
+      total = dataCollection?.getArtist?.comments ?? 0
       break
     case PLAYLISTS_COLLECTION:
-      total = dataCollection.getPlaylist.comments
+      total = dataCollection?.getPlaylist?.comments ?? 0
       break
     case BLOGPOSTS_COLLECTION:
-      total = dataCollection.getBlogpost.comments
+      total = dataCollection?.getBlogpost?.comments ?? 0
       break
   }
 

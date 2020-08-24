@@ -15,11 +15,11 @@ export default () => (
     <div>Browse</div>
     <div>
       song hashtags
-      {/* <TopHashtagsInSongs/> */}
+      <TopHashtagsInSongs/>
     </div>
     <div>
       playlist hashtags
-      {/* <TopHashtagsInPlaylists/> */}
+      <TopHashtagsInPlaylists/>
     </div>
     <div>
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>

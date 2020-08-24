@@ -1,5 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
 
@@ -13,10 +12,10 @@ export const LIST_COMMENT_LIKERS_QUERY = gql`
   }
 `
 
-export default function CommentLikers(props) {
+export default (props) => {
   // set query variables
   const listCommentLikersQueryVariables = {
-    commentId: props.comment.id,
+    commentId: props.commentId,
     page: 1,
     pageSize: PAGE_SIZE,
   }
@@ -29,26 +28,38 @@ export default function CommentLikers(props) {
     }
   )
 
+  // initial loading
+  if (loading) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
     return (<ErrorMessage/>)
   }
 
-  // initial loading
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listCommentLikers?.length) {
+    return null
   }
 
   // get data
   const { listCommentLikers } = data
 
+  // display data
   return (
     <div>
-      { props.comment.likes } liked it
+      { listCommentLikers.length } liked it
+
       { listCommentLikers.map(user => (
         <div key={ user.id }>{ user.username }</div>
       ))}
+
       <style jsx>{`
         .title, .description {
           text-align: center;

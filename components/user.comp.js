@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import Modal from 'react-modal'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import Modal from 'react-modal'
 import { validateUrl } from 'lib/validateUrl'
+import { ROOT_APP_ELEMENT } from 'lib/constants'
+// TODO: does head work here?
 import Head from 'components/head'
 import UpdateUser from 'components/user.update.comp'
 import UpdateUserImage from 'components/user.updateImage.comp'
@@ -13,7 +14,6 @@ import UserSongs from 'components/song.user.comp'
 import UserSongImages from 'components/songImage.user.comp'
 import UserLyrics from 'components/lyrics.user.comp'
 import ErrorMessage from 'components/errorMessage'
-import { ROOT_APP_ELEMENT } from 'lib/constants'
 
 // TODO: scrolling overflow?
 // https://github.com/reactjs/react-modal/issues/283
@@ -53,7 +53,7 @@ export const GET_USER_QUERY = gql`
   }
 `
 
-export default function User() {
+export default () => {
   const router = useRouter()
 
   // for accessibility
@@ -76,32 +76,41 @@ export default function User() {
     }
   )
 
+  // initial loading
+  if (loading) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.getUser) {
+    return (
+      <div>
+        User doesn't exist (design this)
+      </div>
+    )
   }
 
   // get data
   const { getUser } = data
 
-  // in case user not found
-  if (!getUser) {
-    return (<div>User doesn't exist (design this)</div>)
-  }
-
   // fix url in case it doesn't match the slug
   validateUrl(router, 'user', getUser.id, getUser.slug)
 
-  // display user
+  // display data
   return (
     <section>
       <Head title={ getUser.username } description={ getUser.username } asPath={ decodeURIComponent(router.asPath) } ogImage={ getUser.imageUrl } />
+
       <p>User Profile</p>
       <div>
         <img src={ getUser.imageUrl ? getUser.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
@@ -115,15 +124,12 @@ export default function User() {
       </div>
 
       <div>
-        emails:
-        { getUser.emails && getUser.emails.map(email => (
-          <p key={ email }>{ email }</p>
-        )) }
+        emails:{ getUser.emails?.map(email => <p key={ email }>{ email }</p>) }
       </div>
-      <p>social media: { getUser.profiles && getUser.profiles.length && getUser.profiles.map(elem => elem.provider).join()  }</p>
+      <p>social media: { getUser.profiles?.map(elem => elem.provider).join() }</p>
       <p>birthDate: { getUser.birthDate }</p>
       <p>Sex: { getUser.sex }</p>
-      <p>country: { getUser.country && getUser.country.nameAR }</p>
+      <p>country: { getUser.country?.nameAR }</p>
       <p>last seen: { getUser.lastSeenDate }</p>
       <p>joined: { getUser.createdDate }</p>
       <p>premium: { getUser.premium || 'No'}</p>

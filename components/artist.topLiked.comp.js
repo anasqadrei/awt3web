@@ -1,8 +1,7 @@
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from 'components/errorMessage'
 import ArtistGridItem from 'components/artist.gridItem.comp'
+import ErrorMessage from 'components/errorMessage'
 
 const PAGE_SIZE = 5
 const LIST_TOP_LIKED_ARTISTS_QUERY = gql`
@@ -18,7 +17,7 @@ const LIST_TOP_LIKED_ARTISTS_QUERY = gql`
   }
 `
 
-export default function TopLikedArtists() {
+export default () => {
   // set since date
   const since = new Date()
   since.setHours(0, 0, 0, 0)
@@ -39,26 +38,34 @@ export default function TopLikedArtists() {
     }
   )
 
+  // initial loading
+  if (loading) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
+  }
+
   // error handling
   if (error) {
     Sentry.captureException(error)
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listTopLikedArtists?.length) {
+    return (
+      <div>
+        no artists found (design this)
+      </div>
+    )
   }
 
   // get data
   const { listTopLikedArtists } = data
 
-  // in case no artists found
-  if (!listTopLikedArtists.length) {
-    return (<div>no artists found (design this)</div>)
-  }
-
-  // display artists otherwise
+  // display data
   return (
     <section>
       { listTopLikedArtists.map(artist => (
