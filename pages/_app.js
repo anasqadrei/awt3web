@@ -1,21 +1,17 @@
-import React from 'react'
-import App from 'next/app'
 import * as Sentry from '@sentry/node'
+import { ApolloProvider } from '@apollo/client'
+import { useApollo } from 'lib/apolloClient'
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 })
 
-class AwtarikaApp extends App {
-  render() {
-    const { Component, pageProps } = this.props
+// TODO: err is a workaround. Check when this closes: https://github.com/zeit/next.js/issues/8592
 
-    // TODO: It's a workaround. Check when this closes: https://github.com/zeit/next.js/issues/8592
-    const { err } = this.props
-    const modifiedPageProps = { ...pageProps, err }
-
-    return <Component {...modifiedPageProps} />
-  }
+export default ({ Component, pageProps, err }) => {
+  return (
+    <ApolloProvider client={ useApollo(pageProps.initialApolloState) }>
+      <Component { ...pageProps } err={ err } />
+    </ApolloProvider>
+  )
 }
-
-export default AwtarikaApp
