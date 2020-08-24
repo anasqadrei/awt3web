@@ -1,5 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
 
@@ -21,7 +20,7 @@ const CONTACT_US_MUTATION = gql`
   }
 `
 
-export default function ContactUs() {
+export default () => {
   // mutation
   const [contactUs, { loading, error, data }] = useMutation(
     CONTACT_US_MUTATION,
@@ -33,7 +32,7 @@ export default function ContactUs() {
   )
 
   // handling submit event
-  const handleSubmit = event => {
+  const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
     const form = event.target
@@ -51,36 +50,23 @@ export default function ContactUs() {
       email: loggedOnUser.emails && loggedOnUser.emails[0],
     }
 
-    // execute contact us
-    contactUs({
-      variables: queryVariables,
-    })
+    // execute mutation
+    contactUs({ variables: queryVariables })
   }
 
-  // show contact us form
+  // display component
   return (
     <form onSubmit={ handleSubmit }>
-      <p>
-        name: { loggedOnUser.username }
-      </p>
-      <p>
-        provider: { `${ loggedOnUser.profiles.provider } ${ loggedOnUser.profiles.providerId }` }
-      </p>
-      {
-        (loggedOnUser.emails && loggedOnUser.emails[0]) && (
-          <p>
-            email: { loggedOnUser.emails[0] }
-          </p>
-        )
-      }
+      <p>name: { loggedOnUser.username }</p>
+      <p>provider: { `${ loggedOnUser.profiles.provider } ${ loggedOnUser.profiles.providerId }` }</p>
+      { loggedOnUser.emails?.[0] && <p>email: { loggedOnUser.emails[0] }</p> }
+
       <textarea name={ FORM_MESSAGE } type="text" row="3" maxLength="500" placeholder="message here" required/>
-      <button type="submit" disabled={ loading || (data && data.contactUs) }>send message</button>
-      { error && (<ErrorMessage/>) }
-      {
-        (data && data.contactUs) && (
-          <div>message sent</div>
-        )
-      }
+      <button type="submit" disabled={ loading || data?.contactUs }>send message</button>
+
+      { error && <ErrorMessage/> }
+      { data?.contactUs && <div>message sent</div> }
+
       <style jsx>{`
         form {
           border-bottom: 1px solid #ececec;

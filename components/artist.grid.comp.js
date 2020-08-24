@@ -72,7 +72,12 @@ export default () => {
 
   // initial loading
   if (loading && !loadingMore) {
-    return (<div><Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ true }/>Loading... (design this)</div>)
+    return (
+      <div>
+        <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ true }/>
+        Loading... (design this)
+      </div>
+    )
   }
 
   // error handling
@@ -83,7 +88,12 @@ export default () => {
 
   // in case no data found
   if (!data?.listArtists?.length) {
-    return (<div><Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ true }/>no artists found (design this)</div>)
+    return (
+      <div>
+        <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ true }/>
+        no artists found (design this)
+      </div>
+    )
   }
 
   // get data
@@ -112,6 +122,7 @@ export default () => {
   return (
     <section>
       <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ false } onClick={ changeSort }/>
+
       { listArtists.map(artist => (
         <ArtistGridItem key={ artist.id } artist={ artist } />
       ))}
