@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from '@apollo/react-hooks'
-import { NetworkStatus } from 'apollo-client'
-import gql from 'graphql-tag'
+import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import SongItem from 'components/song.item.comp'
 import ErrorMessage from 'components/errorMessage'
@@ -34,9 +32,10 @@ const LIST_USER_LIKED_SONGS_QUERY = gql`
   }
 `
 
-export default function UserLikedSongs() {
+export default () => {
   // paging
   const [nextPage, setNextPage] = useState(true)
+  const [currentListLength, setCurrentListLength] = useState(0)
 
   // set query variables
   const queryVariables = {
@@ -47,33 +46,42 @@ export default function UserLikedSongs() {
   }
 
   // excute query
+  //
+  // setting notifyOnNetworkStatusChange to true will make the component rerender when
+  // the "networkStatus" changes, so we are able to know if it is fetching more data.
+  //
+  // onCompleted() decides paging. it compares currentListLength with the newListLength.
+  // if they're equal, then it means no more items which is an indication to stop paging.
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
     LIST_USER_LIKED_SONGS_QUERY,
     {
       variables: queryVariables,
       notifyOnNetworkStatusChange: true,
+      onCompleted: (data) => {
+        // get new length of data (cached + newly fetched) with default = 0
+        const newListLength = data?.listUserLikedSongs?.length ?? 0;
+
+        // if there are no new items in the list then stop paging.
+        if (newListLength == currentListLength) {
+          setNextPage(false)
+        }
+
+        // update currentListLength to be newListLength
+        setCurrentListLength(newListLength)
+      },
     }
   )
 
   // loading more network status. fetchMore: query is currently in flight
   const loadingMore = (networkStatus === NetworkStatus.fetchMore)
 
-  // get and append new fetched songs. also decide on paging
-  const loadMoreSongs = () => {
-    fetchMore({
-      variables: {
-        page: Math.ceil(listUserLikedSongs.length/queryVariables.pageSize)+1
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listUserLikedSongs || (fetchMoreResult.listUserLikedSongs && fetchMoreResult.listUserLikedSongs.length === 0)) {
-          setNextPage(false)
-          return previousResult
-        }
-        return Object.assign({}, previousResult, {
-          listUserLikedSongs: [...previousResult.listUserLikedSongs, ...fetchMoreResult.listUserLikedSongs],
-        })
-      },
-    })
+  // initial loading
+  if (loading && !loadingMore) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
   }
 
   // error handling
@@ -82,20 +90,28 @@ export default function UserLikedSongs() {
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading && !loadingMore) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listUserLikedSongs?.length) {
+    return (
+      <div>
+        no liked songs found (design this)
+      </div>
+    )
   }
 
   // get data
   const { listUserLikedSongs } = data
 
-  // in case no songs found
-  if (!listUserLikedSongs || !listUserLikedSongs.length) {
-    return (<div>no liked songs found (design this)</div>)
+  // function: get (and append at cache) new fetched data
+  const loadMore = () => {
+    fetchMore({
+      variables: {
+        page: Math.ceil(listUserLikedSongs.length / queryVariables.pageSize) + 1
+      },
+    })
   }
 
-  // display songs
+  // display data
   return (
     <section>
       Liked Songs
@@ -104,7 +120,7 @@ export default function UserLikedSongs() {
       ))}
 
       { nextPage ?
-        <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
+        <button onClick={ () => loadMore() } disabled={ loadingMore }>
           { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
         </button>
         :

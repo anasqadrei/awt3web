@@ -1,13 +1,22 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/react-hooks'
-import { NetworkStatus } from 'apollo-client'
-import gql from 'graphql-tag'
+import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import Sort from 'components/sort.comp'
 import SongItem from 'components/song.item.comp'
 import ErrorMessage from 'components/errorMessage'
 
+const SORT_OPTIONS = [
+  { sort: 'likes', label: 'LIKES' },
+  { sort: '-likes', label: '-LIKES' },
+  { sort: 'plays', label: 'PLAYS' },
+  { sort: '-plays', label: '-PLAYS' },
+  { sort: 'createdDate', label: 'CREATEDDATE' },
+  { sort: '-createdDate', label: '-CREATEDDATE' },
+  { sort: 'title', label: 'TITLE' },
+  { sort: '-title', label: '-TITLE' },
+]
 const PAGE_SIZE = 3
 const LIST_USER_SONGS_QUERY = gql`
   query listUserSongs ($userId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {
@@ -29,43 +38,12 @@ const LIST_USER_SONGS_QUERY = gql`
   }
 `
 
-export default function UserSongs(props) {
-  // SortMenu component
-  const SortMenu = (props) => {
-    return (
-      <div>
-        <button onClick={ () => setNewSort('likes') } hidden={ sort != '-likes' } disabled={ props.disableAll }>
-          likes
-        </button>
-        <button onClick={ () => setNewSort('-likes') } hidden={ sort === '-likes' } disabled={ props.disableAll }>
-          -likes
-        </button>
-        <button onClick={ () => setNewSort('plays') } hidden={ sort != '-plays' } disabled={ props.disableAll }>
-          plays
-        </button>
-        <button onClick={ () => setNewSort('-plays') } hidden={ sort === '-plays' } disabled={ props.disableAll }>
-          -plays
-        </button>
-        <button onClick={ () => setNewSort('createdDate') } hidden={ sort != '-createdDate' } disabled={ props.disableAll }>
-          createdDate
-        </button>
-        <button onClick={ () => setNewSort('-createdDate') } hidden={ sort === '-createdDate' } disabled={ props.disableAll }>
-          -createdDate
-        </button>
-        <button onClick={ () => setNewSort('title') } hidden={ sort != '-title' } disabled={ props.disableAll }>
-          title
-        </button>
-        <button onClick={ () => setNewSort('-title') } hidden={ sort === '-title' } disabled={ props.disableAll }>
-          -title
-        </button>
-      </div>
-    )
-  }
-
+export default (props) => {
   const router = useRouter()
 
   // paging
   const [nextPage, setNextPage] = useState(true)
+  const [currentListLength, setCurrentListLength] = useState(0)
 
   // sorting
   const [sort, setSort] = useState('-createdDate')
@@ -73,48 +51,49 @@ export default function UserSongs(props) {
   // set query variables
   const queryVariables = {
     userId: router.query.id,
+    sort: sort,
     page: 1,
     pageSize: PAGE_SIZE,
-    sort: sort,
   }
 
   // excute query
+  //
+  // setting notifyOnNetworkStatusChange to true will make the component rerender when
+  // the "networkStatus" changes, so we are able to know if it is fetching more data.
+  //
+  // onCompleted() decides paging. it compares currentListLength with the newListLength.
+  // if they're equal, then it means no more items which is an indication to stop paging.
   const { loading, error, data, fetchMore, networkStatus, refetch } = useQuery (
     LIST_USER_SONGS_QUERY,
     {
       variables: queryVariables,
       notifyOnNetworkStatusChange: true,
+      onCompleted: (data) => {
+        // get new length of data (cached + newly fetched) with default = 0
+        const newListLength = data?.listUserSongs?.length ?? 0;
+
+        // if there are no new items in the list then stop paging.
+        if (newListLength == currentListLength) {
+          setNextPage(false)
+        }
+
+        // update currentListLength to be newListLength
+        setCurrentListLength(newListLength)
+      },
     }
   )
 
   // loading more network status. fetchMore: query is currently in flight
   const loadingMore = (networkStatus === NetworkStatus.fetchMore)
 
-  // get and append new fetched songs. also decide on paging
-  const loadMoreSongs = () => {
-    fetchMore({
-      variables: {
-        page: Math.ceil(listUserSongs.length/queryVariables.pageSize)+1
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listUserSongs || (fetchMoreResult.listUserSongs && fetchMoreResult.listUserSongs.length === 0)) {
-          setNextPage(false)
-          return previousResult
-        }
-        return Object.assign({}, previousResult, {
-          listUserSongs: [...previousResult.listUserSongs, ...fetchMoreResult.listUserSongs],
-        })
-      },
-    })
-  }
-
-  // set new sort and refetch data
-  const setNewSort = (newSort) => {
-    setNextPage(true)
-    setSort(newSort)
-    refetch({
-      sort: newSort,
-    })
+  // initial loading
+  if (loading && !loadingMore) {
+    return (
+      <div>
+        { !props.snippet && <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ true }/> }
+        Loading... (design this)
+      </div>
+    )
   }
 
   // error handling
@@ -123,12 +102,12 @@ export default function UserSongs(props) {
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading && !loadingMore) {
+  // in case no data found
+  if (!data?.listUserSongs?.length) {
     return (
       <div>
-        { !props.snippet && (<SortMenu disableAll={ true }/>)}
-        Loading... (design this)
+        { !props.snippet && <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ true }/> }
+        no songs found (design this)
       </div>
     )
   }
@@ -136,20 +115,29 @@ export default function UserSongs(props) {
   // get data
   const { listUserSongs } = data
 
-  // in case no songs found
-  if (!listUserSongs.length) {
-    return (
-      <div>
-        { !props.snippet && (<SortMenu disableAll={ false }/>)}
-        no songs found (design this)
-      </div>
-    )
+  // function: change sort option
+  const changeSort = (newSort) => {
+    // reset paging
+    setNextPage(true)
+    setCurrentListLength(0)
+    // set new sort and refetch data
+    setSort(newSort)
+    refetch({ sort: newSort })
   }
 
-  // display songs
+  // function: get (and append at cache) new fetched data
+  const loadMore = () => {
+    fetchMore({
+      variables: {
+        page: Math.ceil(listUserSongs.length / queryVariables.pageSize) + 1
+      },
+    })
+  }
+
+  // display data
   return (
     <section>
-      { !props.snippet && (<SortMenu disableAll={ false }/>)}
+      { !props.snippet && <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ false } onClick={ changeSort }/> }
 
       { listUserSongs.map(song => (
         <SongItem key={ song.id } song={ song } />
@@ -157,7 +145,7 @@ export default function UserSongs(props) {
 
       { !props.snippet && (
           nextPage ?
-          <button onClick={ () => loadMoreSongs() } disabled={ loadingMore }>
+          <button onClick={ () => loadMore() } disabled={ loadingMore }>
             { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
           </button>
           :

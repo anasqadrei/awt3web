@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from '@apollo/react-hooks'
-import { NetworkStatus } from 'apollo-client'
-import gql from 'graphql-tag'
+import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { validateCommentsCollection, getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
@@ -46,14 +44,15 @@ export const LIST_COMMENTS_QUERY = gql`
   }
 `
 
-export default function CommentsList(props) {
+export default (props) => {
   // validate collection name
   if (!validateCommentsCollection(props.collection)) {
-    return <ErrorMessage message='invalid collection name' />
+    return <ErrorMessage message='invalid collection name'/>
   }
 
   // paging
   const [nextPage, setNextPage] = useState(true)
+  const [currentListLength, setCurrentListLength] = useState(0)
 
   // this is to get number of comments
   // the query will most likey use cache
@@ -93,36 +92,42 @@ export default function CommentsList(props) {
   }
 
   // excute query
+  //
   // setting notifyOnNetworkStatusChange to true will make the component rerender when
-  // the "networkStatus" changes, so we are able to know if it is fetching
-  // more data
+  // the "networkStatus" changes, so we are able to know if it is fetching more data.
+  //
+  // onCompleted() decides paging. it compares currentListLength with the newListLength.
+  // if they're equal, then it means no more items which is an indication to stop paging.
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
     LIST_COMMENTS_QUERY,
     {
       variables: listCommentsQueryVariables,
       notifyOnNetworkStatusChange: true,
+      onCompleted: (data) => {
+        // get new length of data (cached + newly fetched) with default = 0
+        const newListLength = data?.listComments?.length ?? 0;
+
+        // if there are no new items in the list then stop paging.
+        if (newListLength == currentListLength) {
+          setNextPage(false)
+        }
+
+        // update currentListLength to be newListLength
+        setCurrentListLength(newListLength)
+      },
     }
   )
 
   // loading more network status. fetchMore: query is currently in flight
   const loadingMore = (networkStatus === NetworkStatus.fetchMore)
 
-  // get and append new fetched comments. also decide on paging
-  const loadMoreComments = () => {
-    fetchMore({
-      variables: {
-        page: Math.ceil(listComments.length/listCommentsQueryVariables.pageSize)+1
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listComments || (fetchMoreResult.listComments && fetchMoreResult.listComments.length === 0)) {
-          setNextPage(false)
-          return previousResult
-        }
-        return Object.assign({}, previousResult, {
-          listComments: [...previousResult.listComments, ...fetchMoreResult.listComments],
-        })
-      },
-    })
+  // initial loading
+  if (loading && !loadingMore) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
   }
 
   // error handling
@@ -131,20 +136,28 @@ export default function CommentsList(props) {
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading && !loadingMore) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listComments?.length) {
+    return (
+      <div>
+        no comments found (design this)
+      </div>
+    )
   }
 
   // get data
   const { listComments } = data
 
-  // in case no comments found
-  if (!listComments.length) {
-    return (<div>no comments found (design this)</div>)
+  // function: get (and append at cache) new fetched data
+  const loadMore = () => {
+    fetchMore({
+      variables: {
+        page: Math.ceil(listComments.length / listCommentsQueryVariables.pageSize) + 1
+      },
+    })
   }
 
-  // display comments otherwise
+  // display data
   return (
     <section>
       { total && `${ total } commented` }
@@ -153,14 +166,12 @@ export default function CommentsList(props) {
         <ParentComment key={ comment.id } comment={ comment } />
       ))}
 
-      { !!(total) && (
-          nextPage ?
-          <button onClick={ () => loadMoreComments() } disabled={ loadingMore }>
-            { loadingMore ? 'Loading... جاري عرض المزيد من التعليقات ' : 'Show More Comments المزيد' }
-          </button>
-          :
-          <p>all comments has been shown تم عرض جميع التعليقات</p>
-        )
+      { nextPage ?
+        <button onClick={ () => loadMore() } disabled={ loadingMore }>
+          { loadingMore ? 'Loading... جاري عرض المزيد من التعليقات ' : 'Show More Comments المزيد' }
+        </button>
+        :
+        <p>all comments has been shown تم عرض جميع التعليقات</p>
       }
 
       <style jsx>{`

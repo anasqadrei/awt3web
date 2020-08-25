@@ -15,24 +15,22 @@ const META = {
   description: `نتائج البحث`,
 }
 
+// TODO: title useRouter().query.q shows as undefined in Head. fix it
+
 export default () => (
   <Layout>
-    <Head title={ `${ META.title } ${ useRouter().query.q }` } description={ META.description }/>
+    <Head title={ `${ META.title } ${ useRouter().query.q || `` }` } description={ META.description }/>
     <div>
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
     </div>
-    <div>
-      Results for <b>{ useRouter().query.q }</b> Search Term
-    </div>
-    <div>
-      {/* <SearchArtists/> */}
-    </div>
-    <div>
-      {/* <SearchSongs/> */}
-    </div>
-    <div>
-      {/* <SearchPlaylists/> */}
-    </div>
+    <p>Results for <b>{ useRouter().query.q }</b> Search Term</p>
+    { useRouter().query.q &&
+      <div>
+        <SearchArtists/>
+        <SearchSongs/>
+        <SearchPlaylists/>
+      </div>
+    }
     <div>
       <p>Tranding Searches</p>
       <TopSearchTerms/>

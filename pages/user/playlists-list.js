@@ -1,10 +1,9 @@
-import { withApollo } from 'lib/withApollo'
 import Link from 'next/link'
 import Layout from 'components/layout'
 import LibraryNav from 'components/libraryNav'
 import Playlists from 'components/playlist.user.comp'
 
-export default withApollo()(() => (
+export default () => (
   <Layout>
     <LibraryNav/>
     <div>
@@ -23,4 +22,4 @@ export default withApollo()(() => (
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
     </div>
   </Layout>
-))
+)

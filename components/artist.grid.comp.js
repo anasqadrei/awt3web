@@ -53,7 +53,7 @@ export default () => {
       variables: queryVariables,
       notifyOnNetworkStatusChange: true,
       onCompleted: (data) => {
-        // get newListLength with default = 0
+        // get new length of data (cached + newly fetched) with default = 0
         const newListLength = data?.listArtists?.length ?? 0;
 
         // if there are no new items in the list then stop paging.

@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from '@apollo/react-hooks'
-import { NetworkStatus } from 'apollo-client'
-import gql from 'graphql-tag'
+import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ArtistRowItem from 'components/artist.rowItem.comp'
 import ErrorMessage from 'components/errorMessage'
@@ -26,9 +24,10 @@ const LIST_USER_PLAYED_ARTISTS_QUERY = gql`
   }
 `
 
-export default function UserMostPlayedArtists() {
+export default () => {
   // paging
   const [nextPage, setNextPage] = useState(true)
+  const [currentListLength, setCurrentListLength] = useState(0)
 
   // set query variables
   const queryVariables = {
@@ -39,33 +38,42 @@ export default function UserMostPlayedArtists() {
   }
 
   // excute query
+  //
+  // setting notifyOnNetworkStatusChange to true will make the component rerender when
+  // the "networkStatus" changes, so we are able to know if it is fetching more data.
+  //
+  // onCompleted() decides paging. it compares currentListLength with the newListLength.
+  // if they're equal, then it means no more items which is an indication to stop paging.
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
     LIST_USER_PLAYED_ARTISTS_QUERY,
     {
       variables: queryVariables,
       notifyOnNetworkStatusChange: true,
+      onCompleted: (data) => {
+        // get new length of data (cached + newly fetched) with default = 0
+        const newListLength = data?.listUserPlayedArtists?.length ?? 0;
+
+        // if there are no new items in the list then stop paging.
+        if (newListLength == currentListLength) {
+          setNextPage(false)
+        }
+
+        // update currentListLength to be newListLength
+        setCurrentListLength(newListLength)
+      },
     }
   )
 
   // loading more network status. fetchMore: query is currently in flight
   const loadingMore = (networkStatus === NetworkStatus.fetchMore)
 
-  // get and append new fetched artists. also decide on paging
-  const loadMoreArtists = () => {
-    fetchMore({
-      variables: {
-        page: Math.ceil(listUserPlayedArtists.length/queryVariables.pageSize)+1
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listUserPlayedArtists || (fetchMoreResult.listUserPlayedArtists && fetchMoreResult.listUserPlayedArtists.length === 0)) {
-          setNextPage(false)
-          return previousResult
-        }
-        return Object.assign({}, previousResult, {
-          listUserPlayedArtists: [...previousResult.listUserPlayedArtists, ...fetchMoreResult.listUserPlayedArtists],
-        })
-      },
-    })
+  // initial loading
+  if (loading && !loadingMore) {
+    return (
+      <div>
+        Loading... (design this)
+      </div>
+    )
   }
 
   // error handling
@@ -74,20 +82,28 @@ export default function UserMostPlayedArtists() {
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading && !loadingMore) {
-    return (<div>Loading... (design this)</div>)
+  // in case no data found
+  if (!data?.listUserPlayedArtists?.length) {
+    return (
+      <div>
+        no most played Artists found (design this)
+      </div>
+    )
   }
 
   // get data
   const { listUserPlayedArtists } = data
 
-  // in case no artists found
-  if (!listUserPlayedArtists || !listUserPlayedArtists.length) {
-    return (<div>no most played Artists found (design this)</div>)
+  // function: get (and append at cache) new fetched data
+  const loadMore = () => {
+    fetchMore({
+      variables: {
+        page: Math.ceil(listUserPlayedArtists.length / queryVariables.pageSize) + 1
+      },
+    })
   }
 
-  // display artists
+  // display data
   return (
     <section>
       My Most Played Artists
@@ -96,7 +112,7 @@ export default function UserMostPlayedArtists() {
       ))}
 
       { nextPage ?
-        <button onClick={ () => loadMoreArtists() } disabled={ loadingMore }>
+        <button onClick={ () => loadMore() } disabled={ loadingMore }>
           { loadingMore ? 'Loading...' : 'Show More Artists المزيد' }
         </button>
         :

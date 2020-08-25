@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/react-hooks'
-import { NetworkStatus } from 'apollo-client'
-import gql from 'graphql-tag'
+import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
 
@@ -27,11 +25,12 @@ const LIST_USER_SONG_IMAGES_QUERY = gql`
   }
 `
 
-export default function UserSongImages(props) {
+export default (props) => {
   const router = useRouter()
 
   // paging
   const [nextPage, setNextPage] = useState(true)
+  const [currentListLength, setCurrentListLength] = useState(0)
 
   // set query variables
   const queryVariables = {
@@ -41,40 +40,34 @@ export default function UserSongImages(props) {
   }
 
   // excute query
+  //
+  // setting notifyOnNetworkStatusChange to true will make the component rerender when
+  // the "networkStatus" changes, so we are able to know if it is fetching more data.
+  //
+  // onCompleted() decides paging. it compares currentListLength with the newListLength.
+  // if they're equal, then it means no more items which is an indication to stop paging.
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
     LIST_USER_SONG_IMAGES_QUERY,
     {
       variables: queryVariables,
       notifyOnNetworkStatusChange: true,
+      onCompleted: (data) => {
+        // get new length of data (cached + newly fetched) with default = 0
+        const newListLength = data?.listUserSongImages?.length ?? 0;
+
+        // if there are no new items in the list then stop paging.
+        if (newListLength == currentListLength) {
+          setNextPage(false)
+        }
+
+        // update currentListLength to be newListLength
+        setCurrentListLength(newListLength)
+      },
     }
   )
 
   // loading more network status. fetchMore: query is currently in flight
   const loadingMore = (networkStatus === NetworkStatus.fetchMore)
-
-  // get and append new fetched song images. also decide on paging
-  const loadMoreSongImages = () => {
-    fetchMore({
-      variables: {
-        page: Math.ceil(listUserSongImages.length/queryVariables.pageSize)+1
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listUserSongImages || (fetchMoreResult.listUserSongImages && fetchMoreResult.listUserSongImages.length === 0)) {
-          setNextPage(false)
-          return previousResult
-        }
-        return Object.assign({}, previousResult, {
-          listUserSongImages: [...previousResult.listUserSongImages, ...fetchMoreResult.listUserSongImages],
-        })
-      },
-    })
-  }
-
-  // error handling
-  if (error) {
-    Sentry.captureException(error)
-    return <ErrorMessage/>
-  }
 
   // initial loading
   if (loading && !loadingMore) {
@@ -85,11 +78,14 @@ export default function UserSongImages(props) {
     )
   }
 
-  // get data
-  const { listUserSongImages } = data
+  // error handling
+  if (error) {
+    Sentry.captureException(error)
+    return <ErrorMessage/>
+  }
 
-  // in case no song images found
-  if (!listUserSongImages.length) {
+  // in case no data found
+  if (!data?.listUserSongImages?.length) {
     return (
       <div>
         no song images found (design this)
@@ -97,10 +93,21 @@ export default function UserSongImages(props) {
     )
   }
 
-  // display song images
+  // get data
+  const { listUserSongImages } = data
+
+  // function: get (and append at cache) new fetched data
+  const loadMore = () => {
+    fetchMore({
+      variables: {
+        page: Math.ceil(listUserSongImages.length / queryVariables.pageSize) + 1
+      },
+    })
+  }
+
+  // display data
   return (
     <section>
-
       { listUserSongImages.map(songImage => (
         <div key={ songImage.id }>
           <img src={ songImage.url }/>
@@ -116,7 +123,7 @@ export default function UserSongImages(props) {
 
       { !props.snippet && (
           nextPage ?
-          <button onClick={ () => loadMoreSongImages() } disabled={ loadingMore }>
+          <button onClick={ () => loadMore() } disabled={ loadingMore }>
             { loadingMore ? 'Loading...' : 'Show More Song Images المزيد' }
           </button>
           :

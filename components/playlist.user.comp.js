@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/react-hooks'
-import { NetworkStatus } from 'apollo-client'
-import gql from 'graphql-tag'
+import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import Sort from 'components/sort.comp'
 import PlaylistItem from 'components/playlist.item.comp'
 import ErrorMessage from 'components/errorMessage'
 
@@ -14,7 +13,18 @@ const loggedOnUser = {
   username: "Admin",
 }
 
+// TODO: who's using this?
 export const DEFAULT_SORT = '-createdDate'
+const SORT_OPTIONS = [
+  { sort: 'likes', label: 'LIKES' },
+  { sort: '-likes', label: '-LIKES' },
+  { sort: 'plays', label: 'PLAYS' },
+  { sort: '-plays', label: '-PLAYS' },
+  { sort: 'createdDate', label: 'CREATEDDATE' },
+  { sort: '-createdDate', label: '-CREATEDDATE' },
+  { sort: 'name', label: 'NAME' },
+  { sort: '-name', label: '-NAME' },
+]
 export const PAGE_SIZE = 3
 export const LIST_USER_PLAYLISTS_QUERY = gql`
   query listUserPlaylists ($userId: ID!, $private: Boolean!, $sort: String!, $page: Int!, $pageSize: Int!) {
@@ -29,91 +39,61 @@ export const LIST_USER_PLAYLISTS_QUERY = gql`
   }
 `
 
-export default function UserPlaylists(props) {
-  // SortMenu component
-  const SortMenu = (props) => {
-    return (
-      <div>
-        <button onClick={ () => setNewSort('likes') } hidden={ sort != '-likes' } disabled={ props.disableAll }>
-          likes
-        </button>
-        <button onClick={ () => setNewSort('-likes') } hidden={ sort === '-likes' } disabled={ props.disableAll }>
-          -likes
-        </button>
-        <button onClick={ () => setNewSort('plays') } hidden={ sort != '-plays' } disabled={ props.disableAll }>
-          plays
-        </button>
-        <button onClick={ () => setNewSort('-plays') } hidden={ sort === '-plays' } disabled={ props.disableAll }>
-          -plays
-        </button>
-        <button onClick={ () => setNewSort('createdDate') } hidden={ sort != '-createdDate' } disabled={ props.disableAll }>
-          createdDate
-        </button>
-        <button onClick={ () => setNewSort('-createdDate') } hidden={ sort === '-createdDate' } disabled={ props.disableAll }>
-          -createdDate
-        </button>
-        <button onClick={ () => setNewSort('name') } hidden={ sort != '-name' } disabled={ props.disableAll }>
-          name
-        </button>
-        <button onClick={ () => setNewSort('-name') } hidden={ sort === '-name' } disabled={ props.disableAll }>
-          -name
-        </button>
-      </div>
-    )
-  }
-
+export default (props) => {
   // paging
   const [nextPage, setNextPage] = useState(true)
+  const [currentListLength, setCurrentListLength] = useState(0)
 
   // sorting
-  const [sort, setSort] = useState(DEFAULT_SORT)
+  const [sort, setSort] = useState('-createdDate')
 
   // set query variables
   const queryVariables = {
     userId: loggedOnUser.id,
     private: props.private,
+    sort: sort,
     page: 1,
     pageSize: PAGE_SIZE,
-    sort: sort,
   }
 
   // excute query
+  //
+  // setting notifyOnNetworkStatusChange to true will make the component rerender when
+  // the "networkStatus" changes, so we are able to know if it is fetching more data.
+  //
+  // onCompleted() decides paging. it compares currentListLength with the newListLength.
+  // if they're equal, then it means no more items which is an indication to stop paging.
   const { loading, error, data, fetchMore, networkStatus, refetch } = useQuery (
     LIST_USER_PLAYLISTS_QUERY,
     {
       variables: queryVariables,
       notifyOnNetworkStatusChange: true,
+      onCompleted: (data) => {
+        // get new length of data (cached + newly fetched) with default = 0
+        const newListLength = data?.listUserPlaylists?.length ?? 0;
+
+        // if there are no new items in the list then stop paging.
+        if (newListLength == currentListLength) {
+          setNextPage(false)
+        }
+
+        // update currentListLength to be newListLength
+        setCurrentListLength(newListLength)
+      },
     }
   )
 
   // loading more network status. fetchMore: query is currently in flight
   const loadingMore = (networkStatus === NetworkStatus.fetchMore)
 
-  // get and append new fetched playlists. also decide on paging
-  const loadMorePlaylists = () => {
-    fetchMore({
-      variables: {
-        page: Math.ceil(listUserPlaylists.length/queryVariables.pageSize)+1
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listUserPlaylists || (fetchMoreResult.listUserPlaylists && fetchMoreResult.listUserPlaylists.length === 0)) {
-          setNextPage(false)
-          return previousResult
-        }
-        return Object.assign({}, previousResult, {
-          listUserPlaylists: [...previousResult.listUserPlaylists, ...fetchMoreResult.listUserPlaylists],
-        })
-      },
-    })
-  }
-
-  // set new sort and refetch data
-  const setNewSort = (newSort) => {
-    setNextPage(true)
-    setSort(newSort)
-    refetch({
-      sort: newSort,
-    })
+  // initial loading
+  if (loading && !loadingMore) {
+    return (
+      <div>
+        { !props.snippet && <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ true }/> }
+        Loading... (design this)
+      </div>
+    )
   }
 
   // error handling
@@ -122,12 +102,12 @@ export default function UserPlaylists(props) {
     return <ErrorMessage/>
   }
 
-  // initial loading
-  if (loading && !loadingMore) {
+  // in case no data found
+  if (!data?.listUserPlaylists?.length) {
     return (
       <div>
-        { !props.snippet && (<SortMenu disableAll={ true }/>)}
-        Loading... (design this)
+        { !props.snippet && <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ true }/> }
+        no playlists found (design this)
       </div>
     )
   }
@@ -135,20 +115,29 @@ export default function UserPlaylists(props) {
   // get data
   const { listUserPlaylists } = data
 
-  // in case no playlists found
-  if (!listUserPlaylists.length) {
-    return (
-      <div>
-        { !props.snippet && (<SortMenu disableAll={ false }/>)}
-        no playlists found (design this)
-      </div>
-    )
+  // function: change sort option
+  const changeSort = (newSort) => {
+    // reset paging
+    setNextPage(true)
+    setCurrentListLength(0)
+    // set new sort and refetch data
+    setSort(newSort)
+    refetch({ sort: newSort })
   }
 
-  // display playlists
+  // function: get (and append at cache) new fetched data
+  const loadMore = () => {
+    fetchMore({
+      variables: {
+        page: Math.ceil(listUserPlaylists.length / queryVariables.pageSize) + 1
+      },
+    })
+  }
+
+  // display data
   return (
     <section>
-      { !props.snippet && (<SortMenu disableAll={ false }/>)}
+      { !props.snippet && <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ false } onClick={ changeSort }/> }
 
       { listUserPlaylists.map(playlist => (
         <PlaylistItem key={ playlist.id } playlist={ playlist } />
@@ -156,7 +145,7 @@ export default function UserPlaylists(props) {
 
       { !props.snippet && (
           nextPage ?
-          <button onClick={ () => loadMorePlaylists() } disabled={ loadingMore }>
+          <button onClick={ () => loadMore() } disabled={ loadingMore }>
             { loadingMore ? 'Loading...' : 'Show More Playlists المزيد' }
           </button>
           :

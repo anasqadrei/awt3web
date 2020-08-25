@@ -115,7 +115,7 @@ export default function AddSongToListedPlaylist(props) {
   const loadMorePlaylists = () => {
     fetchMore({
       variables: {
-        page: Math.ceil(listUserPlaylists.length/listPlaylistsQueryVariables.pageSize)+1
+        page: Math.ceil(listUserPlaylists.length/listPlaylistsQueryVariables.pageSize) + 1
       },
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult || !fetchMoreResult.listUserPlaylists || (fetchMoreResult.listUserPlaylists && fetchMoreResult.listUserPlaylists.length === 0)) {

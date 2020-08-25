@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/react-hooks'
-import { NetworkStatus } from 'apollo-client'
-import gql from 'graphql-tag'
+import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
 
@@ -27,11 +25,12 @@ const LIST_USER_LYRICS_QUERY = gql`
   }
 `
 
-export default function UserLyrics(props) {
+export default (props) => {
   const router = useRouter()
 
   // paging
   const [nextPage, setNextPage] = useState(true)
+  const [currentListLength, setCurrentListLength] = useState(0)
 
   // set query variables
   const queryVariables = {
@@ -41,40 +40,34 @@ export default function UserLyrics(props) {
   }
 
   // excute query
+  //
+  // setting notifyOnNetworkStatusChange to true will make the component rerender when
+  // the "networkStatus" changes, so we are able to know if it is fetching more data.
+  //
+  // onCompleted() decides paging. it compares currentListLength with the newListLength.
+  // if they're equal, then it means no more items which is an indication to stop paging.
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
     LIST_USER_LYRICS_QUERY,
     {
       variables: queryVariables,
       notifyOnNetworkStatusChange: true,
+      onCompleted: (data) => {
+        // get new length of data (cached + newly fetched) with default = 0
+        const newListLength = data?.listUserLyrics?.length ?? 0;
+
+        // if there are no new items in the list then stop paging.
+        if (newListLength == currentListLength) {
+          setNextPage(false)
+        }
+
+        // update currentListLength to be newListLength
+        setCurrentListLength(newListLength)
+      },
     }
   )
 
   // loading more network status. fetchMore: query is currently in flight
   const loadingMore = (networkStatus === NetworkStatus.fetchMore)
-
-  // get and append new fetched lyrics. also decide on paging
-  const loadMoreLyrics = () => {
-    fetchMore({
-      variables: {
-        page: Math.ceil(listUserLyrics.length/queryVariables.pageSize)+1
-      },
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult || !fetchMoreResult.listUserLyrics || (fetchMoreResult.listUserLyrics && fetchMoreResult.listUserLyrics.length === 0)) {
-          setNextPage(false)
-          return previousResult
-        }
-        return Object.assign({}, previousResult, {
-          listUserLyrics: [...previousResult.listUserLyrics, ...fetchMoreResult.listUserLyrics],
-        })
-      },
-    })
-  }
-
-  // error handling
-  if (error) {
-    Sentry.captureException(error)
-    return <ErrorMessage/>
-  }
 
   // initial loading
   if (loading && !loadingMore) {
@@ -85,11 +78,14 @@ export default function UserLyrics(props) {
     )
   }
 
-  // get data
-  const { listUserLyrics } = data
+  // error handling
+  if (error) {
+    Sentry.captureException(error)
+    return <ErrorMessage/>
+  }
 
-  // in case no lyrics found
-  if (!listUserLyrics.length) {
+  // in case no data found
+  if (!data?.listUserLyrics?.length) {
     return (
       <div>
         no Lyrics found (design this)
@@ -97,10 +93,21 @@ export default function UserLyrics(props) {
     )
   }
 
-  // display lyrics
+  // get data
+  const { listUserLyrics } = data
+
+  // function: get (and append at cache) new fetched data
+  const loadMore = () => {
+    fetchMore({
+      variables: {
+        page: Math.ceil(listUserLyrics.length / queryVariables.pageSize) + 1
+      },
+    })
+  }
+
+  // display data
   return (
     <section>
-
       { listUserLyrics.map(lyrics => (
         <div key={ lyrics.id }>
           <div dangerouslySetInnerHTML={{ __html: lyrics.content }} />
@@ -116,7 +123,7 @@ export default function UserLyrics(props) {
 
       { !props.snippet && (
           nextPage ?
-          <button onClick={ () => loadMoreLyrics() } disabled={ loadingMore }>
+          <button onClick={ () => loadMore() } disabled={ loadingMore }>
             { loadingMore ? 'Loading...' : 'Show More Lyrics المزيد' }
           </button>
           :

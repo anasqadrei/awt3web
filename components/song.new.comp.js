@@ -4,7 +4,7 @@ import SongItem from 'components/song.item.comp'
 import ErrorMessage from 'components/errorMessage'
 
 const SORT = '-createdDate'
-const PAGE_SIZE = 3
+const PAGE_SIZE = 5
 const LIST_SONGS_QUERY = gql`
   query listSongs ($sort: String!, $page: Int!, $pageSize: Int!) {
     listSongs(sort: $sort, page: $page, pageSize: $pageSize) {
@@ -75,7 +75,7 @@ export default () => {
       { listSongs.map(song => (
         <SongItem key={ song.id } song={ song } />
       ))}
-      
+
       <style jsx>{`
         .title, .description {
           text-align: center;
