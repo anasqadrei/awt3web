@@ -1,5 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
@@ -34,10 +33,28 @@ const CREATE_REPLY_MUTATION = gql`
     }
   }
 `
+const COMMENT_CHILDREN_FRAGMENT = gql`fragment commentChildren on Comment {
+  children {
+    id
+    reference {
+      collection
+      id
+    }
+    text
+    createdDate
+    likes
+    user {
+      id
+      username
+      slug
+      imageUrl
+    }
+  }
+}`
 
-export default function ParentComment(props) {
-  // mutation
-  const [createComment, { loading: loadingCreate, error: errorCreate }] = useMutation(
+export default (props) => {
+  // mutation tuple
+  const [createComment, { loading, error }] = useMutation(
     CREATE_REPLY_MUTATION,
     {
       onError: (error) => {
@@ -46,8 +63,8 @@ export default function ParentComment(props) {
     }
   )
 
-  // handling submit event
-  const handleSubmit = event => {
+  // function: handle onSubmit event. get data from form and execute mutation
+  const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
     const form = event.target
@@ -56,7 +73,7 @@ export default function ParentComment(props) {
     form.reset()
 
     // set query variables
-    const createReplyQueryVariables = {
+    const varsCreateReply = {
       text: text,
       reference: {
         collection: props.comment.reference.collection,
@@ -65,7 +82,7 @@ export default function ParentComment(props) {
       parentId: props.comment.id,
       userId: loggedOnUser.id,
     }
-    const listCommentsQueryVariables = {
+    const varsListComments = {
       reference: {
         collection: props.comment.reference.collection,
         id: props.comment.reference.id,
@@ -74,93 +91,94 @@ export default function ParentComment(props) {
       pageSize: PAGE_SIZE,
     }
 
-    // execute createComment and update the replies(children) cache
+    // execute mutation and update the cache
+    // add the newly created reply
+    // update the number of comments
     createComment({
-      variables: createReplyQueryVariables,
-      update: (proxy, { data: { createComment } }) => {
-        // add the newly created reply to the cache
+      variables: varsCreateReply,
+      update: (cache, { data: { createComment } }) => {
+        // add the newly created reply
         {
-          const data = proxy.readQuery({
-            query: LIST_COMMENTS_QUERY,
-            variables: listCommentsQueryVariables,
+          // read from cache
+          const dataRead = cache.readFragment({
+            id: cache.identify(props.comment),
+            fragment: COMMENT_CHILDREN_FRAGMENT,
           })
 
-          // find the comment that the reply belongs to and add it
-          const parentIndex = data.listComments.findIndex(elem => elem.id === props.comment.id)
-          data.listComments[parentIndex].children = [...data.listComments[parentIndex].children || [], createComment]
+          // deep clone since dataRead is read only
+          let dataWrite = JSON.parse(JSON.stringify(dataRead))
 
-          // update cache
-          proxy.writeQuery({
-            query: LIST_COMMENTS_QUERY,
-            variables: listCommentsQueryVariables,
-            data: data,
+          // add the newly created reply
+          dataWrite.children = [...dataWrite.children || [], createComment]
+
+          // write to cache
+          cache.writeFragment({
+            id: cache.identify(props.comment),
+            fragment: COMMENT_CHILDREN_FRAGMENT,
+            data: dataWrite,
           })
         }
-        // update the number of comments in the cache
+
+        // update the number of comments
         {
-          // read cache
+          // read from cache
           const query = getCommentsCollectionQuery(props.comment.reference.collection)
-          const data = proxy.readQuery({
+          const dataRead = cache.readQuery({
             query: query,
             variables: { id: props.comment.reference.id },
           })
 
-          // update the number of comments in the cache
-          let update = { ...data }
+          // deep clone since dataRead is read only
+          let dataWrite = JSON.parse(JSON.stringify(dataRead))
+
+          // update the number of comments
           switch (props.comment.reference.collection) {
             case SONGS_COLLECTION:
-              update.getSong = {
-                ...data.getSong,
-                comments: data.getSong.comments + 1,
-              }
+              dataWrite.getSong.comments = dataWrite.getSong?.comments + 1 || 1
               break
             case ARTISTS_COLLECTION:
-              update.getArtist = {
-                ...data.getArtist,
-                comments: data.getArtist.comments + 1,
-              }
+              dataWrite.getArtist.comments = dataWrite.getArtist?.comments + 1 || 1
               break
             case PLAYLISTS_COLLECTION:
-              update.getPlaylist = {
-                ...data.getPlaylist,
-                comments: data.getPlaylist.comments + 1,
-              }
+              dataWrite.getPlaylist.comments = dataWrite.getPlaylist?.comments + 1 || 1
               break
             case BLOGPOSTS_COLLECTION:
-              update.getBlogpost = {
-                ...data.getBlogpost,
-                comments: data.getBlogpost.comments + 1,
-              }
+              dataWrite.getBlogpost.comments = dataWrite.getBlogpost?.comments + 1 || 1
               break
           }
-          proxy.writeQuery({
+
+          // write to cache
+          cache.writeQuery({
             query: query,
             variables: { id: props.comment.reference.id },
-            data: update,
+            data: dataWrite,
           })
         }
       },
     })
   }
 
+  // display component
   return (
-    <form onSubmit={ handleSubmit }>
-      <CommentItem comment={ props.comment } />
-      { props.comment.children && props.comment.children.map( reply => (
-        <div key={ reply.id }>
-          <CommentItem comment={ reply } />
-        </div>
+    <div>
+      <CommentItem comment={ props.comment }/>
+      { props.comment.children?.map( reply => (
+        <CommentItem key={ reply.id } comment={ reply }/>
       ))}
 
-      <textarea name={ TEXTAREA_REPLY } type="text" row="2" maxLength="200" placeholder="اكتب رداً هنا" required />
-      <button type="submit" disabled={ loadingCreate }>أضف رداً</button>
-      { errorCreate && (<ErrorMessage/>) }
+      <form onSubmit={ handleSubmit }>
+        <textarea name={ TEXTAREA_REPLY } type="text" row="2" maxLength="200" placeholder="اكتب رداً هنا" required/>
+        <button type="submit" disabled={ loading }>أضف رداً</button>
+
+        { loading && <div>mutating (design this)</div> }
+        { error && <ErrorMessage/> }
+      </form>
 
       <style jsx>{`
         .title, .description {
           text-align: center;
         }
       `}</style>
-    </form>
+    </div>
   )
 }

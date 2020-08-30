@@ -21,7 +21,7 @@ const CONTACT_US_MUTATION = gql`
 `
 
 export default () => {
-  // mutation
+  // mutation tuple
   const [contactUs, { loading, error, data }] = useMutation(
     CONTACT_US_MUTATION,
     {
@@ -31,7 +31,7 @@ export default () => {
     }
   )
 
-  // handling submit event
+  // function: handle onSubmit event. get data from form and execute mutation
   const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
@@ -64,6 +64,7 @@ export default () => {
       <textarea name={ FORM_MESSAGE } type="text" row="3" maxLength="500" placeholder="message here" required/>
       <button type="submit" disabled={ loading || data?.contactUs }>send message</button>
 
+      { loading && <div>mutating (design this)</div> }
       { error && <ErrorMessage/> }
       { data?.contactUs && <div>message sent</div> }
 

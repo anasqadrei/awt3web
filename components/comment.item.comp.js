@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
@@ -12,11 +11,18 @@ import ErrorMessage from 'components/errorMessage'
 const loggedOnUser = {
   id: "1",
   username: "Admin",
+  // admin: true,
   __typename: "User",
 }
 // const loggedOnUser = {
 //   id: "2",
 //   username: "Anas",
+//   __typename: "User",
+// }
+// const loggedOnUser = {
+//   id: "3",
+//   username: "Dunno",
+//   admin: true,
 //   __typename: "User",
 // }
 // const loggedOnUser = null
@@ -47,9 +53,43 @@ const DELETE_COMMENT_MUTATION = gql`
   }
 `
 
-export default function CommentItem(props) {
+export default (props) => {
+  // mutation tuples
+  const [likeComment, { loading: loadingLike, error: errorLike }] = useMutation(
+    LIKE_COMMENT_MUTATION,
+    {
+      onError: (error) => {
+        Sentry.captureException(error)
+      },
+    }
+  )
+  const [unlikeComment, { loading: loadingUnlike, error: errorUnlike }] = useMutation(
+    UNLIKE_COMMENT_MUTATION,
+    {
+      onError: (error) => {
+        Sentry.captureException(error)
+      },
+    }
+  )
+  const [flagComment, { loading: loadingFlag, error: errorFlag }] = useMutation(
+    FLAG_COMMENT_MUTATION,
+    {
+      onError: (error) => {
+        Sentry.captureException(error)
+      },
+    }
+  )
+  const [deleteCommentById, { loading: loadingDelete, error: errorDelete }] = useMutation(
+    DELETE_COMMENT_MUTATION,
+    {
+      onError: (error) => {
+        Sentry.captureException(error)
+      },
+    }
+  )
+
   // set common query variables
-  const listCommentsQueryVariables = {
+  const varsListComments = {
     reference: {
       collection: props.comment.reference.collection,
       id: props.comment.reference.id,
@@ -57,11 +97,11 @@ export default function CommentItem(props) {
     page: 1,
     pageSize: LIST_COMMENTS_PAGE_SIZE,
   }
-  const checkUserLikeCommentsQueryVariables = {
+  const varsCheckUserLikeComments = {
     userId: loggedOnUser && loggedOnUser.id,
     commentIds: [props.comment.id],
   }
-  const listCommentLikersQueryVariables = {
+  const varsListCommentLikers = {
     commentId: props.comment.id,
     page: 1,
     pageSize: LIST_COMMENT_LIKERS_PAGE_SIZE,
@@ -74,105 +114,79 @@ export default function CommentItem(props) {
     const { data }  = useQuery (
       CHECK_USER_LIKE_COMMENTS_QUERY,
       {
-        variables: checkUserLikeCommentsQueryVariables,
+        variables: varsCheckUserLikeComments,
       }
     )
     // hide like button if user already liked comment
-    if (data) {
-      const { checkUserLikeComments } = data
-      if (checkUserLikeComments && checkUserLikeComments.length > 0 && checkUserLikeComments[0] === props.comment.id) {
-        hideLike = true
-      }
+    if (data?.checkUserLikeComments?.[0] == props.comment.id) {
+      hideLike = true
     }
   }
 
-  // like comment mutation
-  const [likeComment, { loading: loadingLike, error: errorLike }] = useMutation(
-    LIKE_COMMENT_MUTATION,
-    {
-      onError: (error) => {
-        Sentry.captureException(error)
-      },
-    }
-  )
-
-  // handling like event
-  const likeCommentHandler = () => {
-    // set query variables
-    const likeCommentQueryVariables = {
-      commentId: props.comment.id,
-      userId: loggedOnUser.id,
-    }
-
-    // execute likeComment and update likes in the cache
+  // function: handle onClick event
+  const handleLike = () => {
+    // execute mutation and update the cache
     likeComment({
-      variables: likeCommentQueryVariables,
-      update: (proxy, { data: { likeComment } }) => {
+      variables: {
+        commentId: props.comment.id,
+        userId: loggedOnUser.id,
+      },
+      update: (cache, { data: { likeComment } }) => {
         // if successful like (not a repeated one)
         if (likeComment) {
-          // find the comment or reply(child) that was liked and update its likes counter
+          // find the comment that was liked and update its likes counter
           {
-            // read cache
-            const data = proxy.readQuery({
-              query: LIST_COMMENTS_QUERY,
-              variables: listCommentsQueryVariables,
-            })
-            // loop the parent comments first
-            const parentIndex = data.listComments.findIndex(elem => elem.id === props.comment.id)
-            if (parentIndex >= 0) {
-              data.listComments[parentIndex].likes++
-            } else {
-              // if not found in parents, search in the children
-              for (let i = 0; i < data.listComments.length; i++) {
-                if (data.listComments[i].children) {
-                  const childIndex = data.listComments[i].children.findIndex(elem => elem.id === props.comment.id)
-                  if (childIndex >= 0) {
-                    data.listComments[i].children[childIndex].likes++
-                  }
-                }
+            cache.modify({
+              id: cache.identify(props.comment),
+              fields: {
+                likes(currentValue) {
+                  return currentValue + 1
+                },
               }
-            }
-            // update cache
-            proxy.writeQuery({
-              query: LIST_COMMENTS_QUERY,
-              variables: listCommentsQueryVariables,
-              data: data,
             })
           }
 
-          // update checkUserLikeComments cache
+          // update if user liked comment
           {
-            // read cache
-            const data = proxy.readQuery({
+            // read from cache
+            const dataRead = cache.readQuery({
               query: CHECK_USER_LIKE_COMMENTS_QUERY,
-              variables: checkUserLikeCommentsQueryVariables,
+              variables: varsCheckUserLikeComments,
             })
-            // update cache by adding comment id
-            proxy.writeQuery({
+
+            // deep clone since dataRead is read only
+            let dataWrite = JSON.parse(JSON.stringify(dataRead))
+
+            // update list of liked comments
+            dataWrite.checkUserLikeComments = [...dataWrite.checkUserLikeComments || [], props.comment.id]
+
+            // write to cache
+            cache.writeQuery({
               query: CHECK_USER_LIKE_COMMENTS_QUERY,
-              variables: checkUserLikeCommentsQueryVariables,
-              data: {
-                ...data,
-                checkUserLikeComments: [...data.checkUserLikeComments, props.comment.id],
-              },
+              variables: varsCheckUserLikeComments,
+              data: dataWrite,
             })
           }
 
-          // update listCommentLikers in case if they're > 1
-          // in case if they're = 1 then CommentLikers component will render correctly
-          if (props.comment.likes > 1) {
-            // read cache
-            const data = proxy.readQuery({
+          // update list of likers
+          {
+            // read from cache
+            const dataRead = cache.readQuery({
               query: LIST_COMMENT_LIKERS_QUERY,
-              variables: listCommentLikersQueryVariables,
+              variables: varsListCommentLikers,
             })
-            // update cache by adding loggedOnUser
-            proxy.writeQuery({
+
+            // deep clone since dataRead is read only
+            let dataWrite = JSON.parse(JSON.stringify(dataRead))
+
+            // update list of likers
+            dataWrite.listCommentLikers = [...dataWrite.listCommentLikers || [], loggedOnUser]
+
+            // write to cache
+            cache.writeQuery({
               query: LIST_COMMENT_LIKERS_QUERY,
-              variables: listCommentLikersQueryVariables,
-              data: {
-                listCommentLikers: [...data.listCommentLikers, loggedOnUser],
-              },
+              variables: varsListCommentLikers,
+              data: dataWrite,
             })
           }
         }
@@ -180,93 +194,70 @@ export default function CommentItem(props) {
     })
   }
 
-  // unlike comment mutation
-  const [unlikeComment, { loading: loadingUnlike, error: errorUnlike }] = useMutation(
-    UNLIKE_COMMENT_MUTATION,
-    {
-      onError: (error) => {
-        Sentry.captureException(error)
-      },
-    }
-  )
-
-  // handling unlike event
-  const unlikeCommentHandler = () => {
-    // set query variables
-    const unlikeCommentQueryVariables = {
-      commentId: props.comment.id,
-      userId: loggedOnUser.id,
-    }
-
-    // execute unlikeComment and update likes in the cache
+  // function: handle onClick event
+  const handleUnlike = () => {
+    // execute mutation and update the cache
     unlikeComment({
-      variables: unlikeCommentQueryVariables,
-      update: (proxy, { data: { unlikeComment } }) => {
+      variables: {
+        commentId: props.comment.id,
+        userId: loggedOnUser.id,
+      },
+      update: (cache, { data: { unlikeComment } }) => {
         // if successful unlike (not a repeated one)
         if (unlikeComment) {
-          // find the comment or reply(child) that was unliked and update its likes counter
+          // find the comment that was liked and update its likes counter
           {
-            // read cache
-            const data = proxy.readQuery({
-              query: LIST_COMMENTS_QUERY,
-              variables: listCommentsQueryVariables,
-            })
-            // loop the parent comments first
-            const parentIndex = data.listComments.findIndex(elem => elem.id === props.comment.id)
-            if (parentIndex >= 0) {
-              data.listComments[parentIndex].likes--
-            } else {
-              // if not found in parents, search in the children
-              for (let i = 0; i < data.listComments.length; i++) {
-                if (data.listComments[i].children) {
-                  const childIndex = data.listComments[i].children.findIndex(elem => elem.id === props.comment.id)
-                  if (childIndex >= 0) {
-                    data.listComments[i].children[childIndex].likes--
-                  }
-                }
+            cache.modify({
+              id: cache.identify(props.comment),
+              fields: {
+                likes(currentValue) {
+                  return currentValue - 1
+                },
               }
-            }
-            // update cache
-            proxy.writeQuery({
-              query: LIST_COMMENTS_QUERY,
-              variables: listCommentsQueryVariables,
-              data: data,
             })
           }
 
-          // update checkUserLikeComments cache
+          // update if user liked comment
           {
-            // read cache
-            const data = proxy.readQuery({
+            // read from cache
+            const dataRead = cache.readQuery({
               query: CHECK_USER_LIKE_COMMENTS_QUERY,
-              variables: checkUserLikeCommentsQueryVariables,
+              variables: varsCheckUserLikeComments,
             })
-            // update cache by removing comment id
-            proxy.writeQuery({
+
+            // deep clone since dataRead is read only
+            let dataWrite = JSON.parse(JSON.stringify(dataRead))
+
+            // update list of liked comments
+            dataWrite.checkUserLikeComments = dataWrite.checkUserLikeComments.filter(elem => { elem === props.comment.id })
+
+            // write to cache
+            cache.writeQuery({
               query: CHECK_USER_LIKE_COMMENTS_QUERY,
-              variables: checkUserLikeCommentsQueryVariables,
-              data: {
-                ...data,
-                checkUserLikeComments: data.checkUserLikeComments.filter(elem => { elem === props.comment.id }),
-              },
+              variables: varsCheckUserLikeComments,
+              data: dataWrite,
             })
           }
 
-          // update listCommentLikers in case if they're = 1
-          // in case if they're > 1 then CommentLikers component will render correctly
-          if (props.comment.likes > 0) {
-            // read cache
-            const data = proxy.readQuery({
+          // update list of likers
+          {
+            // read from cache
+            const dataRead = cache.readQuery({
               query: LIST_COMMENT_LIKERS_QUERY,
-              variables: listCommentLikersQueryVariables,
+              variables: varsListCommentLikers,
             })
-            // update cache by removing loggedOnUser
-            proxy.writeQuery({
+
+            // deep clone since dataRead is read only
+            let dataWrite = JSON.parse(JSON.stringify(dataRead))
+
+            // update list of likers
+            dataWrite.listCommentLikers = dataWrite.listCommentLikers.filter(elem => elem.id != loggedOnUser.id)
+
+            // write to cache
+            cache.writeQuery({
               query: LIST_COMMENT_LIKERS_QUERY,
-              variables: listCommentLikersQueryVariables,
-              data: {
-                listCommentLikers: data.listCommentLikers.filter(elem => elem.id != loggedOnUser.id),
-              },
+              variables: varsListCommentLikers,
+              data: dataWrite,
             })
           }
         }
@@ -274,100 +265,66 @@ export default function CommentItem(props) {
     })
   }
 
-  // flag comment mutation
-  const [flagComment, { loading: loadingFlag }] = useMutation(
-    FLAG_COMMENT_MUTATION,
-    {
-      onError: (error) => {
-        Sentry.captureException(error)
-      },
-    }
-  )
-
-  // handling flag event
-  const flagCommentHandler = () => {
-    // TODO: reasons
-    // set query variables
-    const flagCommentQueryVariables = {
-      commentId: props.comment.id,
-      userId: loggedOnUser.id,
-      reason: "temp reason",
-    }
-
-    // execute flagComment
+  // function: handle onClick event
+  const handleFlag = (reason) => {
+    // execute mutation
     flagComment({
-      variables: flagCommentQueryVariables,
+      variables: {
+        commentId: props.comment.id,
+        userId: loggedOnUser.id,
+        reason: reason,
+      },
     })
   }
 
-  // delete comment mutation
-  const [deleteCommentById, { loading: loadingDelete, error: errorDelete }] = useMutation(
-    DELETE_COMMENT_MUTATION,
-    {
-      onError: (error) => {
-        Sentry.captureException(error)
-      },
-    }
-  )
-
-  // handling delete event
-  const deleteCommentHandler = () => {
+  // function: handle onClick event
+  const handleDelete = () => {
     if (confirm("Are you sure?")) {
-      // set query variables
-      const deleteCommentQueryVariables = {
-        id: props.comment.id,
-      }
-
-      // execute deleteComment and refetch listComments from the start for the deleted comment not to be shown
-      // updating the cache is a hassle. paging becomes complicated.
+      // execute mutation and update the cache
+      // only update the number of comments in the cache
+      // refetch listComments because updating them in cache is a hassle. paging becomes complicated.
       deleteCommentById({
-        variables: deleteCommentQueryVariables,
-        update: (proxy) => {
-          // read cache
+        variables: {
+          id: props.comment.id,
+        },
+        update: (cache) => {
+          // read from cache
           const query = getCommentsCollectionQuery(props.comment.reference.collection)
-          const data = proxy.readQuery({
+          const dataRead = cache.readQuery({
             query: query,
             variables: { id: props.comment.reference.id },
           })
 
-          // update the number of comments in the cache
-          let update = { ...data }
-          const replies = props.comment.children?props.comment.children.length:0
+          // deep clone since dataRead is read only
+          let dataWrite = JSON.parse(JSON.stringify(dataRead))
+
+          // update the number of comments
+          const replies = props.comment.children?.length || 0
           switch (props.comment.reference.collection) {
             case SONGS_COLLECTION:
-              update.getSong = {
-                ...data.getSong,
-                comments: data.getSong.comments - 1 - replies,
-              }
+              dataWrite.getSong.comments = dataWrite.getSong.comments - 1 - replies
               break
             case ARTISTS_COLLECTION:
-              update.getArtist = {
-                ...data.getArtist,
-                comments: data.getArtist.comments - 1 - replies,
-              }
+              dataWrite.getArtist.comments = dataWrite.getArtist.comments - 1 - replies
               break
             case PLAYLISTS_COLLECTION:
-              update.getPlaylist = {
-                ...data.getPlaylist,
-                comments: data.getPlaylist.comments - 1 - replies,
-              }
+              dataWrite.getPlaylist.comments = dataWrite.getPlaylist.comments - 1 - replies
               break
             case BLOGPOSTS_COLLECTION:
-              update.getBlogpost = {
-                ...data.getBlogpost,
-                comments: data.getBlogpost.comments - 1 - replies,
-              }
+              dataWrite.getBlogpost.comments = dataWrite.getBlogpost.comments - 1 - replies
               break
           }
-          proxy.writeQuery({
+
+          // write to cache
+          cache.writeQuery({
             query: query,
             variables: { id: props.comment.reference.id },
-            data: update,
+            data: dataWrite,
           })
         },
         refetchQueries: () => [{
           query: LIST_COMMENTS_QUERY,
-          variables: listCommentsQueryVariables
+          variables: varsListComments
         }],
         awaitRefetchQueries: true,
       })
@@ -377,40 +334,53 @@ export default function CommentItem(props) {
   return (
     <div>
       <Link href="/user/[id]/[slug]" as={ `/user/${ props.comment.user.id }/${ props.comment.user.slug }` }>
-        <img src={ props.comment.user.imageUrl?props.comment.user.imageUrl:`https://via.placeholder.com/100?text=No+Photo` } alt={ props.comment.user.imageUrl && props.comment.user.username }/>
+        <img src={ props.comment.user.imageUrl ? props.comment.user.imageUrl : `https://via.placeholder.com/100?text=No+Photo` } alt={ props.comment.user.imageUrl && props.comment.user.username }/>
       </Link>
       <Link href="/user/[id]/[slug]" as={ `/user/${ props.comment.user.id }/${ props.comment.user.slug }` }>
         <a>{ props.comment.user.username }</a>
       </Link>
 
       <p>Date { props.comment.createdDate }</p>
-      <div dangerouslySetInnerHTML={{ __html: props.comment.text }} />
+      <div dangerouslySetInnerHTML={{ __html: props.comment.text }}/>
 
+      <CommentLikers commentId={ props.comment.id }/>
       <div>
-        <button hidden={ hideLike } onClick={ () => likeCommentHandler() } disabled={ loadingLike }>
+        <button hidden={ hideLike } onClick={ () => handleLike() } disabled={ loadingLike }>
           Like
         </button>
-        { // TODO:  fix cache update after like/unlike comment. display at CommentLikers comp    !!(props.comment.likes) &&
-          <CommentLikers commentId={ props.comment.id } />
-        }
-        { errorLike && (<ErrorMessage/>) }
+
+        { loadingLike && <div>mutating (design this)</div> }
+        { errorLike && <ErrorMessage/> }
       </div>
-      <p>
-        <button hidden={ !hideLike } onClick={ () => unlikeCommentHandler() } disabled={ loadingUnlike }>
+
+      <div>
+        <button hidden={ !hideLike } onClick={ () => handleUnlike() } disabled={ loadingUnlike }>
           Unlike
         </button>
-        { errorUnlike && (<ErrorMessage/>) }
-      </p>
-      <div hidden={ !loggedOnUser }>
-        <button onClick={ () => flagCommentHandler() } disabled={ loadingFlag }>
-          flag
-        </button>
+
+        { loadingUnlike && <div>mutating (design this)</div> }
+        { errorUnlike && <ErrorMessage/> }
       </div>
-      <div hidden={ !loggedOnUser || loggedOnUser.id != props.comment.user.id }>
-        <button onClick={ () => deleteCommentHandler() } disabled={ loadingDelete }>
+
+      <div hidden={ !loggedOnUser }>
+        <button onClick={ () => handleFlag('قلة ادب') } disabled={ loadingFlag }>
+          flag - قلة ادب
+        </button>
+        <button onClick={ () => handleFlag('temp reason') } disabled={ loadingFlag }>
+          flag - temp reason
+        </button>
+
+        { loadingFlag && <div>mutating (design this)</div> }
+        { errorFlag && <ErrorMessage/> }
+      </div>
+
+      <div hidden={ !(loggedOnUser?.id === props.comment.user.id || loggedOnUser?.admin) }>
+        <button onClick={ () => handleDelete() } disabled={ loadingDelete }>
           X delete
         </button>
-        { errorDelete && (<ErrorMessage/>) }
+
+        { loadingDelete && <div>mutating (design this)</div> }
+        { errorDelete && <ErrorMessage/> }
       </div>
 
       <style jsx>{`

@@ -1,5 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { validateCommentsCollection, getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
@@ -21,13 +20,13 @@ const CREATE_COMMENT_MUTATION = gql`
   }
 `
 
-export default function Comment(props) {
+export default (props) => {
   // validate collection name
   if (!validateCommentsCollection(props.collection)) {
-    return <ErrorMessage message='invalid collection name' />
+    return <ErrorMessage message='invalid collection name'/>
   }
 
-  // mutation
+  // mutation tuple
   const [createComment, { loading, error }] = useMutation(
     CREATE_COMMENT_MUTATION,
     {
@@ -37,8 +36,8 @@ export default function Comment(props) {
     }
   )
 
-  // handling submit event
-  const handleSubmit = event => {
+  // function: handle onSubmit event. get data from form and execute mutation
+  const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
     const form = event.target
@@ -47,7 +46,7 @@ export default function Comment(props) {
     form.reset()
 
     // set query variables
-    const createCommentQueryVariables = {
+    const varsCreateComment = {
       text: text,
       reference: {
         collection: props.collection,
@@ -55,7 +54,7 @@ export default function Comment(props) {
       },
       userId: loggedOnUser.id,
     }
-    const listCommentsQueryVariables = {
+    const varsListComments = {
       reference: {
         collection: props.collection,
         id: props.id,
@@ -64,67 +63,62 @@ export default function Comment(props) {
       pageSize: PAGE_SIZE,
     }
 
-    // execute createComment and refetch listComments from the start for the new comment to be shown
-    // updating the list of comments in the cache is a hassle. paging becomes complicated.
-    // just updating the number of comments in the cache
+    // execute mutation and update the cache
+    // only update the number of comments in the cache
+    // refetch listComments because updating them in cache is a hassle. paging becomes complicated.
     createComment({
-      variables: createCommentQueryVariables,
-      update: (proxy) => {
-        // read cache
+      variables: varsCreateComment,
+      update: (cache) => {
+        // read from cache
         const query = getCommentsCollectionQuery(props.collection)
-        const data = proxy.readQuery({
+        const dataRead = cache.readQuery({
           query: query,
           variables: { id: props.id },
         })
 
-        // update the number of comments in the cache
-        let update = { ...data }
+        // deep clone since dataRead is read only
+        let dataWrite = JSON.parse(JSON.stringify(dataRead))
+
+        // update the number of comments
         switch (props.collection) {
           case SONGS_COLLECTION:
-            update.getSong = {
-              ...data.getSong,
-              comments: data.getSong.comments + 1,
-            }
+            dataWrite.getSong.comments = dataWrite.getSong?.comments + 1 || 1
             break
           case ARTISTS_COLLECTION:
-            update.getArtist = {
-              ...data.getArtist,
-              comments: data.getArtist.comments + 1,
-            }
+            dataWrite.getArtist.comments = dataWrite.getArtist?.comments + 1 || 1
             break
           case PLAYLISTS_COLLECTION:
-            update.getPlaylist = {
-              ...data.getPlaylist,
-              comments: data.getPlaylist.comments + 1,
-            }
+            dataWrite.getPlaylist.comments = dataWrite.getPlaylist?.comments + 1 || 1
             break
           case BLOGPOSTS_COLLECTION:
-            update.getBlogpost = {
-              ...data.getBlogpost,
-              comments: data.getBlogpost.comments + 1,
-            }
+            dataWrite.getBlogpost.comments = dataWrite.getBlogpost?.comments + 1 || 1
             break
         }
-        proxy.writeQuery({
+
+        // write to cache
+        cache.writeQuery({
           query: query,
           variables: { id: props.id },
-          data: update,
+          data: dataWrite,
         })
       },
       refetchQueries: () => [{
         query: LIST_COMMENTS_QUERY,
-        variables: listCommentsQueryVariables
+        variables: varsListComments
       }],
       awaitRefetchQueries: true,
     })
   }
 
-  // show comment form
+  // display component
   return (
     <form onSubmit={ handleSubmit }>
-      <textarea name={ TEXTAREA_COMMENT } type="text" row="2" maxLength="200" placeholder="اكتب تعليقك هنا" required />
+      <textarea name={ TEXTAREA_COMMENT } type="text" row="2" maxLength="200" placeholder="اكتب تعليقك هنا" required/>
       <button type="submit" disabled={ loading }>أضف تعليقك</button>
-      { error && (<ErrorMessage/>) }
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
+
       <style jsx>{`
         form {
           border-bottom: 1px solid #ececec;
