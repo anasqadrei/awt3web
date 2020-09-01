@@ -118,9 +118,7 @@ export default (props) => {
       }
     )
     // hide like button if user already liked comment
-    if (data?.checkUserLikeComments?.[0] == props.comment.id) {
-      hideLike = true
-    }
+    hideLike = (data?.checkUserLikeComments?.[0] == props.comment.id) || false
   }
 
   // function: handle onClick event
@@ -132,14 +130,14 @@ export default (props) => {
         userId: loggedOnUser.id,
       },
       update: (cache, { data: { likeComment } }) => {
-        // if successful like (not a repeated one)
+        // if a successful like (not a repeated one)
         if (likeComment) {
           // find the comment that was liked and update its likes counter
           {
             cache.modify({
               id: cache.identify(props.comment),
               fields: {
-                likes(currentValue) {
+                likes(currentValue = 0) {
                   return currentValue + 1
                 },
               }
@@ -203,14 +201,14 @@ export default (props) => {
         userId: loggedOnUser.id,
       },
       update: (cache, { data: { unlikeComment } }) => {
-        // if successful unlike (not a repeated one)
+        // if a successful unlike (not a repeated one)
         if (unlikeComment) {
           // find the comment that was liked and update its likes counter
           {
             cache.modify({
               id: cache.identify(props.comment),
               fields: {
-                likes(currentValue) {
+                likes(currentValue = 0) {
                   return currentValue - 1
                 },
               }
@@ -331,6 +329,7 @@ export default (props) => {
     }
   }
 
+  // display component
   return (
     <div>
       <Link href="/user/[id]/[slug]" as={ `/user/${ props.comment.user.id }/${ props.comment.user.slug }` }>

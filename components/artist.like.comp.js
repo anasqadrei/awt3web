@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_ARTIST_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
@@ -28,43 +26,8 @@ const UNLIKE_ARTIST_MUTATION = gql`
   }
 `
 
-export default function LikeArtist() {
-  const router = useRouter()
-
-  // this is to get number of likes
-  // the query will most likey use cache
-  const { data }  = useQuery (
-    GET_ARTIST_QUERY,
-    {
-      variables: { id: router.query.id },
-    }
-  )
-  const { getArtist } = data
-
-  // set query variables (common for all)
-  const queryVariables = {
-    userId: loggedOnUser.id,
-    artistId: router.query.id,
-  }
-
-  // TODO: show the like always even if user wasn't logged in. direct to log them in
-  // decide to either show or hide like and unlike buttons
-  let hideLike = false
-  if (loggedOnUser) {
-    // check if user like artist query
-    const { data }  = useQuery (
-      CHECK_USER_LIKE_ARTIST_QUERY,
-      {
-        variables: queryVariables,
-      }
-    )
-    // hide like button if user already liked artist
-    if (data) {
-      hideLike = data.checkUserLikeArtist
-    }
-  }
-
-  // like mutation
+export default (props) => {
+  // mutation tuples
   const [likeArtist, { loading: loadingLike, error: errorLike }] = useMutation(
     LIKE_ARTIST_MUTATION,
     {
@@ -73,58 +36,6 @@ export default function LikeArtist() {
       },
     }
   )
-
-  // handling like event
-  const likeHandler = () => {
-    // execute likeArtist and update likes in the cache
-    likeArtist({
-      variables: queryVariables,
-      update: (proxy, { data: { likeArtist } }) => {
-        // if successful like (not a repeated one)
-        if (likeArtist) {
-          // update checkUserLikeArtist cache
-          {
-            // read cache
-            const data = proxy.readQuery({
-              query: CHECK_USER_LIKE_ARTIST_QUERY,
-              variables: queryVariables,
-            })
-            // update cache by making checkUserLikeArtist: true
-            proxy.writeQuery({
-              query: CHECK_USER_LIKE_ARTIST_QUERY,
-              variables: queryVariables,
-              data: {
-                ...data,
-                checkUserLikeArtist: true,
-              },
-            })
-          }
-          // update artist likes cache
-          {
-            // read cache
-            const data = proxy.readQuery({
-              query: GET_ARTIST_QUERY,
-              variables: { id: router.query.id },
-            })
-            // update cache by incrementing getArtist.likes
-            proxy.writeQuery({
-              query: GET_ARTIST_QUERY,
-              variables: { id: router.query.id },
-              data: {
-                ...data,
-                getArtist: {
-                  ...data.getArtist,
-                  likes: data.getArtist.likes + 1,
-                }
-              },
-            })
-          }
-        }
-      },
-    })
-  }
-
-  // unlike mutation
   const [unlikeArtist, { loading: loadingUnlike, error: errorUnlike }] = useMutation(
     UNLIKE_ARTIST_MUTATION,
     {
@@ -134,49 +45,85 @@ export default function LikeArtist() {
     }
   )
 
-  // handling like event
-  const unlikeHandler = () => {
-    // execute unlikeArtist and update likes in the cache
-    unlikeArtist({
-      variables: queryVariables,
-      update: (proxy, { data: { unlikeArtist } }) => {
-        // if successful unlike (not a repeated one)
-        if (unlikeArtist) {
-          // update checkUserLikeArtist cache
+  // TODO: what if user is not logged on
+  // set common query variables
+  const vars = {
+    userId: loggedOnUser?.id,
+    artistId: props.artistId,
+  }
+
+  // TODO: show the like always even if user wasn't logged in. then direct to log them in. use skip??
+
+  // decide to either show or hide like and unlike buttons
+  let hideLike = false
+  if (loggedOnUser) {
+    // check if user like artist query
+    const { data }  = useQuery (
+      CHECK_USER_LIKE_ARTIST_QUERY,
+      {
+        variables: vars,
+        // skip: false,
+      }
+    )
+    // hide like button if user already liked artist
+    hideLike = data?.checkUserLikeArtist || false
+  }
+
+  // excute query to display data. the query will most likey use cache
+  const { data }  = useQuery (
+    GET_ARTIST_QUERY,
+    {
+      variables: { id: props.artistId },
+    }
+  )
+
+  // in case of initial loading (or the highly unlikely case of no data found)
+  if (!data?.getArtist) {
+    return null
+  }
+
+  // get data
+  const { getArtist } = data
+
+  // function: handle onClick event
+  const handleLike = () => {
+    // execute mutation and update the cache
+    likeArtist({
+      variables: vars,
+      update: (cache, { data: { likeArtist } }) => {
+        // if a successful like (not a repeated one)
+        if (likeArtist) {
+          // update artist likes
           {
-            // read cache
-            const data = proxy.readQuery({
-              query: CHECK_USER_LIKE_ARTIST_QUERY,
-              variables: queryVariables,
-            })
-            // update cache by making checkUserLikeArtist: false
-            proxy.writeQuery({
-              query: CHECK_USER_LIKE_ARTIST_QUERY,
-              variables: queryVariables,
-              data: {
-                ...data,
-                checkUserLikeArtist: false,
-              },
+            cache.modify({
+              id: cache.identify(getArtist),
+              fields: {
+                likes(currentValue = 0) {
+                  return currentValue + 1
+                },
+              }
             })
           }
-          // update artist likes cache
+
+          // update if user liked comment
           {
-            // read cache
-            const data = proxy.readQuery({
-              query: GET_ARTIST_QUERY,
-              variables: { id: router.query.id },
+            // read from cache
+            const dataRead = cache.readQuery({
+              query: CHECK_USER_LIKE_ARTIST_QUERY,
+              variables: vars,
             })
-            // update cache by decrementing getArtist.likes
-            proxy.writeQuery({
-              query: GET_ARTIST_QUERY,
-              variables: { id: router.query.id },
-              data: {
-                ...data,
-                getArtist: {
-                  ...data.getArtist,
-                  likes: data.getArtist.likes - 1,
-                }
-              },
+
+            // deep clone since dataRead is read only
+            let dataWrite = JSON.parse(JSON.stringify(dataRead))
+
+            // update values
+            dataWrite.checkUserLikeArtist = true
+
+            // write to cache
+            cache.writeQuery({
+              query: CHECK_USER_LIKE_ARTIST_QUERY,
+              variables: vars,
+              data: dataWrite,
             })
           }
         }
@@ -184,19 +131,71 @@ export default function LikeArtist() {
     })
   }
 
-  // like and unlike buttons
+  // function: handle onClick event
+  const handleUnlike = () => {
+    // execute mutation and update the cache
+    unlikeArtist({
+      variables: vars,
+      update: (cache, { data: { unlikeArtist } }) => {
+        // if a successful unlike (not a repeated one)
+        if (unlikeArtist) {
+          // update artist likes
+          {
+            cache.modify({
+              id: cache.identify(getArtist),
+              fields: {
+                likes(currentValue = 0) {
+                  return currentValue - 1
+                },
+              }
+            })
+          }
+
+          // update if user liked comment
+          {
+            // read from cache
+            const dataRead = cache.readQuery({
+              query: CHECK_USER_LIKE_ARTIST_QUERY,
+              variables: vars,
+            })
+
+            // deep clone since dataRead is read only
+            let dataWrite = JSON.parse(JSON.stringify(dataRead))
+
+            // update values
+            dataWrite.checkUserLikeArtist = false
+
+            // write to cache
+            cache.writeQuery({
+              query: CHECK_USER_LIKE_ARTIST_QUERY,
+              variables: vars,
+              data: dataWrite,
+            })
+          }
+        }
+      },
+    })
+  }
+
+  // display component
   return (
     <section>
       <div>
-        <button hidden={ hideLike } onClick={ () => likeHandler() } disabled={ loadingLike }>
+        <button hidden={ hideLike } onClick={ () => handleLike() } disabled={ loadingLike }>
           Like
         </button>
-        { errorLike && (<ErrorMessage/>) }
-        <button hidden={ !hideLike } onClick={ () => unlikeHandler() } disabled={ loadingUnlike }>
+
+        { loadingLike && <div>mutating (design this)</div> }
+        { errorLike && <ErrorMessage/> }
+
+        <button hidden={ !hideLike } onClick={ () => handleUnlike() } disabled={ loadingUnlike }>
           Unlike
         </button>
-        { errorUnlike && (<ErrorMessage/>) }
+
+        { loadingUnlike && <div>mutating (design this)</div> }
+        { errorUnlike && <ErrorMessage/> }
       </div>
+
       <div>
         { getArtist.likes ? `${ getArtist.likes } liked them` : `be the first to like? or empty?` }
       </div>

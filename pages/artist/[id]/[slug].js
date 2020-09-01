@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Error from 'next/error'
 import * as Sentry from '@sentry/node'
-import { withApollo, createApolloClient } from 'lib/withApollo'
+import { createApolloClient } from 'lib/withApollo'
 import { validateUrl } from 'lib/validateUrl'
 import { GET_ARTIST_QUERY } from 'lib/graphql'
 import { ARTISTS_COLLECTION, DISPLAY } from 'lib/constants'
@@ -44,7 +44,7 @@ export async function getStaticPaths() {
   }
 }
 
-export default withApollo()(({ artist }) => {
+export default ({ artist }) => {
   const router = useRouter()
 
   // fix url in case it doesn't match the slug
@@ -72,14 +72,14 @@ export default withApollo()(({ artist }) => {
         <div>
           <img src={ artist.imageUrl ? artist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
           <h1 className="title">{ artist.name }</h1>
-          <LikeArtist/>
+          <LikeArtist artistId={ artist.id }/>
         </div>
         <div>
           New Songs
           <ArtistSongs artistId={ artist.id } sort="-createdDate" snippet={ true } display={ DISPLAY.TEXT }/>
         </div>
         <div>
-          <ShareArtist/>
+          <ShareArtist artistId={ artist.id }/>
         </div>
         <div>
           <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
@@ -108,4 +108,4 @@ export default withApollo()(({ artist }) => {
       `}</style>
     </Layout>
   )
-})
+}

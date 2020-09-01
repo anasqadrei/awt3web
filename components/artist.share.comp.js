@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_ARTIST_QUERY } from 'lib/graphql'
 
@@ -17,26 +15,8 @@ const SHARE_ARTIST_MUTATION = gql`
   }
 `
 
-export default function ShareArtist() {
-  const router = useRouter()
-
-  // this is to get number of shares
-  // the query will most likey use cache
-  const { data }  = useQuery (
-    GET_ARTIST_QUERY,
-    {
-      variables: { id: router.query.id },
-    }
-  )
-  const { getArtist } = data
-
-  // set query variables
-  const queryVariables = {
-    userId: loggedOnUser.id,
-    artistId: router.query.id,
-  }
-
-  // share mutation
+export default (props) => {
+  // mutation tuples
   const [shareArtist, { loading, error }] = useMutation(
     SHARE_ARTIST_MUTATION,
     {
@@ -46,55 +26,67 @@ export default function ShareArtist() {
     }
   )
 
-  // handling share event
-  const shareHandler = () => {
+  // excute query to display data. the query will most likey use cache
+  const { data }  = useQuery (
+    GET_ARTIST_QUERY,
+    {
+      variables: { id: props.artistId },
+    }
+  )
+
+  // in case of initial loading (or the highly unlikely case of no data found)
+  if (!data?.getArtist) {
+    return null
+  }
+
+  // get data
+  const { getArtist } = data
+
+  // function: handle onClick event
+  const handleShare = () => {
     // TODO: window.open() somehow
     // $scope.share('https://www.facebook.com/dialog/share?app_id=726940310703987&display=popup&redirect_uri=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/close.html') + '&href=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/#!' + $location.url()));
     // $scope.share('https://twitter.com/share?via=awtarika&lang=ar&text=' + $scope.data.title + '&url=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/#!' + $location.url()));
 
-    // execute shareArtist and update shares counter in the cache
+    // execute mutation and update the cache
     shareArtist({
-      variables: queryVariables,
-      update: (proxy, { data: { shareArtist } }) => {
-        // if successful share, update artist shares cache
+      variables: {
+        userId: loggedOnUser.id,
+        artistId: props.artistId,
+      },
+      update: (cache, { data: { shareArtist } }) => {
+        // if a successful share, update artist shares counter in the cache
         if (shareArtist) {
-          // read cache
-          const data = proxy.readQuery({
-            query: GET_ARTIST_QUERY,
-            variables: { id: router.query.id },
-          })
-          // update cache by incrementing getArtist.shares
-          proxy.writeQuery({
-            query: GET_ARTIST_QUERY,
-            variables: { id: router.query.id },
-            data: {
-              ...data,
-              getArtist: {
-                ...data.getArtist,
-                shares: data.getArtist.shares + 1,
-              }
-            },
+          cache.modify({
+            id: cache.identify(getArtist),
+            fields: {
+              shares(currentValue = 0) {
+                return currentValue + 1
+              },
+            }
           })
         }
       },
     })
   }
 
-  // share section
+  // display component
   return (
     <section>
       <div>
         { getArtist.shares ? `${ getArtist.shares } shared this` : `be the first to share` }
       </div>
+
       <div>
         Share
-        <button onClick={ () => shareHandler('Facebook') } disabled={ loading }>
+        <button onClick={ () => handleShare('Facebook') } disabled={ loading }>
           Facebook
         </button>
-        <button onClick={ () => shareHandler('Twitter') } disabled={ loading }>
+        <button onClick={ () => handleShare('Twitter') } disabled={ loading }>
           Twitter
         </button>
       </div>
+
       <div>
         <span dir="ltr"><input value={ getArtist.url } readOnly/></span>
       </div>
