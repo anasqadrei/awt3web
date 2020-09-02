@@ -53,7 +53,6 @@ export default (props) => {
   }
 
   // TODO: show the like always even if user wasn't logged in. then direct to log them in. use skip??
-
   // decide to either show or hide like and unlike buttons
   let hideLike = false
   if (loggedOnUser) {
@@ -93,7 +92,7 @@ export default (props) => {
       update: (cache, { data: { likeArtist } }) => {
         // if a successful like (not a repeated one)
         if (likeArtist) {
-          // update artist likes
+          // update likes counter
           {
             cache.modify({
               id: cache.identify(getArtist),
@@ -105,7 +104,7 @@ export default (props) => {
             })
           }
 
-          // update if user liked comment
+          // update if user liked artist
           {
             // read from cache
             const dataRead = cache.readQuery({
@@ -139,7 +138,7 @@ export default (props) => {
       update: (cache, { data: { unlikeArtist } }) => {
         // if a successful unlike (not a repeated one)
         if (unlikeArtist) {
-          // update artist likes
+          // update likes counter
           {
             cache.modify({
               id: cache.identify(getArtist),
@@ -151,7 +150,7 @@ export default (props) => {
             })
           }
 
-          // update if user liked comment
+          // update if user liked artist
           {
             // read from cache
             const dataRead = cache.readQuery({

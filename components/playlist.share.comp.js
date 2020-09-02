@@ -1,9 +1,7 @@
-import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from 'components/errorMessage'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
+import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -18,16 +16,8 @@ const SHARE_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default function SharePlaylist() {
-  const router = useRouter()
-
-  // set query variables
-  const queryVariables = {
-    userId: loggedOnUser.id,
-    playlistId: router.query.id,
-  }
-
-  // share mutation
+export default (props) => {
+  // mutation tuple
   const [sharePlaylist, { loading, error }] = useMutation(
     SHARE_PLAYLIST_MUTATION,
     {
@@ -37,49 +27,79 @@ export default function SharePlaylist() {
     }
   )
 
-  // handling share event
-  const shareHandler = () => {
+  // excute query to display data. the query will most likey use cache
+  const { data }  = useQuery (
+    GET_PLAYLIST_QUERY,
+    {
+      variables: { id: props.playlistId },
+    }
+  )
+
+  // in case of initial loading (or the highly unlikely case of no data found)
+  if (!data?.getPlaylist) {
+    return null
+  }
+
+  // get data
+  const { getPlaylist } = data
+
+  // function: handle onClick event
+  const handleShare = () => {
     // TODO: window.open() somehow
     // $scope.share('https://www.facebook.com/dialog/share?app_id=726940310703987&display=popup&redirect_uri=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/close.html') + '&href=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/#!' + $location.url()));
     // $scope.share('https://twitter.com/share?via=awtarika&lang=ar&text=' + $scope.data.title + '&url=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/#!' + $location.url()));
 
-    // execute sharePlaylist and update shares counter in the cache
+    // execute mutation and update the cache
     sharePlaylist({
-      variables: queryVariables,
-      update: (proxy, { data: { sharePlaylist } }) => {
-        // if successful share, update playlist shares cache
+      variables: {
+        userId: loggedOnUser.id,
+        playlistId: props.playlistId,
+      },
+      update: (cache, { data: { sharePlaylist } }) => {
+        // if a successful share, update shares counter in the cache
         if (sharePlaylist) {
-          // read cache
-          const data = proxy.readQuery({
-            query: GET_PLAYLIST_QUERY,
-            variables: { id: router.query.id },
-          })
-          // update cache by incrementing getPlaylist.shares
-          proxy.writeQuery({
-            query: GET_PLAYLIST_QUERY,
-            variables: { id: router.query.id },
-            data: {
-              ...data,
-              getPlaylist: {
-                ...data.getPlaylist,
-                shares: data.getPlaylist.shares + 1,
-              }
-            },
+          cache.modify({
+            id: cache.identify(getPlaylist),
+            fields: {
+              shares(currentValue = 0) {
+                return currentValue + 1
+              },
+            }
           })
         }
       },
     })
   }
 
-  // share buttons
+  // display component
   return (
     <section>
-      <button onClick={ () => shareHandler('Facebook') } disabled={ loading }>
-        Facebook
-      </button>
-      <button onClick={ () => shareHandler('Twitter') } disabled={ loading }>
-        Twitter
-      </button>
+      {
+        getPlaylist.private ?
+          <div>
+            { getPlaylist.shares && `${ getPlaylist.shares } shared this` }
+          </div>
+        :
+          <div>
+            Share
+            <div>
+              { getPlaylist.shares ? `${ getPlaylist.shares } shared this` : `be the first to share` }
+            </div>
+
+            <div>
+              <button onClick={ () => handleShare('Facebook') } disabled={ loading }>
+                Facebook
+              </button>
+              <button onClick={ () => handleShare('Twitter') } disabled={ loading }>
+                Twitter
+              </button>
+            </div>
+
+            <div>
+              <span dir="ltr"><input value={ getPlaylist.url } readOnly/></span>
+            </div>
+          </div>
+      }
     </section>
   )
 }

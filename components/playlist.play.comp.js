@@ -1,9 +1,7 @@
-import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from 'components/errorMessage'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
+import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -18,16 +16,8 @@ const PLAY_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default function PlayPlaylist(props) {
-  const router = useRouter()
-
-  // set query variables
-  const queryVariables = {
-    userId: loggedOnUser.id,
-    playlistId: router.query.id,
-  }
-
-  // play mutation
+export default (props) => {
+  // mutation tuple
   const [playPlaylist, { loading, error }] = useMutation(
     PLAY_PLAYLIST_MUTATION,
     {
@@ -37,40 +27,51 @@ export default function PlayPlaylist(props) {
     }
   )
 
-  // handling play event
-  const playHandler = () => {
+  // excute query to display data. the query will most likey use cache
+  const { data }  = useQuery (
+    GET_PLAYLIST_QUERY,
+    {
+      variables: { id: props.playlistId },
+    }
+  )
+
+  // in case of initial loading (or the highly unlikely case of no data found)
+  if (!data?.getPlaylist) {
+    return null
+  }
+
+  // get data
+  const { getPlaylist } = data
+
+  // function: handle onClick event
+  const handlePlay = () => {
     // TODO: stream playlist
-    // execute playPlaylist and update plays counter in the cache
+
+    // execute mutation and update the cache
     playPlaylist({
-      variables: queryVariables,
-      update: (proxy, { data: { playPlaylist } }) => {
-        // if successful play, update playlist plays cache
+      variables: {
+        userId: loggedOnUser.id,
+        playlistId: props.playlistId,
+      },
+      update: (cache, { data: { playPlaylist } }) => {
+        // if a successful play, update plays counter in the cache
         if (playPlaylist) {
-          // read cache
-          const data = proxy.readQuery({
-            query: GET_PLAYLIST_QUERY,
-            variables: { id: router.query.id },
-          })
-          // update cache by incrementing getPlaylist.plays
-          proxy.writeQuery({
-            query: GET_PLAYLIST_QUERY,
-            variables: { id: router.query.id },
-            data: {
-              ...data,
-              getPlaylist: {
-                ...data.getPlaylist,
-                plays: data.getPlaylist.plays + 1,
-              }
-            },
+          cache.modify({
+            id: cache.identify(getPlaylist),
+            fields: {
+              plays(currentValue = 0) {
+                return currentValue + 1
+              },
+            }
           })
         }
       },
     })
   }
 
-  // play button
+  // display component
   return (
-    <button onClick={ () => playHandler() } disabled={ loading }>
+    <button onClick={ () => handlePlay() } disabled={ loading }>
       { props.shuffle ? 'Shuffle' : 'Play All' }
     </button>
   )

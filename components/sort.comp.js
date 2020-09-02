@@ -8,7 +8,9 @@ export default ({ optionsList, sort, disableAll, onClick }) => {
   return (
     <div>
       { optionsList.map(option => (
-        <button key={ option.sort } onClick={ () => onClick(option.sort) } hidden={ option.sort.charAt(0) === '-' ? sort === option.sort : sort !== `-${ option.sort }` } disabled={ disableAll }>{ option.label }</button>
+        <button key={ option.sort } onClick={ () => onClick(option.sort) } hidden={ option.sort.charAt(0) === '-' ? sort === option.sort : sort !== `-${ option.sort }` } disabled={ disableAll }>
+          { option.label }
+        </button>
       ))}
     </div>
   )

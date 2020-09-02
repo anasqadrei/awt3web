@@ -93,12 +93,11 @@ export default () => {
       <div>
         <img src={ getPlaylist.imageUrl ? getPlaylist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
         <h1 className="title">{ getPlaylist.name }</h1>
-        <LikePlaylist/>
-        { getPlaylist.likes ? `${ getPlaylist.likes } liked them` : `be the first to like? or empty?` }
+        <LikePlaylist playlistId={ getPlaylist.id }/>
       </div>
 
       <div>
-        <PlayPlaylist shuffle={ false }/> | <PlayPlaylist shuffle={ true }/> | <button onClick={ () => { setUpdatePlaylistModalIsOpen(true) } }>Update Playlist</button> | <DeletePlaylist playlist={ getPlaylist }/>
+        <PlayPlaylist playlistId={ getPlaylist.id } shuffle={ false }/> | <PlayPlaylist playlistId={ getPlaylist.id } shuffle={ true }/> | <button onClick={ () => { setUpdatePlaylistModalIsOpen(true) } }>Update Playlist</button> | <DeletePlaylist playlist={ getPlaylist }/>
       </div>
 
       <Modal isOpen={ updatePlaylistModalIsOpen } onRequestClose={ () => { setUpdatePlaylistModalIsOpen(false) } } style={ modalStyles } contentLabel="update playlist modal">
@@ -107,21 +106,7 @@ export default () => {
         <UpdatePlaylist playlist={ getPlaylist }/>
       </Modal>
 
-      { getPlaylist.private ? (
-          <div>
-            { getPlaylist.shares && `${ getPlaylist.shares } shared this` }
-          </div>
-        )
-        :
-        (
-          <div>
-            Share
-            { getPlaylist.shares ? `${ getPlaylist.shares } shared this` : `be the first to share` }
-            <SharePlaylist/>
-            <span dir="ltr"><input value={ getPlaylist.url } readOnly/></span>
-          </div>
-        )
-      }
+      <SharePlaylist playlistId={ getPlaylist.id }/>
 
       <div>
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>

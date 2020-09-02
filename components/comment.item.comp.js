@@ -132,7 +132,7 @@ export default (props) => {
       update: (cache, { data: { likeComment } }) => {
         // if a successful like (not a repeated one)
         if (likeComment) {
-          // find the comment that was liked and update its likes counter
+          // update likes counter
           {
             cache.modify({
               id: cache.identify(props.comment),
@@ -203,7 +203,7 @@ export default (props) => {
       update: (cache, { data: { unlikeComment } }) => {
         // if a successful unlike (not a repeated one)
         if (unlikeComment) {
-          // find the comment that was liked and update its likes counter
+          // update likes counter
           {
             cache.modify({
               id: cache.identify(props.comment),

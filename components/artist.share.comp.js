@@ -55,7 +55,7 @@ export default (props) => {
         artistId: props.artistId,
       },
       update: (cache, { data: { shareArtist } }) => {
-        // if a successful share, update artist shares counter in the cache
+        // if a successful share, update shares counter in the cache
         if (shareArtist) {
           cache.modify({
             id: cache.identify(getArtist),
