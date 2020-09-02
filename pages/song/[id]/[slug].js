@@ -227,7 +227,7 @@ export default withApollo()(({ song }) => {
           <Modal isOpen={ createLyricsModalIsOpen } onRequestClose={ () => { setCreateLyricsModalIsOpen(false) } } style={ modalStyles } contentLabel="add lyrics modal">
             <button onClick={ () => { setCreateLyricsModalIsOpen(false) } }>close</button>
             <h2>Add lyrics</h2>
-            <CreateLyrics/>
+            <CreateLyrics songId={ song.id }/>
           </Modal>
         </div>
         { song.lyrics && (
@@ -239,10 +239,10 @@ export default withApollo()(({ song }) => {
               <Modal isOpen={ updateLyricsModalIsOpen } onRequestClose={ () => { setUpdateLyricsModalIsOpen(false) } } style={ modalStyles } contentLabel="update lyrics modal">
                 <button onClick={ () => { setUpdateLyricsModalIsOpen(false) } }>close</button>
                 <h2>update lyrics</h2>
-                <UpdateLyrics lyrics={ song.lyrics }/>
+                <UpdateLyrics songId={ song.id } lyrics={ song.lyrics }/>
               </Modal>
             </div>
-            <DeleteLyrics lyrics={ song.lyrics }/>
+            <DeleteLyrics songId={ song.id } lyrics={ song.lyrics }/>
           </div>
         )}
       </div>

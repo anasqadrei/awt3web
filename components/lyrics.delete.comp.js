@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
@@ -17,10 +15,8 @@ const DELETE_LYRICS_MUTATION = gql`
   }
 `
 
-export default function DeleteLyrics(props) {
-  const router = useRouter()
-
-  // mutation
+export default (props) => {
+  // mutation tuble
   const [deleteLyrics, { loading, error, data }] = useMutation(
     DELETE_LYRICS_MUTATION,
     {
@@ -30,41 +26,36 @@ export default function DeleteLyrics(props) {
     }
   )
 
-  // handling delete event
-  const deleteHandler = event => {
+  // function: handle onClick event
+  const handleDelete = () => {
     if (confirm("Are you sure?")) {
-      // set query variables
-      const queryVariables = {
-        lyricsId: props.lyrics.id,
-        userId: loggedOnUser.id,
-      }
-
-      // execute deleteLyrics and refetch getSong from the start for the deleted lyrics to be removed
-      // update the cache is not easy
+      // execute mutation
+      // refetch getSong because updating list of lyrics in cache is a hassle
       deleteLyrics({
-        variables: queryVariables,
+        variables: {
+          lyricsId: props.lyrics.id,
+          userId: loggedOnUser.id,
+        },
         refetchQueries: () => [{
           query: GET_SONG_QUERY,
-          variables: { id: router.query.id },
+          variables: { id: props.songId },
         }],
         awaitRefetchQueries: true,
       })
     }
   }
 
-  // show delete lyrics button
+  // display component
   return (
     <div>
-      <div hidden={ !loggedOnUser || loggedOnUser.id != props.lyrics.user.id }>
-        <button onClick={ () => deleteHandler() } disabled={ loading || (data && data.deleteLyrics) }>
+      <div hidden={ !(loggedOnUser?.id === props.lyrics.user.id || loggedOnUser?.admin) }>
+        <button onClick={ () => handleDelete() } disabled={ loading || data?.deleteLyrics }>
           Delete Lyrics
         </button>
-        { error && (<ErrorMessage/>) }
-        {
-          (data && data.deleteLyrics) && (
-            <div>Lyrics is being Deleted. Check later(won't show instantly)</div>
-          )
-        }
+
+        { loading && <div>mutating (design this)</div> }
+        { error && <ErrorMessage/> }
+        { data?.deleteLyrics && <div>Lyrics is being Deleted. Check later(won't show instantly)</div> }
       </div>
     </div>
   )

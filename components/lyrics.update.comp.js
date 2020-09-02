@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
@@ -21,23 +19,21 @@ const UPDATE_LYRICS_MUTATION = gql`
   }
 `
 
-export default function UpdateLyrics(props) {
+export default (props) => {
   // set props.lyrics.content in a state variable (stateContent)
   const [stateContent, setStateContent] = useState(props.lyrics.content.replace(/<br\/>/g, '\n'))
 
   // to track changes in props.lyrics.content
   const [oldContent, setOldContent] = useState(props.lyrics.content)
 
-  // if props.lyrics.content changes from outside then reset state variable (stateContent) to the new props.lyrics.content
+  // if props.lyrics.content changes from outside, then reset state variable (stateContent) to the new props.lyrics.content
   // it does not automaically happen
   if (oldContent != props.lyrics.content) {
     setOldContent(props.lyrics.content)
     setStateContent(props.lyrics.content.replace(/<br\/>/g, '\n'))
   }
 
-  const router = useRouter()
-
-  // mutation
+  // mutation tuble
   const [updateLyrics, { loading, error, data }] = useMutation(
     UPDATE_LYRICS_MUTATION,
     {
@@ -47,51 +43,51 @@ export default function UpdateLyrics(props) {
     }
   )
 
-  // handling change in content. "onChange" must be used with "value" at textarea
-  const contentChangeHandler = event => {
+  // function: handle onChange event
+  const handleContentChange = (event) => {
+    // handling change in content related to the issue of <br> in HTML and new line is textarea
+    // "onChange" must be used with "value" at textarea
     setStateContent(event.target.value)
   }
 
-  // handling submit event
-  const handleSubmit = event => {
+  // function: handle onSubmit event. get data from form and execute mutation
+  const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
     const form = event.target
     const formData = new window.FormData(form)
     const content = formData.get(FORM_CONTENT).replace(/\n/g, '<br/>')
 
-    // set query variables
-    const queryVariables = {
-      lyricsId: props.lyrics.id,
-      content: content,
-      userId: loggedOnUser.id,
-    }
-
-    // execute updateLyrics and refetch getSong from the start for the new lyrics to be shown
-    // update the cache is not easy but can be done
+    // execute mutation
+    // refetch getSong because updating list of lyrics in cache is a hassle
     updateLyrics({
-      variables: queryVariables,
+      variables: {
+        lyricsId: props.lyrics.id,
+        content: content,
+        userId: loggedOnUser.id,
+      },
       refetchQueries: () => [{
         query: GET_SONG_QUERY,
-        variables: { id: router.query.id },
+        variables: { id: props.songId },
       }],
       awaitRefetchQueries: true,
     })
   }
 
-  // show update lyrics form
+  // display component
   return (
     <form onSubmit={ handleSubmit }>
-      <div hidden={ !loggedOnUser || loggedOnUser.id != props.lyrics.user.id }>
-        <textarea name={ FORM_CONTENT } type="text" disabled={ loading } row="20" maxLength="500" value={ stateContent } onChange={ contentChangeHandler } placeholder="lyrics here" required/>
-        <button type="submit" disabled={ loading || (data && data.updateLyrics) }>update lyrics</button>
-        { error && (<ErrorMessage/>) }
-        {
-          (data && data.updateLyrics) && (
-            <div>Lyrics updated. Check later(won't apear instantly)</div>
-          )
-        }
+      <div hidden={ !(loggedOnUser?.id === props.lyrics.user.id || loggedOnUser?.admin) }>
+        <textarea name={ FORM_CONTENT } type="text" disabled={ loading } row="20" maxLength="500" value={ stateContent } onChange={ (event) => handleContentChange(event) } placeholder="lyrics here" required/>
+        <button type="submit" disabled={ loading || data?.updateLyrics }>
+          Update Lyrics
+        </button>
+
+        { loading && <div>mutating (design this)</div> }
+        { error && <ErrorMessage/> }
+        { data?.updateLyrics && <div>Lyrics updated. Check later(won't apear instantly)</div> }
       </div>
+
       <style jsx>{`
         form {
           border-bottom: 1px solid #ececec;

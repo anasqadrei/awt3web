@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
@@ -20,10 +18,8 @@ const CREATE_LYRICS_MUTATION = gql`
   }
 `
 
-export default function CreateLyrics() {
-  const router = useRouter()
-
-  // mutation
+export default (props) => {
+  // mutation tuple
   const [createLyrics, { loading, error, data }] = useMutation(
     CREATE_LYRICS_MUTATION,
     {
@@ -33,8 +29,8 @@ export default function CreateLyrics() {
     }
   )
 
-  // handling submit event
-  const handleSubmit = event => {
+  // function: handle onSubmit event. get data from form and execute mutation
+  const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
     const form = event.target
@@ -44,34 +40,35 @@ export default function CreateLyrics() {
 
     // set query variables
     const queryVariables = {
-      songId: router.query.id,
+      songId: props.songId,
       content: content,
       userId: loggedOnUser.id,
     }
 
-    // execute createLyrics and refetch getSong from the start for the new lyrics to be shown
-    // update the cache is not easy
+    // execute mutation
+    // refetch getSong because updating list of lyrics in cache is a hassle
     createLyrics({
       variables: queryVariables,
       refetchQueries: () => [{
         query: GET_SONG_QUERY,
-        variables: { id: router.query.id },
+        variables: { id: props.songId },
       }],
       awaitRefetchQueries: true,
     })
   }
 
-  // show add lyrics form
+  // display component
   return (
     <form onSubmit={ handleSubmit }>
       <textarea name={ FORM_CONTENT } type="text" row="20" maxLength="500" placeholder="lyrics here" required />
-      <button type="submit" disabled={ loading || (data && data.createLyrics) }>add lyrics</button>
-      { error && (<ErrorMessage/>) }
-      {
-        (data && data.createLyrics) && (
-          <div>Lyrics Added. Check later(won't apear instantly)</div>
-        )
-      }
+      <button type="submit" disabled={ loading || data?.createLyrics }>
+        Add Lyrics
+      </button>
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
+      { data?.createLyrics && <div>Lyrics Added. Check later(won't apear instantly)</div> }
+
       <style jsx>{`
         form {
           border-bottom: 1px solid #ececec;
