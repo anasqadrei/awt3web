@@ -1,5 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_USER_QUERY } from 'components/user.comp'
 import ErrorMessage from 'components/errorMessage'
@@ -21,8 +20,8 @@ const UPDATE_USER_MUTATION = gql`
   }
 `
 
-export default function UpdateUserImage() {
-  // mutation
+export default () => {
+  // mutation tuple
   const [updateUser, { loading, error, data }] = useMutation(
     UPDATE_USER_MUTATION,
     {
@@ -32,8 +31,8 @@ export default function UpdateUserImage() {
     }
   )
 
-  // handling submit event
-  const handleSubmit = event => {
+  // function: handle onSubmit event. get data from form and execute mutation
+  const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
     const form = event.target
@@ -41,52 +40,45 @@ export default function UpdateUserImage() {
     const file = formData.get(FORM_FILE)
     form.reset()
 
-    // set query variables
-    const queryVariables = {
-      userId: loggedOnUser.id,
-      user: {
-        image: loggedOnUser.id,
-        lastSeenDate: new Date(),
-      }
-    }
-
-    // execute updateUser and update the cache
+    // execute mutation and update the cache
     updateUser({
-      variables: queryVariables,
-      update: (proxy, { data: { updateUser } }) => {
-        // read cache
-        const data = proxy.readQuery({
-          query: GET_USER_QUERY,
-          variables: { id: loggedOnUser.id },
-        })
+      variables: {
+        userId: loggedOnUser.id,
+        user: {
+          // TODO: add real image file
+          image: loggedOnUser.id,
+          lastSeenDate: new Date(),
+        }
+      },
+      update: (cache, { data: { updateUser } }) => {
         // update cache
-        proxy.writeQuery({
-          query: GET_USER_QUERY,
-          variables: { id: loggedOnUser.id },
-          data: {
-            ...data,
-            getUser: {
-              ...data.getUser,
-              imageUrl: updateUser.imageUrl,
-              lastSeenDate: updateUser.lastSeenDate,
+        // TODO: does it even work? check after deciding on login way
+        cache.modify({
+          id: cache.identify(loggedOnUser),
+          fields: {
+            imageUrl() {
+              return updateUser.imageUrl
             },
-          },
+            lastSeenDate() {
+              return updateUser.lastSeenDate
+            },
+          }
         })
       },
     })
   }
 
-  // show add a user image form
+  // display component
   return (
     <form onSubmit={ handleSubmit }>
       <input name={ FORM_FILE } type="file" accept="image/png, image/jpeg" required/>
-      <button type="submit" disabled={ loading || (data && data.updateUser) }>add a user image</button>
-      { error && (<ErrorMessage/>) }
-      {
-        (data && data.updateUser) && (
-          <div>Image Added</div>
-        )
-      }
+      <button type="submit" disabled={ loading || data?.updateUser }>
+        Add User Image
+      </button>
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
+      { data?.updateUser && <div>Image Added</div> }
     </form>
   )
 }

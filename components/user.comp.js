@@ -124,7 +124,7 @@ export default () => {
       </div>
 
       <div>
-        emails:{ getUser.emails?.map(email => <p key={ email }>{ email }</p>) }
+        emails:{ getUser.emails ? getUser.emails.map(email => <p key={ email }>{ email }</p>) : `None` }
       </div>
       <p>social media: { getUser.profiles?.map(elem => elem.provider).join() }</p>
       <p>birthDate: { getUser.birthDate }</p>

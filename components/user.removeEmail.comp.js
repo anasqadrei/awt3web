@@ -1,5 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_USER_QUERY } from 'components/user.comp'
 import ErrorMessage from 'components/errorMessage'
@@ -20,8 +19,8 @@ const REMOVE_USER_EMAIL_MUTATION = gql`
   }
 `
 
-export default function RemoveUserEmail(props) {
-  // mutation
+export default (props) => {
+  // mutation tuple
   const [removeUserEmail, { loading, error }] = useMutation(
     REMOVE_USER_EMAIL_MUTATION,
     {
@@ -31,50 +30,42 @@ export default function RemoveUserEmail(props) {
     }
   )
 
-  // handling remove email event
-  const removeEmailHandler = event => {
+  // function: handle onClick event
+  const handleRemoveEmail = (event) => {
     event.preventDefault()
 
     if (confirm("Are you sure?")) {
-      // set query variables
-      const queryVariables = {
-        userId: loggedOnUser.id,
-        email: props.email,
-      }
-
-      // execute removeUserEmail and update the cache
+      // execute mutation and update the cache
       removeUserEmail({
-        variables: queryVariables,
-        update: (proxy, { data: { removeUserEmail } }) => {
-          // read cache
-          const data = proxy.readQuery({
-            query: GET_USER_QUERY,
-            variables: { id: loggedOnUser.id },
-          })
+        variables: {
+          userId: loggedOnUser.id,
+          email: props.email,
+        },
+        update: (cache, { data: { removeUserEmail } }) => {
           // update cache
-          proxy.writeQuery({
-            query: GET_USER_QUERY,
-            variables: { id: loggedOnUser.id },
-            data: {
-              ...data,
-              getUser: {
-                ...data.getUser,
-                emails: removeUserEmail.emails,
+          // TODO: does it even work? check after deciding on login way
+          cache.modify({
+            id: cache.identify(loggedOnUser),
+            fields: {
+              emails() {
+                return removeUserEmail.emails
               },
-            },
+            }
           })
         },
       })
     }
   }
 
-  // show remove email button
+  // display component
   return (
     <div>
-      <button hidden={ !loggedOnUser.admin } onClick={ removeEmailHandler } disabled={ loading }>
-        remove email
+      <button hidden={ !loggedOnUser.admin } onClick={ (event) => handleRemoveEmail(event) } disabled={ loading }>
+        Remove Email
       </button>
-      { error && (<ErrorMessage/>) }
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
     </div>
   )
 }
