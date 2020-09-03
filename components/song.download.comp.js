@@ -1,9 +1,7 @@
-import { useRouter } from 'next/router'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import ErrorMessage from 'components/errorMessage'
 import { GET_SONG_QUERY } from 'lib/graphql'
+import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism
 const loggedOnUser = {
@@ -18,26 +16,8 @@ const DOWNLOAD_SONG_MUTATION = gql`
   }
 `
 
-export default function DownloadSong() {
-  const router = useRouter()
-
-  // this is to get number of downloads
-  // the query will most likey use cache
-  const { data }  = useQuery (
-    GET_SONG_QUERY,
-    {
-      variables: { id: router.query.id },
-    }
-  )
-  const { getSong } = data
-
-  // set query variables
-  const queryVariables = {
-    userId: loggedOnUser.id,
-    songId: router.query.id,
-  }
-
-  // download mutation
+export default (props) => {
+  // mutation tuple
   const [downloadSong, { loading, error }] = useMutation(
     DOWNLOAD_SONG_MUTATION,
     {
@@ -47,43 +27,55 @@ export default function DownloadSong() {
     }
   )
 
-  // handling download event
-  const downloadHandler = () => {
+  // excute query to display data. the query will most likey use cache
+  const { data }  = useQuery (
+    GET_SONG_QUERY,
+    {
+      variables: { id: props.songId },
+    }
+  )
+
+  // in case of initial loading (or the highly unlikely case of no data found)
+  if (!data?.getSong) {
+    return null
+  }
+
+  // get data
+  const { getSong } = data
+
+  // function: handle onClick event
+  const handleDownload = () => {
     // TODO: download song
-    // execute downloadSong and update downloads counter in the cache
+
+    // execute mutation and update the cache
     downloadSong({
-      variables: queryVariables,
-      update: (proxy, { data: { downloadSong } }) => {
-        // if successful download, update song downloads cache
+      variables: {
+        userId: loggedOnUser.id,
+        songId: props.songId,
+      },
+      update: (cache, { data: { downloadSong } }) => {
+        // if a successful download, update downloads counter in the cache
         if (downloadSong) {
-          // read cache
-          const data = proxy.readQuery({
-            query: GET_SONG_QUERY,
-            variables: { id: router.query.id },
-          })
-          // update cache by incrementing getSong.downloads
-          proxy.writeQuery({
-            query: GET_SONG_QUERY,
-            variables: { id: router.query.id },
-            data: {
-              ...data,
-              getSong: {
-                ...data.getSong,
-                downloads: data.getSong.downloads + 1,
-              }
-            },
+          cache.modify({
+            id: cache.identify(getSong),
+            fields: {
+              downloads(currentValue = 0) {
+                return currentValue + 1
+              },
+            }
           })
         }
       },
     })
   }
 
-  // download button
+  // display component
   return (
     <section>
-      <button onClick={ () => downloadHandler() } disabled={ loading }>
+      <button onClick={ () => handleDownload() } disabled={ loading }>
         Download
       </button>
+
       { getSong.downloads && `Downloaded ${ getSong.downloads } times` }
     </section>
   )

@@ -138,16 +138,16 @@ export default withApollo()(({ song }) => {
       </div>
 
       <div>
-        <PlaySong/>
+        <PlaySong songId={ song.id }/>
       </div>
       <div>
         <Link href="#"><a><img src="https://via.placeholder.com/60?text=Queue" alt="Queue"/>Play Next/Add to Queue</a></Link>
       </div>
       <div>
-        <DownloadSong/>
+        <DownloadSong songId={ song.id }/>
       </div>
       <div>
-        <LikeSong/>
+        <LikeSong songId={ song.id }/>
       </div>
 
       <div>
@@ -167,7 +167,7 @@ export default withApollo()(({ song }) => {
       </div>
 
       <div>
-        <ShareSong/>
+        <ShareSong songId={ song.id }/>
       </div>
 
       <div>
