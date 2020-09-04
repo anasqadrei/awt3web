@@ -38,17 +38,14 @@ export default (props) => {
     const content = formData.get(FORM_CONTENT).replace(/\n/g, '<br/>')
     form.reset()
 
-    // set query variables
-    const queryVariables = {
-      songId: props.songId,
-      content: content,
-      userId: loggedOnUser.id,
-    }
-
     // execute mutation
     // refetch getSong because updating list of lyrics in cache is a hassle
     createLyrics({
-      variables: queryVariables,
+      variables: {
+        songId: props.songId,
+        content: content,
+        userId: loggedOnUser.id,
+      },
       refetchQueries: () => [{
         query: GET_SONG_QUERY,
         variables: { id: props.songId },

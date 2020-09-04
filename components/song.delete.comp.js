@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
 
@@ -16,52 +14,42 @@ const DELETE_SONG_MUTATION = gql`
   }
 `
 
-export default function DeleteSong(props) {
-  const router = useRouter()
-
-  // mutation
+export default (props) => {
+  // mutation tuble
   const [deleteSong, { loading, error, data }] = useMutation(
     DELETE_SONG_MUTATION,
     {
-      onCompleted: (data) => {
-        // TODO: redirect or what?
-      },
       onError: (error) => {
         Sentry.captureException(error)
       },
     }
   )
 
-  // handling delete event
-  const deleteHandler = event => {
+  // function: handle onClick event
+  const handleDelete = () => {
     if (confirm("Are you sure?")) {
-      // set query variables
-      const queryVariables = {
-        songId: router.query.id,
-        userId: loggedOnUser.id,
-      }
-
-      // execute deleteSong
+      // execute mutation
       deleteSong({
-        variables: queryVariables,
+        variables: {
+          songId: props.song.id,
+          userId: loggedOnUser.id,
+        },
       })
+      // NOTE: deleted song could exist in many places in the cache such as artist list, new songs, playlists...
+      // NOTE: remove all is a hassle. it will disapear at the next website visit anyway
     }
   }
 
-  // show delete song button
+  // display component
   return (
-    <div>
-      <div hidden={ !loggedOnUser || loggedOnUser.id != props.song.user.id }>
-        <button onClick={ () => deleteHandler() } disabled={ loading || (data && data.deleteSong) }>
-          Delete Song
-        </button>
-        { error && (<ErrorMessage/>) }
-        {
-          (data && data.deleteSong) && (
-            <div>song is being Deleted. Check later(won't show instantly)</div>
-          )
-        }
-      </div>
+    <div hidden={ !(loggedOnUser?.id === props.song.user.id || loggedOnUser?.admin) }>
+      <button onClick={ () => handleDelete() } disabled={ loading || data?.deleteSong }>
+        Delete Song
+      </button>
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
+      { data?.deleteSong && <div>song is being Deleted. Check later(won't show instantly)</div> }
     </div>
   )
 }

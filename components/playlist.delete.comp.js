@@ -1,6 +1,5 @@
 import Router from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'
 import ErrorMessage from 'components/errorMessage'
@@ -17,8 +16,8 @@ const DELETE_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default function DeletePlaylist(props) {
-  // mutation
+export default (props) => {
+  // mutation tuble
   const [deletePlaylist, { loading, error }] = useMutation(
     DELETE_PLAYLIST_MUTATION,
     {
@@ -31,44 +30,40 @@ export default function DeletePlaylist(props) {
     }
   )
 
-  // handling delete event
-  const deleteHandler = event => {
+  // function: handle onClick event
+  const handleDelete = () => {
     if (confirm("Are you sure?")) {
-      // set query variables
-      const deletePlaylistQueryVariables = {
-        playlistId: props.playlist.id,
-        userId: loggedOnUser.id,
-      }
-      const listPlaylistsQueryVariables = {
-        userId: loggedOnUser.id,
-        private: props.playlist.private,
-        page: 1,
-        pageSize: PAGE_SIZE,
-        sort: DEFAULT_SORT,
-      }
-
-      // execute deletePlaylist and fetch all user's list for the deleted one to disappear
-      // update cache is not easy in case of lists
+      // execute mutation
+      // refetch all user's playlists because updating list of lyrics in cache is a hassle
       deletePlaylist({
-        variables: deletePlaylistQueryVariables,
+        variables: {
+          playlistId: props.playlist.id,
+          userId: loggedOnUser.id,
+        },
         refetchQueries: () => [{
           query: LIST_USER_PLAYLISTS_QUERY,
-          variables: listPlaylistsQueryVariables,
+          variables: {
+            userId: loggedOnUser.id,
+            private: props.playlist.private,
+            page: 1,
+            pageSize: PAGE_SIZE,
+            sort: DEFAULT_SORT,
+          },
         }],
         awaitRefetchQueries: false,
       })
     }
   }
 
-  // show delete playlist button
+  // display component
   return (
-    <div>
-      <div hidden={ !loggedOnUser || loggedOnUser.id != props.playlist.user.id }>
-        <button onClick={ () => deleteHandler() } disabled={ loading }>
-          Delete Playlist
-        </button>
-        { error && (<ErrorMessage/>) }
-      </div>
+    <div hidden={ !(loggedOnUser?.id === props.playlist.user.id || loggedOnUser?.admin) }>
+      <button onClick={ () => handleDelete() } disabled={ loading }>
+        Delete Playlist
+      </button>
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
     </div>
   )
 }

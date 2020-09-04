@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'
@@ -24,10 +22,8 @@ const UPDATE_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default function UpdatePlaylist(props) {
-  const router = useRouter()
-
-  // mutation
+export default (props) => {
+  // mutation tuble
   const [updatePlaylist, { loading, error, data }] = useMutation(
     UPDATE_PLAYLIST_MUTATION,
     {
@@ -37,8 +33,8 @@ export default function UpdatePlaylist(props) {
     }
   )
 
-  // handling submit event
-  const handleSubmit = event => {
+  // function: handle onSubmit event. get data from form and execute mutation
+  const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
     const form = event.target
@@ -47,65 +43,69 @@ export default function UpdatePlaylist(props) {
     const desc = formData.get(FORM_DESC).replace(/\n/g, '<br/>')
     const privacy = formData.get(FORM_PRIVACY) ? true : false
 
-    // set query variables
-    const updatePlaylistQueryVariables = {
-      playlistId: router.query.id,
+    // set query variables. update only what's changed
+    const varsUpdatePlaylist = {
+      playlistId: props.playlist.id,
       playlist: {},
     }
-    const listPlaylistsQueryVariables = {
+    const varsListPlaylists = {
       userId: loggedOnUser.id,
       page: 1,
       pageSize: PAGE_SIZE,
       sort: DEFAULT_SORT,
     }
+    let moreRefetchQueries = []
 
-    // update only what's changed
     if (name != props.playlist.name) {
-      updatePlaylistQueryVariables.playlist.name = name
+      varsUpdatePlaylist.playlist.name = name
     }
     if (desc != props.playlist.desc) {
-      updatePlaylistQueryVariables.playlist.desc = desc
+      varsUpdatePlaylist.playlist.desc = desc.trim().length ? desc : ' '
     }
-    let moreRefetchQueries = []
     if (privacy != props.playlist.private) {
-      updatePlaylistQueryVariables.playlist.private = privacy
+      varsUpdatePlaylist.playlist.private = privacy
       // refetch all public and private for the cache to be correctly updated
       moreRefetchQueries = [{
         query: LIST_USER_PLAYLISTS_QUERY,
-        variables: { ...listPlaylistsQueryVariables, private: true },
-      },{
+        variables: { ...varsListPlaylists, private: true },
+      },
+      {
         query: LIST_USER_PLAYLISTS_QUERY,
-        variables: { ...listPlaylistsQueryVariables, private: false },
+        variables: { ...varsListPlaylists, private: false },
       }]
     }
 
-    // execute updatePlaylist and refetch getPlaylist
-    // update the cache is hard when privace changes
+    // execute mutation
+    // refetch listUserPlaylists because updating privacy changes in cache is a hassle
     updatePlaylist({
-      variables: updatePlaylistQueryVariables,
-      refetchQueries: () => [{
-        query: GET_PLAYLIST_QUERY,
-        variables: { id: router.query.id },
-      }, ...moreRefetchQueries],
+      variables: varsUpdatePlaylist,
+      refetchQueries: () => [
+        {
+          query: GET_PLAYLIST_QUERY,
+          variables: { id: props.playlist.id },
+        },
+        ...moreRefetchQueries,
+      ],
       awaitRefetchQueries: true,
     })
   }
 
-  // show update playlist form
+  // display component
   return (
     <form onSubmit={ handleSubmit }>
-      <div hidden={ !loggedOnUser || loggedOnUser.id != props.playlist.user.id }>
+      <div hidden={ !(loggedOnUser?.id === props.playlist.user.id || loggedOnUser?.admin) }>
         playlist name: <input name={ FORM_NAME } type="text" disabled={ loading } maxLength="50" defaultValue={ props.playlist.name } placeholder="playlist name here" required/>
-        description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" defaultValue={ props.playlist.desc && props.playlist.desc.replace(/<br\/>/g, '\n') } placeholder="desc here"/>
+        description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" defaultValue={ props.playlist?.desc?.replace(/<br\/>/g, '\n') } placeholder="desc here"/>
         <input name={ FORM_PRIVACY } type="checkbox" disabled={ loading } defaultChecked={ props.playlist.private }/> private playlist
-        <button type="submit" disabled={ loading || (data && data.updatePlaylist) }>update playlist</button>
-        { error && (<ErrorMessage/>) }
-        {
-          (data && data.updatePlaylist) && (
-            <div>Playlist Updated</div>
-          )
-        }
+        <button type="submit" disabled={ loading || data?.updatePlaylist }>
+          Update Playlist
+        </button>
+
+        { loading && <div>mutating (design this)</div> }
+        { error && <ErrorMessage/> }
+        { data?.updatePlaylist && <div>Playlist Updated</div> }
       </div>
+
       <style jsx>{`
         form {
           border-bottom: 1px solid #ececec;

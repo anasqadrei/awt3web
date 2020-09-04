@@ -1,5 +1,5 @@
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import Router from 'next/router'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
 
@@ -17,17 +17,18 @@ const CREATE_SONG_MUTATION = gql`
   mutation createSong ($title: String!, $artist: String!, $desc: String!, $userId: ID!) {
     createSong(title: $title, artist: $artist, desc: $desc, userId: $userId) {
       id
+      slug
     }
   }
 `
 
-export default function CreateSong() {
-  // mutation
-  const [createSong, { loading, error }] = useMutation(
+export default () => {
+  // mutation tuple
+  const [createSong, { loading, error, data }] = useMutation(
     CREATE_SONG_MUTATION,
     {
       onCompleted: (data) => {
-        // TODO: redirect or what?
+        Router.push(`/song/[id]/[slug]`, `/song/${ data.createSong.id }/${ data.createSong.slug }`)
       },
       onError: (error) => {
         Sentry.captureException(error)
@@ -35,8 +36,8 @@ export default function CreateSong() {
     }
   )
 
-  // handling submit event
-  const handleSubmit = event => {
+  // function: handle onSubmit event. get data from form and execute mutation
+  const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
     const form = event.target
@@ -45,24 +46,20 @@ export default function CreateSong() {
     const artist = formData.get(FORM_ARTIST)
     const desc = formData.get(FORM_DESC).replace(/\n/g, '<br/>')
     const file = formData.get(FORM_FILE)
-    // form.reset()
 
-    // set query variables
-    const queryVariables = {
-      title: title,
-      artist: artist,
-      desc: desc,
-      userId: loggedOnUser.id,
-      // file: file,
-    }
-
-    // execute createSong
+    // execute mutation
     createSong({
-      variables: queryVariables,
+      variables: {
+        title: title,
+        artist: artist,
+        desc: desc,
+        userId: loggedOnUser.id,
+        // file: file,
+      },
     })
   }
 
-  // show song upload form
+  // display component
   // TODO: check the audio file type after setting up the streaming
   // TODO: confirmation on this component or another?
   return (
@@ -86,8 +83,14 @@ export default function CreateSong() {
       </div>
       */}
 
-      <button type="submit" disabled={ loading }>add song</button>
-      { error && (<ErrorMessage/>) }
+      <button type="submit" disabled={ loading || data?.createSong }>
+        Add Song
+      </button>
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
+      { data?.createSong && <div>song added. redirect shortly</div> }
+
       <style jsx>{`
         form {
           border-bottom: 1px solid #ececec;
