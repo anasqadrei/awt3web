@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
@@ -17,10 +15,8 @@ const DELETE_SONG_IMAGE_MUTATION = gql`
   }
 `
 
-export default function DeleteSongImage(props) {
-  const router = useRouter()
-
-  // mutation
+export default (props) => {
+  // mutation tuple
   const [deleteSongImage, { loading, error, data }] = useMutation(
     DELETE_SONG_IMAGE_MUTATION,
     {
@@ -30,42 +26,35 @@ export default function DeleteSongImage(props) {
     }
   )
 
-  // handling delete event
-  const deleteHandler = event => {
+  // function: handle onClick event
+  const handleDelete = () => {
     if (confirm("Are you sure?")) {
-      // set query variables
-      const queryVariables = {
-        songImageId:  props.image.id,
-        userId: loggedOnUser.id,
-      }
-
-      // execute deleteSongImage and refetch getSong from the start for the deleted song image to be removed
-      // update the cache is not easy
+      // execute mutation
+      // refetch getSong because updating list of images in cache is a hassle
       deleteSongImage({
-        variables: queryVariables,
+        variables: {
+          songImageId:  props.image.id,
+          userId: loggedOnUser.id,
+        },
         refetchQueries: () => [{
           query: GET_SONG_QUERY,
-          variables: { id: router.query.id },
+          variables: { id: props.songId },
         }],
         awaitRefetchQueries: true,
       })
     }
   }
 
-  // show delete a song image button
+  // display component
   return (
-    <div>
-      <div hidden={ !loggedOnUser || loggedOnUser.id != props.image.user.id }>
-        <button onClick={ () => deleteHandler() } disabled={ loading || (data && data.deleteSongImage) }>
-          X delete
-        </button>
-        { error && (<ErrorMessage/>) }
-        {
-          (data && data.deleteSongImage) && (
-            <div>songImage is being Deleted. Check later(won't show instantly)</div>
-          )
-        }
-      </div>
+    <div hidden={ !(loggedOnUser?.id === props.image.user.id || loggedOnUser?.admin) }>
+      <button onClick={ () => handleDelete() } disabled={ loading || data?.deleteSongImage }>
+        X Delete Image
+      </button>
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
+      { data?.deleteSongImage && <div>songImage is being Deleted. Check later(won't show instantly)</div> }
     </div>
   )
 }

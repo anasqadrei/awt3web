@@ -203,12 +203,12 @@ export default withApollo()(({ song }) => {
       </div>
 
       <div>
-        { song.imagesList && song.imagesList.map(image => (
+        { song.imagesList?.map(image => (
           <div key={ image.id }>
             <img src={ image.url } alt={ song.title }/>
             أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ image.user.id }/${ image.user.slug }` }><a>{ image.user.username }</a></Link> on { image.createdDate }
-            <DeleteSongImage image={ image }/>
-            <LikeSongImage image={ image }/>
+            <DeleteSongImage songId={ song.id } image={ image }/>
+            <LikeSongImage songId={ song.id } imageId={ image.id }/>
           </div>
         ))}
         <div>
@@ -216,7 +216,7 @@ export default withApollo()(({ song }) => {
           <Modal isOpen={ createSongImageModalIsOpen } onRequestClose={ () => { setCreateSongImageModalIsOpen(false) } } style={ modalStyles } contentLabel="add song image modal">
             <button onClick={ () => { setCreateSongImageModalIsOpen(false) } }>close</button>
             <h2>Add Song Image</h2>
-            <CreateSongImage/>
+            <CreateSongImage songId={ song.id }/>
           </Modal>
         </div>
       </div>

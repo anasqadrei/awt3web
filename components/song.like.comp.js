@@ -136,7 +136,7 @@ export default (props) => {
     likeSong({
       variables: vars,
       update: (cache, { data: { likeSong } }) => {
-        // if successful like (not a repeated one)
+        // if a successful like (not a repeated one)
         if (likeSong) {
           // update likes counter
           {
@@ -182,7 +182,7 @@ export default (props) => {
     unlikeSong({
       variables: vars,
       update: (cache, { data: { unlikeSong } }) => {
-        // if successful unlike (not a repeated one)
+        // if a successful unlike (not a repeated one)
         if (unlikeSong) {
           // update likes counter
           {
@@ -231,7 +231,7 @@ export default (props) => {
         reason: reason
       },
       update: (cache, { data: { dislikeSong } }) => {
-        // if successful dislike (not a repeated one)
+        // if a successful dislike (not a repeated one)
         if (dislikeSong) {
           // update dislikes counter
           {
@@ -277,7 +277,7 @@ export default (props) => {
     undislikeSong({
       variables: vars,
       update: (cache, { data: { undislikeSong } }) => {
-        // if successful undislike (not a repeated one)
+        // if a successful undislike (not a repeated one)
         if (undislikeSong) {
           // update dislikes counter
           {

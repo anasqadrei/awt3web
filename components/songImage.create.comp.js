@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
@@ -20,10 +18,8 @@ const CREATE_SONG_IMAGE_MUTATION = gql`
   }
 `
 
-export default function CreateSongImage() {
-  const router = useRouter()
-
-  // mutation
+export default (props) => {
+  // mutation tuple
   const [createSongImage, { loading, error, data }] = useMutation(
     CREATE_SONG_IMAGE_MUTATION,
     {
@@ -33,8 +29,8 @@ export default function CreateSongImage() {
     }
   )
 
-  // handling submit event
-  const handleSubmit = event => {
+  // function: handle onSubmit event. get data from form and execute mutation
+  const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
     const form = event.target
@@ -42,36 +38,35 @@ export default function CreateSongImage() {
     const file = formData.get(FORM_FILE)
     form.reset()
 
-    // set query variables
-    const queryVariables = {
-      // file: file,
-      songId: router.query.id,
-      userId: loggedOnUser.id,
-    }
-
-    // execute createSongImage and refetch getSong from the start for the new song image to be shown
-    // update the cache is not easy
+    // execute mutation
+    // refetch getSong because updating list of images in cache is a hassle
     createSongImage({
-      variables: queryVariables,
+      variables: {
+        // TODO: file
+        // file: file,
+        songId: props.songId,
+        userId: loggedOnUser.id,
+      },
       refetchQueries: () => [{
         query: GET_SONG_QUERY,
-        variables: { id: router.query.id },
+        variables: { id: props.songId },
       }],
       awaitRefetchQueries: true,
     })
   }
 
-  // show add a song image form
+  // display component
   return (
     <form onSubmit={ handleSubmit }>
       <input name={ FORM_FILE } type="file" accept="image/png, image/jpeg" required/>
-      <button type="submit" disabled={ loading || (data && data.createSongImage) }>add a song image</button>
-      { error && (<ErrorMessage/>) }
-      {
-        (data && data.createSongImage) && (
-          <div>Image Added. Check later(won't show instantly)</div>
-        )
-      }
+      <button type="submit" disabled={ loading || data?.createSongImage }>
+        Add Song Image
+      </button>
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
+      { data?.createSongImage && <div>song-image added. Check later(won't show instantly)</div> }
+
       <style jsx>{`
         form {
           border-bottom: 1px solid #ececec;
