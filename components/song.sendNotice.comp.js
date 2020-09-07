@@ -83,16 +83,16 @@ export default (props) => {
   // display component
   return (
     <form onSubmit={ handleSubmit }>
-      الإسم: <input name={ FORM_NAME } type="text" maxLength="100" placeholder="الإسم" required /><br/>
-      الشركة: <input name={ FORM_COMPANY } type="text" maxLength="100" placeholder="الشركة" /><br/>
-      العنوان: <textarea name={ FORM_ADDRESS } type="text" row="3" maxLength="200" placeholder="العنوان" required /><br/>
-      الهاتف: <input name={ FORM_PHONE } type="text" maxLength="100" placeholder="الهاتف" required /><br/>
-      البريد الالكتروني: <input name={ FORM_EMAIL } type="email" maxLength="100" placeholder="البريد الالكتروني" required /><br/>
-      الآغنية: <input name={ FORM_SONG_TITLE } type="text" value={ props.song.title } readOnly /><br/>
-      الفنان: <input name={ FORM_ARTIST_NAME } type="text" value={ props.song.artist.name } readOnly /><br/>
-      العنوان الالكتروني: <input name={ FORM_SONG_URL } type="text" value={ props.song.url } readOnly /><br/>
-      song description: <textarea name={ FORM_SONG_DESC } type="text" row="3" maxLength="200" value={ props.song.desc.replace(/<br\/>/g, '\n') } readOnly /><br/>
-      message: <textarea name={ FORM_MESSAGE } type="text" row="5" minLength="50" maxLength="500" placeholder="اكتب الرسالة" required /><br/>
+      الإسم: <input name={ FORM_NAME } type="text" maxLength="100" placeholder="الإسم" required/><br/>
+      الشركة: <input name={ FORM_COMPANY } type="text" maxLength="100" placeholder="الشركة"/><br/>
+      العنوان: <textarea name={ FORM_ADDRESS } type="text" row="3" maxLength="200" placeholder="العنوان" required/><br/>
+      الهاتف: <input name={ FORM_PHONE } type="text" maxLength="100" placeholder="الهاتف" required/><br/>
+      البريد الالكتروني: <input name={ FORM_EMAIL } type="email" maxLength="100" placeholder="البريد الالكتروني" required/><br/>
+      الآغنية: <input name={ FORM_SONG_TITLE } type="text" value={ props.song.title } readOnly/><br/>
+      الفنان: <input name={ FORM_ARTIST_NAME } type="text" value={ props.song.artist.name } readOnly/><br/>
+      العنوان الالكتروني: <input name={ FORM_SONG_URL } type="text" value={ props.song.url } readOnly/><br/>
+      song description: <textarea name={ FORM_SONG_DESC } type="text" row="3" maxLength="200" value={ props.song.desc.replace(/<br\/>/g, '\n') } readOnly/><br/>
+      message: <textarea name={ FORM_MESSAGE } type="text" row="5" minLength="50" maxLength="500" placeholder="اكتب الرسالة" required/><br/>
       <button type="submit" disabled={ loading || data?.sendCopyrightInfringementNotice }>
         Send Notice
       </button>

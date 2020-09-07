@@ -163,7 +163,7 @@ export default (props) => {
       { total && `${ total } commented` }
 
       { listComments.map(comment => (
-        <ParentComment key={ comment.id } comment={ comment } />
+        <ParentComment key={ comment.id } comment={ comment }/>
       ))}
 
       { nextPage ?

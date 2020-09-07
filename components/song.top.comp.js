@@ -81,7 +81,7 @@ export default () => {
     <section>
       Top Songs
       { listTopSongs.map(song => (
-        <SongItem key={ song.id } song={ song } />
+        <SongItem key={ song.id } song={ song }/>
       ))}
 
       <style jsx>{`

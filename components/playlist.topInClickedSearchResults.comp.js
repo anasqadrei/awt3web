@@ -70,7 +70,7 @@ export default () => {
     <section>
       Top playlists in clicked search results
       { listTopPlaylistsInClickedSearchResult.map(playlist => (
-        <PlaylistItem key={ playlist.id } playlist={ playlist } />
+        <PlaylistItem key={ playlist.id } playlist={ playlist }/>
       ))}
       
       <style jsx>{`

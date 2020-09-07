@@ -124,7 +124,7 @@ export default () => {
       <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ false } onClick={ changeSort }/>
 
       { listArtists.map(artist => (
-        <ArtistGridItem key={ artist.id } artist={ artist } />
+        <ArtistGridItem key={ artist.id } artist={ artist }/>
       ))}
 
       { nextPage ?

@@ -67,7 +67,7 @@ export default () => {
   // error handling
   if (error) {
     Sentry.captureException(error)
-    return <ErrorMessage />
+    return <ErrorMessage/>
   }
 
   // in case no data found
@@ -88,7 +88,7 @@ export default () => {
   // display data
   return (
     <section>
-      <Head title={ getPlaylist.name } description={ getPlaylist.name } asPath={ decodeURIComponent(router.asPath) } ogImage={ getPlaylist.imageUrl } />
+      <Head title={ getPlaylist.name } description={ getPlaylist.name } asPath={ decodeURIComponent(router.asPath) } ogImage={ getPlaylist.imageUrl }/>
 
       <div>
         <img src={ getPlaylist.imageUrl ? getPlaylist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>

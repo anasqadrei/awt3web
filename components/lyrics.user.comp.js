@@ -110,7 +110,7 @@ export default (props) => {
     <section>
       { listUserLyrics.map(lyrics => (
         <div key={ lyrics.id }>
-          <div dangerouslySetInnerHTML={{ __html: lyrics.content }} />
+          <div dangerouslySetInnerHTML={{ __html: lyrics.content }}/>
           <Link href="/song/[id]/[slug]" as={ `/song/${ lyrics.song.id }/${ lyrics.song.slug }` }>
             <a>{ lyrics.song.title }</a>
           </Link>

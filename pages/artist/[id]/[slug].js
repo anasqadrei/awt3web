@@ -57,7 +57,7 @@ export default ({ artist }) => {
 
   // if artist was not found or error (after running getStaticProps())
   if (!router.isFallback && !artist) {
-    return <Error statusCode={ 404 } title="Artist Not Found" />;
+    return <Error statusCode={ 404 } title="Artist Not Found"/>;
   }
 
   // If the page is not yet generated, this will be displayed initially until getStaticProps() finishes running
@@ -67,7 +67,7 @@ export default ({ artist }) => {
 
   return (
     <Layout>
-      <Head title={ artist.name } description={ artist.name } asPath={ `/artist/${ artist.id }/${ decodeURIComponent(artist.slug) }` } ogImage={ artist.imageUrl } />
+      <Head title={ artist.name } description={ artist.name } asPath={ `/artist/${ artist.id }/${ decodeURIComponent(artist.slug) }` } ogImage={ artist.imageUrl }/>
       <section>
         <div>
           <img src={ artist.imageUrl ? artist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
@@ -98,8 +98,8 @@ export default ({ artist }) => {
           Total Songs: { artist.songs }, Liked songs: { artist.songLikes }
           <ArtistSongs artistId={ artist.id } snippet={ false } display={ DISPLAY.LIST }/>
         </div>
-        <CreateComment collection={ ARTISTS_COLLECTION } id={ artist.id } />
-        <CommentsList collection={ ARTISTS_COLLECTION } id={ artist.id } />
+        <CreateComment collection={ ARTISTS_COLLECTION } id={ artist.id }/>
+        <CommentsList collection={ ARTISTS_COLLECTION } id={ artist.id }/>
       </section>
       <style jsx>{`
         .title, .description {

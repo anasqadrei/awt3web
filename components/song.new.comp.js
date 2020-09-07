@@ -73,7 +73,7 @@ export default () => {
     <section>
       NewSongs
       { listSongs.map(song => (
-        <SongItem key={ song.id } song={ song } />
+        <SongItem key={ song.id } song={ song }/>
       ))}
 
       <style jsx>{`

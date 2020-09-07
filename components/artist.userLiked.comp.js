@@ -108,7 +108,7 @@ export default () => {
     <section>
       Liked Artists
       { listUserLikedArtists.map(artist => (
-        <ArtistRowItem key={ artist.id } artist={ artist } />
+        <ArtistRowItem key={ artist.id } artist={ artist }/>
       ))}
 
       { nextPage ?

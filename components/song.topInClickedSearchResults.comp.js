@@ -77,7 +77,7 @@ export default () => {
     <section>
       Top songs in clicked search results
       { listTopSongsInClickedSearchResult.map(song => (
-        <SongItem key={ song.id } song={ song } />
+        <SongItem key={ song.id } song={ song }/>
       ))}
       
       <style jsx>{`

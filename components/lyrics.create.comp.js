@@ -57,7 +57,7 @@ export default (props) => {
   // display component
   return (
     <form onSubmit={ handleSubmit }>
-      <textarea name={ FORM_CONTENT } type="text" row="20" maxLength="500" placeholder="lyrics here" required />
+      <textarea name={ FORM_CONTENT } type="text" row="20" maxLength="500" placeholder="lyrics here" required/>
       <button type="submit" disabled={ loading || data?.createLyrics }>
         Add Lyrics
       </button>

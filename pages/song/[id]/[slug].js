@@ -94,7 +94,7 @@ export default ({ song }) => {
   // if song was not found or error (after running getStaticProps())
   if (!router.isFallback && !song) {
     // TODO: custom 404 instead of this. to have the proper design
-    return <Error statusCode={ 404 } title="Song Not Found" />;
+    return <Error statusCode={ 404 } title="Song Not Found"/>;
   }
 
   // If the page is not yet generated, this will be displayed initially until getStaticProps() finishes running
@@ -117,7 +117,7 @@ export default ({ song }) => {
 
   return (
     <Layout>
-      <Head title={ `${ song.title } - ${ song.artist.name }` } description={ `${ song.title } - ${ song.artist.name }` } asPath={ `/song/${ song.id }/${ decodeURIComponent(song.slug) }` } ogImage={ song.defaultImage && song.defaultImage.url } />
+      <Head title={ `${ song.title } - ${ song.artist.name }` } description={ `${ song.title } - ${ song.artist.name }` } asPath={ `/song/${ song.id }/${ decodeURIComponent(song.slug) }` } ogImage={ song.defaultImage && song.defaultImage.url }/>
       <div>
         <div>
           <button onClick={ () => { setReportSongModalIsOpen(true) } }>Report Song</button>
@@ -176,7 +176,7 @@ export default ({ song }) => {
 
       <div>
         { song.desc && (
-          <div dangerouslySetInnerHTML={{ __html: song.desc.replace(/#[^\s<]+/g,'') }} />
+          <div dangerouslySetInnerHTML={{ __html: song.desc.replace(/#[^\s<]+/g,'') }}/>
         )}
         {
           song.hashtags && song.hashtags.map(hashtag => (
@@ -232,7 +232,7 @@ export default ({ song }) => {
         </div>
         { song.lyrics && (
           <div>
-            <div dangerouslySetInnerHTML={{ __html: song.lyrics.content }} />
+            <div dangerouslySetInnerHTML={{ __html: song.lyrics.content }}/>
             { song.lyrics.createdDate && `created on ${ song.lyrics.createdDate }` } { song.lyrics.lastUpdatedDate && `last modified on ${ song.lyrics.lastUpdatedDate }` } by <Link href="/user/[id]/[slug]" as={ `/user/${ song.lyrics.user.id }/${ song.lyrics.user.slug }` }><a>{ song.lyrics.user.username }</a></Link>
             <div>
               <button onClick={ () => { setUpdateLyricsModalIsOpen(true) } }>Update Lyrics</button>
@@ -252,8 +252,8 @@ export default ({ song }) => {
         {/* // TODO: relatedSongs */}
       </div>
 
-      <CreateComment collection={ SONGS_COLLECTION } id={ song.id } />
-      <CommentsList collection={ SONGS_COLLECTION } id={ song.id } />
+      <CreateComment collection={ SONGS_COLLECTION } id={ song.id }/>
+      <CommentsList collection={ SONGS_COLLECTION } id={ song.id }/>
 
       <style jsx>{`
         .title, .description {

@@ -116,7 +116,7 @@ export default () => {
     <section>
       Liked Songs
       { listUserLikedSongs.map(song => (
-        <SongItem key={ song.id } song={ song } />
+        <SongItem key={ song.id } song={ song }/>
       ))}
 
       { nextPage ?

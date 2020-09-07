@@ -70,7 +70,7 @@ export default () => {
     <section>
       Top artists in clicked search results
       { listTopArtistsInClickedSearchResult.map(artist => (
-        <ArtistGridItem key={ artist.id } artist={ artist } />
+        <ArtistGridItem key={ artist.id } artist={ artist }/>
       ))}
 
       <style jsx>{`

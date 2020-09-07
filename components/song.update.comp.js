@@ -75,7 +75,7 @@ export default (props) => {
       <div hidden={ !(loggedOnUser?.id === props.song.user.id || loggedOnUser?.admin) }>
         song title: <input name={ FORM_TITLE } type="text" disabled={ loading } maxLength="50" defaultValue={ props.song.title } placeholder="title here" required/>
         artist name: <input name={ FORM_ARTIST } type="text" disabled={ loading } maxLength="50" defaultValue={ props.song.artist.name } placeholder="artist here" required/>
-        description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" defaultValue={ props.song?.desc?.replace(/<br\/>/g, '\n') } placeholder="desc here" required />
+        description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" defaultValue={ props.song?.desc?.replace(/<br\/>/g, '\n') } placeholder="desc here" required/>
         <button type="submit" disabled={ loading || data?.updateSong }>
           Update Song
         </button>

@@ -140,7 +140,7 @@ export default (props) => {
       { !props.snippet && <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ false } onClick={ changeSort }/> }
 
       { listUserSongs.map(song => (
-        <SongItem key={ song.id } song={ song } />
+        <SongItem key={ song.id } song={ song }/>
       ))}
 
       { !props.snippet && (

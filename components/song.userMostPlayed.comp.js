@@ -116,7 +116,7 @@ export default () => {
     <section>
       My Most Played
       { listUserPlayedSongs.map(song => (
-        <SongItem key={ song.id } song={ song } />
+        <SongItem key={ song.id } song={ song }/>
       ))}
 
       { nextPage ?

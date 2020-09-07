@@ -109,7 +109,7 @@ export default () => {
   // display data
   return (
     <section>
-      <Head title={ getUser.username } description={ getUser.username } asPath={ decodeURIComponent(router.asPath) } ogImage={ getUser.imageUrl } />
+      <Head title={ getUser.username } description={ getUser.username } asPath={ decodeURIComponent(router.asPath) } ogImage={ getUser.imageUrl }/>
 
       <p>User Profile</p>
       <div>

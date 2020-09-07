@@ -107,7 +107,7 @@ export default () => {
   // display data
   return (
     <section>
-      <Head title={ title } description={ metaDescription } asPath={ decodeURIComponent(router.asPath) } />
+      <Head title={ title } description={ metaDescription } asPath={ decodeURIComponent(router.asPath) }/>
 
       <h1 className="title">{ title }</h1>
       <p>Blogposts List</p>

@@ -107,7 +107,7 @@ export default () => {
       Hashtag Playlists
 
       { listHashtagPlaylists.map(playlist => (
-        <PlaylistItem key={ playlist.id } playlist={ playlist } />
+        <PlaylistItem key={ playlist.id } playlist={ playlist }/>
       ))}
 
       { nextPage ?

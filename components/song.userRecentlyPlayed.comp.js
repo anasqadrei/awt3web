@@ -116,7 +116,7 @@ export default (props) => {
     <section>
       My Recently Played
       { listUserPlayedSongs.map(song => (
-        <SongItem key={ song.id } song={ song } />
+        <SongItem key={ song.id } song={ song }/>
       ))}
 
       { !props.snippet && (

@@ -11,7 +11,7 @@ Sentry.init({
 export default ({ Component, pageProps, err }) => {
   return (
     <ApolloProvider client={ useApollo(pageProps.initialApolloState) }>
-      <Component { ...pageProps } err={ err } />
+      <Component { ...pageProps } err={ err }/>
     </ApolloProvider>
   )
 }

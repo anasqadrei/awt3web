@@ -69,7 +69,7 @@ export default () => {
   return (
     <section>
       { listTopLikedArtists.map(artist => (
-        <ArtistGridItem key={ artist.id } artist={ artist } />
+        <ArtistGridItem key={ artist.id } artist={ artist }/>
       ))}
 
       <style jsx>{`

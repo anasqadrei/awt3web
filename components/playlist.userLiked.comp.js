@@ -109,7 +109,7 @@ export default () => {
     <section>
       Liked Playlists
       { listUserLikedPlaylists.map(playlist => (
-        <PlaylistItem key={ playlist.id } playlist={ playlist } />
+        <PlaylistItem key={ playlist.id } playlist={ playlist }/>
       ))}
 
       { nextPage ?

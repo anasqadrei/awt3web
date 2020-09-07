@@ -55,7 +55,7 @@ export default ({ blogpost }) => {
 
   // if blogpost was not found or error (after running getStaticProps())
   if (!router.isFallback && !blogpost) {
-    return <Error statusCode={ 404 } title="Blogpost Not Found" />;
+    return <Error statusCode={ 404 } title="Blogpost Not Found"/>;
   }
 
   // If the page is not yet generated, this will be displayed initially until getStaticProps() finishes running
@@ -65,7 +65,7 @@ export default ({ blogpost }) => {
 
   return (
     <Layout>
-      <Head title={ blogpost.title } description={ blogpost.title } asPath={ `/blog/${ blogpost.id }/${ decodeURIComponent(blogpost.slug) }` } />
+      <Head title={ blogpost.title } description={ blogpost.title } asPath={ `/blog/${ blogpost.id }/${ decodeURIComponent(blogpost.slug) }` }/>
       <Link href="/"><a>الرئيسية</a></Link> / <Link href="/blog"><a>المدونة</a></Link> / { blogpost.title }
       <h1 className="title">{ blogpost.title }</h1>
       <p>
@@ -74,12 +74,12 @@ export default ({ blogpost }) => {
       <p>
         { blogpost.views } views
       </p>
-      <div dangerouslySetInnerHTML={{ __html: blogpost.content }} />
+      <div dangerouslySetInnerHTML={{ __html: blogpost.content }}/>
       <div>
         <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
       </div>
-      <CreateComment collection={ BLOGPOSTS_COLLECTION } id={ blogpost.id } />
-      <CommentsList collection={ BLOGPOSTS_COLLECTION } id={ blogpost.id } />
+      <CreateComment collection={ BLOGPOSTS_COLLECTION } id={ blogpost.id }/>
+      <CommentsList collection={ BLOGPOSTS_COLLECTION } id={ blogpost.id }/>
       <style jsx>{`
         .title, .description {
           text-align: center;

@@ -114,7 +114,7 @@ export default () => {
       Hashtag Songs
 
       { listHashtagSongs.map(song => (
-        <SongItem key={ song.id } song={ song } />
+        <SongItem key={ song.id } song={ song }/>
       ))}
 
       { nextPage ?

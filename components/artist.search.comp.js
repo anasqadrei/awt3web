@@ -112,7 +112,7 @@ export default () => {
       { search.map(searchResult => (
         <div key={ searchResult.id }>
           <Link href="/artist/[id]/[slug]" as={ `/artist/${ searchResult.id }/${ searchResult.title.toLowerCase().replace(/[\s]+/g, '-') }` }>
-            <a><img src={ searchResult.imageUrl ? searchResult.imageUrl : `https://via.placeholder.com/150?text=no+photo?` } alt={ searchResult.title } /></a>
+            <a><img src={ searchResult.imageUrl ? searchResult.imageUrl : `https://via.placeholder.com/150?text=no+photo?` } alt={ searchResult.title }/></a>
           </Link>
           <div>
             <Link href="/artist/[id]/[slug]" as={ `/artist/${ searchResult.id }/${ searchResult.title.toLowerCase().replace(/[\s]+/g, '-') }` }>

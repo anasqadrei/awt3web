@@ -139,7 +139,7 @@ export default (props) => {
       { !props.snippet && <Sort optionsList={ SORT_OPTIONS } sort={ sort } disableAll={ false } onClick={ changeSort }/> }
 
       { listUserPlaylists.map(playlist => (
-        <PlaylistItem key={ playlist.id } playlist={ playlist } />
+        <PlaylistItem key={ playlist.id } playlist={ playlist }/>
       ))}
 
       { !props.snippet && (
