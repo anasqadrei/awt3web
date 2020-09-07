@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-const LibraryNav = () => (
+export default () => (
   <nav>
     <Link href="/user/playlists-list">
       <a>My Playlists</a>
@@ -19,5 +19,3 @@ const LibraryNav = () => (
     </Link>
   </nav>
 )
-
-export default LibraryNav

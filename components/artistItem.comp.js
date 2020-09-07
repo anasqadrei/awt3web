@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-const ArtistItem = () => (
+export default () => (
   <div>
     <img src="https://via.placeholder.com/30?text=artist+image"/>
     <Link as="/artist/1/slug" href={`/artist?id=1`}>
@@ -8,5 +8,3 @@ const ArtistItem = () => (
     </Link>
   </div>
 )
-
-export default ArtistItem

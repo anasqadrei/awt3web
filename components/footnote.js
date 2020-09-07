@@ -1,7 +1,6 @@
-import Head from 'components/head'
 import Link from 'next/link'
 
-const Footnote = () => (
+export default () => (
   <footer>
     <div>
       <Link href="/about">
@@ -52,5 +51,3 @@ const Footnote = () => (
     </div>
   </footer>
 )
-
-export default Footnote

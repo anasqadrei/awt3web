@@ -2,8 +2,7 @@ import Router from 'next/router'
 
 const FORM_QUERY = "query"
 
-export default function Search() {
-
+export default () => {
   // handling submit event
   const handleSubmit = event => {
     event.preventDefault()

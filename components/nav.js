@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Search from 'components/search.comp'
 import AuthUser from 'components/user.auth.comp'
 
-const Nav = () => (
+export default () => (
   <nav>
     <Link href="/">
       <a>Awtarika</a>
@@ -32,5 +32,3 @@ const Nav = () => (
     <AuthUser/>
   </nav>
 )
-
-export default Nav
