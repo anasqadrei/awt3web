@@ -33,7 +33,7 @@ export default (props) => {
   const [currentListLength, setCurrentListLength] = useState(0)
 
   // set query variables
-  const queryVariables = {
+  const vars = {
     userId: router.query.id,
     page: 1,
     pageSize: PAGE_SIZE,
@@ -49,7 +49,7 @@ export default (props) => {
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
     LIST_USER_SONG_IMAGES_QUERY,
     {
-      variables: queryVariables,
+      variables: vars,
       notifyOnNetworkStatusChange: true,
       onCompleted: (data) => {
         // get new length of data (cached + newly fetched) with default = 0
@@ -100,7 +100,7 @@ export default (props) => {
   const loadMore = () => {
     fetchMore({
       variables: {
-        page: Math.ceil(listUserSongImages.length / queryVariables.pageSize) + 1
+        page: Math.ceil(listUserSongImages.length / vars.pageSize) + 1
       },
     })
   }

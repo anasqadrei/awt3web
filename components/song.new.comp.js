@@ -27,7 +27,7 @@ const LIST_SONGS_QUERY = gql`
 
 export default () => {
   // set query variables
-  const queryVariables = {
+  const vars = {
     page: 1,
     pageSize: PAGE_SIZE,
     sort: SORT,
@@ -37,7 +37,7 @@ export default () => {
   const { loading, error, data } = useQuery (
     LIST_SONGS_QUERY,
     {
-      variables: queryVariables,
+      variables: vars,
     }
   )
 

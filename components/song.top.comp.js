@@ -31,7 +31,7 @@ export default () => {
   since.setMonth(since.getMonth() - 60)
 
   // set query variables
-  const queryVariables = {
+  const vars = {
     page: 1,
     pageSize: PAGE_SIZE,
     since: since.toISOString(),
@@ -45,7 +45,7 @@ export default () => {
   const { loading, error, data } = useQuery (
     LIST_TOP_SONGS_QUERY,
     {
-      variables: queryVariables,
+      variables: vars,
     }
   )
 

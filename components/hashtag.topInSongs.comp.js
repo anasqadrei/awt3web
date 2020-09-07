@@ -12,7 +12,7 @@ const LIST_SONG_HASHTAGS_QUERY = gql`
 
 export default () => {
   // set query variables
-  const queryVariables = {
+  const vars = {
     page: 1,
     pageSize: PAGE_SIZE,
   }
@@ -21,7 +21,7 @@ export default () => {
   const { loading, error, data } = useQuery (
     LIST_SONG_HASHTAGS_QUERY,
     {
-      variables: queryVariables,
+      variables: vars,
     }
   )
 

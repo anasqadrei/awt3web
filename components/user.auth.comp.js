@@ -97,33 +97,33 @@ const uiConfig = {
       console.log(authResult);
 
       // try {
-      //   let queryVariables = {}
+      //   let vars = {}
       //   switch (authResult.credential.providerId) {
       //     case FIREBASE_PROVIDER_ID.FACEBOOK:
-      //       queryVariables.provider = AWTARIKA_PROVIDER.FACEBOOK
-      //       queryVariables.providerId = 'twitter'
+      //       vars.provider = AWTARIKA_PROVIDER.FACEBOOK
+      //       vars.providerId = 'twitter'
       //       break
       //     case FIREBASE_PROVIDER_ID.GOOGLE:
-      //       queryVariables.provider = AWTARIKA_PROVIDER.GOOGLE
-      //       queryVariables.providerId = 'twitter'
-      //       queryVariables.email = 'twitter'
+      //       vars.provider = AWTARIKA_PROVIDER.GOOGLE
+      //       vars.providerId = 'twitter'
+      //       vars.email = 'twitter'
       //       break
       //     case FIREBASE_PROVIDER_ID.APPLE:
-      //       queryVariables.provider = AWTARIKA_PROVIDER.APPLE
-      //       queryVariables.providerId = 'twitter'
+      //       vars.provider = AWTARIKA_PROVIDER.APPLE
+      //       vars.providerId = 'twitter'
       //       break
       //     case FIREBASE_PROVIDER_ID.TWITTER:
-      //       queryVariables.provider = AWTARIKA_PROVIDER.TWITTER
-      //       queryVariables.providerId = authResult.additionalUserInfo?.profile?.id_str
+      //       vars.provider = AWTARIKA_PROVIDER.TWITTER
+      //       vars.providerId = authResult.additionalUserInfo?.profile?.id_str
       //       break
       //     case FIREBASE_PROVIDER_ID.MICROSOFT:
-      //       queryVariables.provider = AWTARIKA_PROVIDER.MICROSOFT
-      //       queryVariables.providerId = 'twitter'
+      //       vars.provider = AWTARIKA_PROVIDER.MICROSOFT
+      //       vars.providerId = 'twitter'
       //       break
       //     case FIREBASE_PROVIDER_ID.YAHOO:
-      //       queryVariables.provider = AWTARIKA_PROVIDER.YAHOO
-      //       queryVariables.providerId = 'twitter'
-      //       queryVariables.email = 'twitter'
+      //       vars.provider = AWTARIKA_PROVIDER.YAHOO
+      //       vars.providerId = 'twitter'
+      //       vars.email = 'twitter'
       //       break
       //   }
       //
@@ -133,7 +133,7 @@ const uiConfig = {
       //   console.log(client);
       //   const R = client.query({
       //     query: GET_USER_BY_PROVIDER_ID_OR_EMAIL_QUERY,
-      //     variables: queryVariables,
+      //     variables: vars,
       //   })
       //   // .then((R) => {
       //     console.log(R);

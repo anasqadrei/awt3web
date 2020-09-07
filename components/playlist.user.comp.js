@@ -47,7 +47,7 @@ export default (props) => {
   const [sort, setSort] = useState('-createdDate')
 
   // set query variables
-  const queryVariables = {
+  const vars = {
     userId: loggedOnUser.id,
     private: props.private,
     sort: sort,
@@ -65,7 +65,7 @@ export default (props) => {
   const { loading, error, data, fetchMore, networkStatus, refetch } = useQuery (
     LIST_USER_PLAYLISTS_QUERY,
     {
-      variables: queryVariables,
+      variables: vars,
       notifyOnNetworkStatusChange: true,
       onCompleted: (data) => {
         // get new length of data (cached + newly fetched) with default = 0
@@ -128,7 +128,7 @@ export default (props) => {
   const loadMore = () => {
     fetchMore({
       variables: {
-        page: Math.ceil(listUserPlaylists.length / queryVariables.pageSize) + 1
+        page: Math.ceil(listUserPlaylists.length / vars.pageSize) + 1
       },
     })
   }

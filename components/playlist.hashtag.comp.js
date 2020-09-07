@@ -28,7 +28,7 @@ export default () => {
   const [currentListLength, setCurrentListLength] = useState(0)
 
   // set query variables
-  const queryVariables = {
+  const vars = {
     hashtag: router.query.hashtag,
     sort: SORT,
     page: 1,
@@ -45,7 +45,7 @@ export default () => {
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
     LIST_HASHTAG_PLAYLISTS_QUERY,
     {
-      variables: queryVariables,
+      variables: vars,
       notifyOnNetworkStatusChange: true,
       onCompleted: (data) => {
         // get new length of data (cached + newly fetched) with default = 0

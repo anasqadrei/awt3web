@@ -34,7 +34,7 @@ export default () => {
   const [sort, setSort] = useState('-likes')
 
   // set query variables
-  const queryVariables = {
+  const vars = {
     sort: sort,
     page: 1,
     pageSize: PAGE_SIZE,
@@ -50,7 +50,7 @@ export default () => {
   const { loading, error, data, fetchMore, networkStatus, refetch } = useQuery (
     LIST_ARTISTS_QUERY,
     {
-      variables: queryVariables,
+      variables: vars,
       notifyOnNetworkStatusChange: true,
       onCompleted: (data) => {
         // get new length of data (cached + newly fetched) with default = 0
@@ -113,7 +113,7 @@ export default () => {
   const loadMore = () => {
     fetchMore({
       variables: {
-        page: Math.ceil(listArtists.length / queryVariables.pageSize) + 1
+        page: Math.ceil(listArtists.length / vars.pageSize) + 1
       },
     })
   }

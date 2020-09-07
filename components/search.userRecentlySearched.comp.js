@@ -19,7 +19,7 @@ const LIST_USER_SEARCHES_QUERY = gql`
 
 export default () => {
   // set query variables
-  const queryVariables = {
+  const vars = {
     userId: loggedOnUser.id,
     sort: SORT,
     page: 1,
@@ -30,7 +30,7 @@ export default () => {
   const { loading, error, data } = useQuery (
     LIST_USER_SEARCHES_QUERY,
     {
-      variables: queryVariables,
+      variables: vars,
     }
   )
 

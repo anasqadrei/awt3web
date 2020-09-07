@@ -31,7 +31,7 @@ export default () => {
   const [currentListLength, setCurrentListLength] = useState(0)
 
   // set query variables
-  const queryVariables = {
+  const vars = {
     userId: loggedOnUser.id,
     sort: SORT,
     page: 1,
@@ -48,7 +48,7 @@ export default () => {
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
     LIST_USER_LIKED_PLAYLISTS_QUERY,
     {
-      variables: queryVariables,
+      variables: vars,
       notifyOnNetworkStatusChange: true,
       onCompleted: (data) => {
         // get new length of data (cached + newly fetched) with default = 0
@@ -99,7 +99,7 @@ export default () => {
   const loadMore = () => {
     fetchMore({
       variables: {
-        page: Math.ceil(listUserLikedPlaylists.length / queryVariables.pageSize) + 1
+        page: Math.ceil(listUserLikedPlaylists.length / vars.pageSize) + 1
       },
     })
   }

@@ -64,7 +64,7 @@ export default () => {
   const [updateUserImageModalIsOpen, setUpdateUserImageModalIsOpen] = useState(false)
 
   // set query variables
-  const queryVariables = {
+  const vars = {
     id: router.query.id
   }
 
@@ -72,7 +72,7 @@ export default () => {
   const { loading, error, data } = useQuery (
     GET_USER_QUERY,
     {
-      variables: queryVariables,
+      variables: vars,
     }
   )
 
