@@ -114,9 +114,13 @@ export default () => {
       <p>User Profile</p>
       <div>
         <img src={ getUser.imageUrl ? getUser.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
-        <button onClick={ () => { setUpdateUserImageModalIsOpen(true) } }>Update User Image</button>
+        <button onClick={ () => { setUpdateUserImageModalIsOpen(true) } }>
+          Update User Image
+        </button>
         <Modal isOpen={ updateUserImageModalIsOpen } onRequestClose={ () => { setUpdateUserImageModalIsOpen(false) } } style={ modalStyles } contentLabel="update user image modal">
-          <button onClick={ () => { setUpdateUserImageModalIsOpen(false) } }>close</button>
+          <button onClick={ () => { setUpdateUserImageModalIsOpen(false) } }>
+            Close
+          </button>
           <h2>Update User Image</h2>
           <UpdateUserImage/>
         </Modal>
@@ -134,9 +138,13 @@ export default () => {
       <p>joined: { getUser.createdDate }</p>
       <p>premium: { getUser.premium || 'No'}</p>
       <div>
-        <button onClick={ () => { setUpdateUserModalIsOpen(true) } }>Update User</button>
+        <button onClick={ () => { setUpdateUserModalIsOpen(true) } }>
+          Update User
+        </button>
         <Modal isOpen={ updateUserModalIsOpen } onRequestClose={ () => { setUpdateUserModalIsOpen(false) } } style={ modalStyles } contentLabel="update user modal">
-          <button onClick={ () => { setUpdateUserModalIsOpen(false) } }>close</button>
+          <button onClick={ () => { setUpdateUserModalIsOpen(false) } }>
+            Close
+          </button>
           <h2>Update User</h2>
           <UpdateUser user={ getUser }/>
         </Modal>

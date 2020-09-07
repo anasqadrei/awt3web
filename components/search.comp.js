@@ -17,7 +17,9 @@ export default function Search() {
   return (
     <form onSubmit={ handleSubmit }>
       <input name={ FORM_QUERY } type="text" maxLength="50" placeholder="search here" required/>
-      <button type="submit">بحث</button>
+      <button type="submit">
+        بحث
+      </button>
     </form>
   )
 }

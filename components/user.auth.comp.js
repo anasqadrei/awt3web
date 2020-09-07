@@ -210,13 +210,19 @@ export default () => {
           <Link href="/user/[id]/[slug]" as={ `/user/1/xxx` }>
             <a>{ firebase.auth().currentUser.displayName } (fix link)</a>
           </Link>
-          <button onClick={ () => { firebase.auth().signOut(); setAuthModalIsOpen(false) } }>Logout</button>
+          <button onClick={ () => { firebase.auth().signOut(); setAuthModalIsOpen(false) } }>
+            Logout
+          </button>
         </div>
         :
         <div>
-          <button onClick={ () => { setAuthModalIsOpen(true) } }>Login</button>
+          <button onClick={ () => { setAuthModalIsOpen(true) } }>
+            Login
+          </button>
           <Modal isOpen={ authModalIsOpen } onRequestClose={ () => { setAuthModalIsOpen(false) } } style={ modalStyles } contentLabel="auth modal">
-            <button onClick={ () => { setAuthModalIsOpen(false) } }>close</button>
+            <button onClick={ () => { setAuthModalIsOpen(false) } }>
+              Close
+            </button>
             <h2>Login with...</h2>
             <StyledFirebaseAuth uiConfig={ uiConfig } firebaseAuth={ firebase.auth() }/>
           </Modal>

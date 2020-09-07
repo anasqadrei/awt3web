@@ -120,9 +120,13 @@ export default ({ song }) => {
       <Head title={ `${ song.title } - ${ song.artist.name }` } description={ `${ song.title } - ${ song.artist.name }` } asPath={ `/song/${ song.id }/${ decodeURIComponent(song.slug) }` } ogImage={ song.defaultImage && song.defaultImage.url }/>
       <div>
         <div>
-          <button onClick={ () => { setReportSongModalIsOpen(true) } }>Report Song</button>
+          <button onClick={ () => { setReportSongModalIsOpen(true) } }>
+            Report Song
+          </button>
           <Modal isOpen={ reportSongModalIsOpen } onRequestClose={ () => { setReportSongModalIsOpen(false) } } style={ modalStyles } contentLabel="report song modal">
-            <button onClick={ () => { setReportSongModalIsOpen(false) } }>close</button>
+            <button onClick={ () => { setReportSongModalIsOpen(false) } }>
+              Close
+            </button>
             <h2>Report { song.title }</h2>
             <SendNoticeRegardingSong song={ song }/>
           </Modal>
@@ -151,11 +155,17 @@ export default ({ song }) => {
       </div>
 
       <div>
-        <button onClick={ openAddSongToPlaylistModal }>Add to a playlist</button>
+        <button onClick={ openAddSongToPlaylistModal }>
+          Add to a playlist
+        </button>
         <Modal isOpen={ addSongToPlaylistModalIsOpen } onRequestClose={ closeAddSongToPlaylistModal } style={ modalStyles } contentLabel="Add song to playlist modal">
-          <button onClick={ closeAddSongToPlaylistModal }>close</button>
+          <button onClick={ closeAddSongToPlaylistModal }>
+            Close
+          </button>
           <h2>Add { song.title } to a playlist</h2>
-          <button onClick={ () => setShowCreatePlaylist(!showCreatePlaylist) }>+ new playlist</button>
+          <button onClick={ () => setShowCreatePlaylist(!showCreatePlaylist) }>
+            + new playlist
+          </button>
           { showCreatePlaylist && (
             <div>
               <AddSongToCreatedPlaylist song={ song }/>
@@ -191,9 +201,13 @@ export default ({ song }) => {
         أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ song.user.id }/${ song.user.slug }` }><a>{ song.user.username }</a></Link> on { song.createdDate }
         <div>
           <div>
-            <button onClick={ () => { setUpdateSongModalIsOpen(true) } }>Update Song</button>
+            <button onClick={ () => { setUpdateSongModalIsOpen(true) } }>
+              Update Song
+            </button>
             <Modal isOpen={ updateSongModalIsOpen } onRequestClose={ () => { setUpdateSongModalIsOpen(false) } } style={ modalStyles } contentLabel="update song modal">
-              <button onClick={ () => { setUpdateSongModalIsOpen(false) } }>close</button>
+              <button onClick={ () => { setUpdateSongModalIsOpen(false) } }>
+                Close
+              </button>
               <h2>Update Song</h2>
               <UpdateSong song={ song }/>
             </Modal>
@@ -212,9 +226,13 @@ export default ({ song }) => {
           </div>
         ))}
         <div>
-          <button onClick={ () => { setCreateSongImageModalIsOpen(true) } }>Add Song Image</button>
+          <button onClick={ () => { setCreateSongImageModalIsOpen(true) } }>
+            Add Song Image
+          </button>
           <Modal isOpen={ createSongImageModalIsOpen } onRequestClose={ () => { setCreateSongImageModalIsOpen(false) } } style={ modalStyles } contentLabel="add song image modal">
-            <button onClick={ () => { setCreateSongImageModalIsOpen(false) } }>close</button>
+            <button onClick={ () => { setCreateSongImageModalIsOpen(false) } }>
+              Close
+            </button>
             <h2>Add Song Image</h2>
             <CreateSongImage songId={ song.id }/>
           </Modal>
@@ -223,9 +241,13 @@ export default ({ song }) => {
 
       <div>
         <div>
-          <button onClick={ () => { setCreateLyricsModalIsOpen(true) } }>Add Lyrics</button>
+          <button onClick={ () => { setCreateLyricsModalIsOpen(true) } }>
+            Add Lyrics
+          </button>
           <Modal isOpen={ createLyricsModalIsOpen } onRequestClose={ () => { setCreateLyricsModalIsOpen(false) } } style={ modalStyles } contentLabel="add lyrics modal">
-            <button onClick={ () => { setCreateLyricsModalIsOpen(false) } }>close</button>
+            <button onClick={ () => { setCreateLyricsModalIsOpen(false) } }>
+              Close
+            </button>
             <h2>Add lyrics</h2>
             <CreateLyrics songId={ song.id }/>
           </Modal>
@@ -235,9 +257,13 @@ export default ({ song }) => {
             <div dangerouslySetInnerHTML={{ __html: song.lyrics.content }}/>
             { song.lyrics.createdDate && `created on ${ song.lyrics.createdDate }` } { song.lyrics.lastUpdatedDate && `last modified on ${ song.lyrics.lastUpdatedDate }` } by <Link href="/user/[id]/[slug]" as={ `/user/${ song.lyrics.user.id }/${ song.lyrics.user.slug }` }><a>{ song.lyrics.user.username }</a></Link>
             <div>
-              <button onClick={ () => { setUpdateLyricsModalIsOpen(true) } }>Update Lyrics</button>
+              <button onClick={ () => { setUpdateLyricsModalIsOpen(true) } }>
+                Update Lyrics
+              </button>
               <Modal isOpen={ updateLyricsModalIsOpen } onRequestClose={ () => { setUpdateLyricsModalIsOpen(false) } } style={ modalStyles } contentLabel="update lyrics modal">
-                <button onClick={ () => { setUpdateLyricsModalIsOpen(false) } }>close</button>
+                <button onClick={ () => { setUpdateLyricsModalIsOpen(false) } }>
+                  Close
+                </button>
                 <h2>update lyrics</h2>
                 <UpdateLyrics songId={ song.id } lyrics={ song.lyrics }/>
               </Modal>

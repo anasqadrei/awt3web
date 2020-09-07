@@ -114,7 +114,9 @@ export default (props) => {
   return (
     <form onSubmit={ handleSubmit }>
       <textarea name={ TEXTAREA_COMMENT } type="text" row="2" maxLength="200" placeholder="اكتب تعليقك هنا" required/>
-      <button type="submit" disabled={ loading }>أضف تعليقك</button>
+      <button type="submit" disabled={ loading }>
+        أضف تعليقك
+      </button>
 
       { loading && <div>mutating (design this)</div> }
       { error && <ErrorMessage/> }

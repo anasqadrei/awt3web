@@ -136,7 +136,7 @@ export default (props) => {
       { loadingCountries && <div>loading countries</div> }
       { dataCountries?.listCountries &&
           <div>
-            Country: 
+            Country:
             <select name={ FORM_COUNTRY } disabled={ loadingUpdate } defaultValue={ props.user.country.id } required>
             { dataCountries?.listCountries?.map(country => (
                 <option key={ country.id } value={ country.id }>{ country.nameAR }</option>
@@ -145,7 +145,9 @@ export default (props) => {
             </select>
           </div>
       }
-      <button type="submit" disabled={ loadingUpdate || dataUpdate?.updateUser }>UPDATE user</button>
+      <button type="submit" disabled={ loadingUpdate || dataUpdate?.updateUser }>
+        UPDATE user
+      </button>
 
       { loadingUpdate && <div>mutating (design this)</div> }
       { errorUpdate && <ErrorMessage/> }

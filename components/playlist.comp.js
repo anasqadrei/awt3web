@@ -101,7 +101,9 @@ export default () => {
       </div>
 
       <Modal isOpen={ updatePlaylistModalIsOpen } onRequestClose={ () => { setUpdatePlaylistModalIsOpen(false) } } style={ modalStyles } contentLabel="update playlist modal">
-        <button onClick={ () => { setUpdatePlaylistModalIsOpen(false) } }>close</button>
+        <button onClick={ () => { setUpdatePlaylistModalIsOpen(false) } }>
+          Close
+        </button>
         <h2>Update Playlist</h2>
         <UpdatePlaylist playlist={ getPlaylist }/>
       </Modal>
