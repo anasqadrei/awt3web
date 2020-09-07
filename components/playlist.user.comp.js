@@ -13,8 +13,6 @@ const loggedOnUser = {
   username: "Admin",
 }
 
-// TODO: who's using this?
-export const DEFAULT_SORT = '-createdDate'
 const SORT_OPTIONS = [
   { sort: 'likes', label: 'LIKES' },
   { sort: '-likes', label: '-LIKES' },
@@ -25,6 +23,7 @@ const SORT_OPTIONS = [
   { sort: 'name', label: 'NAME' },
   { sort: '-name', label: '-NAME' },
 ]
+export const DEFAULT_SORT = '-createdDate'
 export const PAGE_SIZE = 3
 export const LIST_USER_PLAYLISTS_QUERY = gql`
   query listUserPlaylists ($userId: ID!, $private: Boolean!, $sort: String!, $page: Int!, $pageSize: Int!) {

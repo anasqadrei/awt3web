@@ -1,5 +1,4 @@
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
@@ -52,8 +51,8 @@ const REMOVE_SONG_FROM_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default function RemoveSongFromPlaylist(props) {
-  // mutation
+export default (props) => {
+  // mutation tuple
   const [removeSongFromPlaylist, { loading, error }] = useMutation(
     REMOVE_SONG_FROM_PLAYLIST_MUTATION,
     {
@@ -63,51 +62,37 @@ export default function RemoveSongFromPlaylist(props) {
     }
   )
 
-  // handling remove song event
-  const removeSongHandler = event => {
+  // function: handle onClick event
+  const handleRemove = () => {
     if (confirm("Are you sure?")) {
-      // set query variables
-      const removeSongQueryVariables = {
-        playlistId: props.playlist.id,
-        songId: props.song.id,
-        index: props.index,
-      }
-      const getPlaylistQueryVariables = {
-        id: props.playlist.id,
-      }
-
-      // execute removeSongFromPlaylist and update playlist in cache for the song to be removed
+      // execute mutation and update the cache
       removeSongFromPlaylist({
-        variables: removeSongQueryVariables,
-        update: (proxy, { data: { removeSongFromPlaylist } }) => {
-          // read cache
-          const data = proxy.readQuery({
+        variables: {
+          playlistId: props.playlist.id,
+          songId: props.song.id,
+          index: props.index,
+        },
+        update: (cache, { data: { removeSongFromPlaylist } }) => {
+          // write to cache
+          cache.writeQuery({
             query: GET_PLAYLIST_QUERY,
-            variables: getPlaylistQueryVariables,
-          })
-          // update cache
-          proxy.writeQuery({
-            query: GET_PLAYLIST_QUERY,
-            variables: getPlaylistQueryVariables,
-            data: {
-              ...data,
-              getPlaylist: removeSongFromPlaylist,
-            },
+            variables: { id: props.playlist.id },
+            data: removeSongFromPlaylist,
           })
         },
       })
     }
   }
 
-  // show remove song button
+  // display component
   return (
-    <div>
-      <div hidden={ !loggedOnUser || loggedOnUser.id != props.playlist.user.id }>
-        <button onClick={ () => removeSongHandler() } disabled={ loading }>
-          remove song
-        </button>
-        { error && (<ErrorMessage/>) }
-      </div>
+    <div hidden={ !(loggedOnUser?.id === props.playlist.user.id || loggedOnUser?.admin) }>
+      <button onClick={ () => handleRemove() } disabled={ loading }>
+        Remove Song
+      </button>
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
     </div>
   )
 }
