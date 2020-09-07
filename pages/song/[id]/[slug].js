@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Error from 'next/error'
 import Modal from 'react-modal'
 import * as Sentry from '@sentry/node'
-import { createApolloClient } from 'lib/withApollo'
+import { initializeApollo } from 'lib/apolloClient'
 import { validateUrl } from 'lib/validateUrl'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import { SONGS_COLLECTION, ROOT_APP_ELEMENT } from 'lib/constants'
@@ -44,7 +44,7 @@ const modalStyles = {
 export async function getStaticProps(context) {
   try {
     // apollo client for the build time
-    const client = await createApolloClient()
+    const client = await initializeApollo()
     // query
     const { data } = await client.query({
       query: GET_SONG_QUERY,
@@ -53,7 +53,7 @@ export async function getStaticProps(context) {
     // return apollo cache and song
     return {
       props: {
-        apolloState: client.cache.extract(),
+        initialApolloState: client.cache.extract(),
         song: data.getSong,
       },
     }

@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Error from 'next/error'
 import * as Sentry from '@sentry/node'
-import { withApollo, createApolloClient } from 'lib/withApollo'
+import { initializeApollo } from 'lib/apolloClient'
 import { validateUrl } from 'lib/validateUrl'
 import { GET_BLOGPOST_QUERY } from 'lib/graphql'
 import { BLOGPOSTS_COLLECTION } from 'lib/constants'
@@ -15,7 +15,7 @@ import CommentsList from 'components/comment.list.comp'
 export async function getStaticProps(context) {
   try {
     // apollo client for the build time
-    const client = await createApolloClient()
+    const client = await initializeApollo()
     // query
     const { data } = await client.query({
       query: GET_BLOGPOST_QUERY,
@@ -24,7 +24,7 @@ export async function getStaticProps(context) {
     // return apollo cache and blogpost
     return {
       props: {
-        apolloState: client.cache.extract(),
+        initialApolloState: client.cache.extract(),
         blogpost: data.getBlogpost,
       },
     }
@@ -42,7 +42,7 @@ export async function getStaticPaths() {
   }
 }
 
-export default withApollo()(({ blogpost }) => {
+export default ({ blogpost }) => {
   const router = useRouter()
 
   // fix url in case it doesn't match the slug
@@ -87,4 +87,4 @@ export default withApollo()(({ blogpost }) => {
       `}</style>
     </Layout>
   )
-})
+}

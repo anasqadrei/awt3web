@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Error from 'next/error'
 import * as Sentry from '@sentry/node'
-import { createApolloClient } from 'lib/withApollo'
+import { initializeApollo } from 'lib/apolloClient'
 import { validateUrl } from 'lib/validateUrl'
 import { GET_ARTIST_QUERY } from 'lib/graphql'
 import { ARTISTS_COLLECTION, DISPLAY } from 'lib/constants'
@@ -17,7 +17,7 @@ import CommentsList from 'components/comment.list.comp'
 export async function getStaticProps(context) {
   try {
     // apollo client for the build time
-    const client = await createApolloClient()
+    const client = await initializeApollo()
     // query
     const { data } = await client.query({
       query: GET_ARTIST_QUERY,
@@ -26,7 +26,7 @@ export async function getStaticProps(context) {
     // return apollo cache and artist
     return {
       props: {
-        apolloState: client.cache.extract(),
+        initialApolloState: client.cache.extract(),
         artist: data.getArtist,
       },
     }
