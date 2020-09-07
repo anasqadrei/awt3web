@@ -40,18 +40,17 @@ export default () => {
     const message = formData.get(FORM_MESSAGE).replace(/\n/g, '<br/>')
     form.reset()
 
-    // set query variables
-    const queryVariables = {
-      message: message,
-      userId: loggedOnUser.id,
-      username: loggedOnUser.username,
-      provider: loggedOnUser.profiles.provider,
-      handler: loggedOnUser.profiles.providerId,
-      email: loggedOnUser.emails && loggedOnUser.emails[0],
-    }
-
     // execute mutation
-    contactUs({ variables: queryVariables })
+    contactUs({
+      variables: {
+        message: message,
+        userId: loggedOnUser.id,
+        username: loggedOnUser.username,
+        provider: loggedOnUser.profiles.provider,
+        handler: loggedOnUser.profiles.providerId,
+        email: loggedOnUser.emails && loggedOnUser.emails[0],
+      }
+    })
   }
 
   // display component
@@ -60,9 +59,10 @@ export default () => {
       <p>name: { loggedOnUser.username }</p>
       <p>provider: { `${ loggedOnUser.profiles.provider } ${ loggedOnUser.profiles.providerId }` }</p>
       { loggedOnUser.emails?.[0] && <p>email: { loggedOnUser.emails[0] }</p> }
-
       <textarea name={ FORM_MESSAGE } type="text" row="3" maxLength="500" placeholder="message here" required/>
-      <button type="submit" disabled={ loading || data?.contactUs }>send message</button>
+      <button type="submit" disabled={ loading || data?.contactUs }>
+        Send Message
+      </button>
 
       { loading && <div>mutating (design this)</div> }
       { error && <ErrorMessage/> }

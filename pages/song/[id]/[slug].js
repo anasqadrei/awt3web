@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Error from 'next/error'
 import Modal from 'react-modal'
 import * as Sentry from '@sentry/node'
-import { withApollo, createApolloClient } from 'lib/withApollo'
+import { createApolloClient } from 'lib/withApollo'
 import { validateUrl } from 'lib/validateUrl'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import { SONGS_COLLECTION, ROOT_APP_ELEMENT } from 'lib/constants'
@@ -71,7 +71,7 @@ export async function getStaticPaths() {
   }
 }
 
-export default withApollo()(({ song }) => {
+export default ({ song }) => {
   const router = useRouter()
 
   // fix url in case it doesn't match the slug
@@ -262,4 +262,4 @@ export default withApollo()(({ song }) => {
       `}</style>
     </Layout>
   )
-})
+}

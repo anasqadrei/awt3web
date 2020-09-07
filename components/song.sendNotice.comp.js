@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
 
@@ -31,10 +29,8 @@ const SEND_COPYRIGHT_INFRINGEMENT_NOTICE_MUTATION = gql`
 
 // TODO: add form validation
 
-export default function SendNoticeRegardingSong(props) {
-  const router = useRouter()
-
-  // mutation
+export default (props) => {
+  // mutation tuple
   const [sendCopyrightInfringementNotice, { loading, error, data }] = useMutation(
     SEND_COPYRIGHT_INFRINGEMENT_NOTICE_MUTATION,
     {
@@ -44,8 +40,8 @@ export default function SendNoticeRegardingSong(props) {
     }
   )
 
-  // handling event
-  const sendNoticeHandler = () => {
+  // function: handle onSubmit event. get data from form and execute mutation
+  const handleSubmit = (event) => {
     // get data from form and set its behaviour
     event.preventDefault()
     const form = event.target
@@ -63,54 +59,47 @@ export default function SendNoticeRegardingSong(props) {
     const message = formData.get(FORM_MESSAGE)
     form.reset()
 
-    // set query variables
-    const queryVariables = {
-      songId: router.query.id,
-      notice: {
-        name,
-        company,
-        address,
-        phone,
-        email,
-        songId: router.query.id,
-        songTitle,
-        artistName,
-        songUrl: encodeURI(songUrl),
-        songDesc,
-        message,
-      }
-    }
-
     // execute mutation
     sendCopyrightInfringementNotice({
-      variables: queryVariables,
+      variables: {
+        songId: props.song.id,
+        notice: {
+          name,
+          company,
+          address,
+          phone,
+          email,
+          songId: props.song.id,
+          songTitle,
+          artistName,
+          songUrl: encodeURI(songUrl),
+          songDesc,
+          message,
+        }
+      },
     })
   }
 
-  // Send Notice Form
+  // display component
   return (
-    <section>
-      <form onSubmit={ sendNoticeHandler }>
-        الإسم: <input name={ FORM_NAME } type="text" maxLength="100" placeholder="الإسم" required /><br/>
-        الشركة: <input name={ FORM_COMPANY } type="text" maxLength="100" placeholder="الشركة" /><br/>
-        العنوان: <textarea name={ FORM_ADDRESS } type="text" row="3" maxLength="200" placeholder="العنوان" required /><br/>
-        الهاتف: <input name={ FORM_PHONE } type="text" maxLength="100" placeholder="الهاتف" required /><br/>
-        البريد الالكتروني: <input name={ FORM_EMAIL } type="email" maxLength="100" placeholder="البريد الالكتروني" required /><br/>
-        الآغنية: <input name={ FORM_SONG_TITLE } type="text" value={ props.song.title } readOnly /><br/>
-        الفنان: <input name={ FORM_ARTIST_NAME } type="text" value={ props.song.artist.name } readOnly /><br/>
-        العنوان الالكتروني: <input name={ FORM_SONG_URL } type="text" value={ props.song.url } readOnly /><br/>
-        song description: <textarea name={ FORM_SONG_DESC } type="text" row="3" maxLength="200" value={ props.song.desc } readOnly /><br/>
-        message: <textarea name={ FORM_MESSAGE } type="text" row="5" minLength="50" maxLength="500" placeholder="اكتب الرسالة" required /><br/>
-        <button type="submit" disabled={ loading || (data && data.sendCopyrightInfringementNotice) }>Send Notice</button>
-        { error && (<ErrorMessage/>) }
-        {
-          (data && data.sendCopyrightInfringementNotice) && (
-            <div>
-              report sent
-            </div>
-          )
-        }
-      </form>
-    </section>
+    <form onSubmit={ handleSubmit }>
+      الإسم: <input name={ FORM_NAME } type="text" maxLength="100" placeholder="الإسم" required /><br/>
+      الشركة: <input name={ FORM_COMPANY } type="text" maxLength="100" placeholder="الشركة" /><br/>
+      العنوان: <textarea name={ FORM_ADDRESS } type="text" row="3" maxLength="200" placeholder="العنوان" required /><br/>
+      الهاتف: <input name={ FORM_PHONE } type="text" maxLength="100" placeholder="الهاتف" required /><br/>
+      البريد الالكتروني: <input name={ FORM_EMAIL } type="email" maxLength="100" placeholder="البريد الالكتروني" required /><br/>
+      الآغنية: <input name={ FORM_SONG_TITLE } type="text" value={ props.song.title } readOnly /><br/>
+      الفنان: <input name={ FORM_ARTIST_NAME } type="text" value={ props.song.artist.name } readOnly /><br/>
+      العنوان الالكتروني: <input name={ FORM_SONG_URL } type="text" value={ props.song.url } readOnly /><br/>
+      song description: <textarea name={ FORM_SONG_DESC } type="text" row="3" maxLength="200" value={ props.song.desc.replace(/<br\/>/g, '\n') } readOnly /><br/>
+      message: <textarea name={ FORM_MESSAGE } type="text" row="5" minLength="50" maxLength="500" placeholder="اكتب الرسالة" required /><br/>
+      <button type="submit" disabled={ loading || data?.sendCopyrightInfringementNotice }>
+        Send Notice
+      </button>
+
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
+      { data?.sendCopyrightInfringementNotice && <div>report sent</div> }
+    </form>
   )
 }
