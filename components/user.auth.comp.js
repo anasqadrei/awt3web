@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { initializeApollo } from 'lib/apolloClient'
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
