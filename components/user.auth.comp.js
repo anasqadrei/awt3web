@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { initializeApollo } from 'lib/apolloClient'
 import { gql } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import Modal from 'react-modal'
-import ErrorMessage from 'components/errorMessage'
+import { initializeApollo } from 'lib/apolloClient'
 import { ROOT_APP_ELEMENT } from 'lib/constants'
+import ErrorMessage from 'components/errorMessage'
 
 const GET_USER_BY_PROVIDER_ID_OR_EMAIL_QUERY = gql`
   query getUserByProviderIdOrEmail ($provider: String!, $providerId: ID!, $email: AWSEmail) {
