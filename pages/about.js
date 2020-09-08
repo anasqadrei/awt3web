@@ -2,9 +2,15 @@ import Link from 'next/link'
 import Layout from 'components/layout'
 import Head from 'components/head'
 
-export default (props) => (
+const META = {
+  asPath: `/about`,
+  title: `من نحن`,
+  description: `عن موقع أوتاريكا`,
+}
+
+export default () => (
   <Layout>
-    <Head title='من نحن'/>
+    <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     About page
     <p>
       Lorem ipsum dolor sit amet, consectetuer adipiscing

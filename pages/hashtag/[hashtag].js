@@ -5,15 +5,13 @@ import HashtagSongs from 'components/song.hashtag.comp'
 import HashtagPlaylists from 'components/playlist.hashtag.comp'
 
 const META = {
-  title: `وسم:`,
+  title: `وسم`,
   description: `وسم و كلمة مفتاحية و هاش تاجات`,
 }
 
-// TODO: title useRouter().query.hashtag shows as undefined in Head. fix it
-
 export default () => (
   <Layout>
-    <Head title={ `${ META.title } ${ useRouter().query.hashtag }` } description={ META.description }/>
+    <Head title={ `${ META.title }: ${ useRouter().query.hashtag || `` }` } description={ META.description }/>
     <h1>#{ useRouter().query.hashtag }</h1>
     <HashtagSongs hashtag={ useRouter().query.hashtag }/>
     <HashtagPlaylists hashtag={ useRouter().query.hashtag }/>

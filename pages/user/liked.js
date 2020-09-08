@@ -1,11 +1,19 @@
 import Layout from 'components/layout'
+import Head from 'components/head'
 import LibraryNav from 'components/libraryNav'
 import UserLikedSongs from 'components/song.userLiked.comp'
 import UserLikedArtists from 'components/artist.userLiked.comp'
 import UserLikedPlaylists from 'components/playlist.userLiked.comp'
 
+const META = {
+  asPath: `/liked`,
+  title: `Liked`,
+  description: `Liked`,
+}
+
 export default () => (
   <Layout>
+  <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <LibraryNav/>
     <div>
       <UserLikedSongs/>

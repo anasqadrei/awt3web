@@ -7,7 +7,6 @@ import Modal from 'react-modal'
 import { validateUrl } from 'lib/validateUrl'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import { PLAYLISTS_COLLECTION, ROOT_APP_ELEMENT } from 'lib/constants'
-// TODO: does head work here?
 import Head from 'components/head'
 import UpdatePlaylist from 'components/playlist.update.comp'
 import LikePlaylist from 'components/playlist.like.comp'
@@ -88,7 +87,7 @@ export default () => {
   // display data
   return (
     <section>
-      <Head title={ getPlaylist.name } description={ getPlaylist.name } asPath={ decodeURIComponent(router.asPath) } ogImage={ getPlaylist.imageUrl }/>
+      <Head title={ getPlaylist.name }/>
 
       <div>
         <img src={ getPlaylist.imageUrl ? getPlaylist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>

@@ -94,12 +94,24 @@ export default ({ song }) => {
   // if song was not found or error (after running getStaticProps())
   if (!router.isFallback && !song) {
     // TODO: custom 404 instead of this. to have the proper design
-    return <Error statusCode={ 404 } title="Song Not Found"/>;
+    return <Error statusCode={ 404 } title="Song Not Found"/>
   }
 
   // If the page is not yet generated, this will be displayed initially until getStaticProps() finishes running
   if (router.isFallback) {
-    return (<div>Loading Song... (design it please)</div>)
+    return (
+      <div>
+        Loading... (design it please)
+      </div>
+    )
+  }
+
+  // TODO: doesn't work on dev. check on production
+  const META = {
+    asPath: `/song/${ song.id }/${ decodeURIComponent(song.slug) }`,
+    title: `${ song.title } - ${ song.artist.name }`,
+    description: `${ song.title } - ${ song.artist.name }`,
+    image: song.defaultImage?.url,
   }
 
   // for accessibility
@@ -117,7 +129,8 @@ export default ({ song }) => {
 
   return (
     <Layout>
-      <Head title={ `${ song.title } - ${ song.artist.name }` } description={ `${ song.title } - ${ song.artist.name }` } asPath={ `/song/${ song.id }/${ decodeURIComponent(song.slug) }` } ogImage={ song.defaultImage && song.defaultImage.url }/>
+      <Head asPath={ META.asPath } title={ META.title } description={ META.description } image={ META.image }/>
+
       <div>
         <div>
           <button onClick={ () => { setReportSongModalIsOpen(true) } }>

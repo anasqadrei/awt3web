@@ -1,9 +1,17 @@
 import Layout from 'components/layout'
+import Head from 'components/head'
 import LibraryNav from 'components/libraryNav'
 import UserSavedSongs from 'components/song.userSaved.comp'
 
+const META = {
+  asPath: `/saved`,
+  title: `Saved Songs`,
+  description: `saved songs`,
+}
+
 export default () => (
   <Layout>
+    <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <LibraryNav/>
     <div>
       <UserSavedSongs/>

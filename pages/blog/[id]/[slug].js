@@ -55,17 +55,29 @@ export default ({ blogpost }) => {
 
   // if blogpost was not found or error (after running getStaticProps())
   if (!router.isFallback && !blogpost) {
-    return <Error statusCode={ 404 } title="Blogpost Not Found"/>;
+    return <Error statusCode={ 404 } title="Blogpost Not Found"/>
   }
 
   // If the page is not yet generated, this will be displayed initially until getStaticProps() finishes running
   if (router.isFallback) {
-    return (<div>Loading Blogpost... (design it please)</div>)
+    return (
+      <div>
+        Loading... (design it please)
+      </div>
+    )
+  }
+
+  // TODO: doesn't work on dev. check on production
+  const META = {
+    asPath: `/blog/${ blogpost.id }/${ decodeURIComponent(blogpost.slug) }`,
+    title: blogpost.title,
+    description: blogpost.title,
   }
 
   return (
     <Layout>
-      <Head title={ blogpost.title } description={ blogpost.title } asPath={ `/blog/${ blogpost.id }/${ decodeURIComponent(blogpost.slug) }` }/>
+      <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
+
       <Link href="/"><a>الرئيسية</a></Link> / <Link href="/blog"><a>المدونة</a></Link> / { blogpost.title }
       <h1 className="title">{ blogpost.title }</h1>
       <p>

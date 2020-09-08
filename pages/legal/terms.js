@@ -2,9 +2,15 @@ import Link from 'next/link'
 import Layout from 'components/layout'
 import Head from 'components/head'
 
-export default (props) => (
+const META = {
+  asPath: `/terms`,
+  title: `الشروط و الأحكام`,
+  description: `Terms & Conditions`,
+}
+
+export default () => (
   <Layout>
-    <Head/>
+    <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     terms page
     <p>
       Lorem ipsum dolor sit amet, consectetuer adipiscing

@@ -2,9 +2,15 @@ import Link from 'next/link'
 import Layout from 'components/layout'
 import Head from 'components/head'
 
-export default (props) => (
+const META = {
+  asPath: `/cookies`,
+  title: `كعكي`,
+  description: `Cookies`,
+}
+
+export default () => (
   <Layout>
-    <Head/>
+    <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     Cookies Page
     <p>
       Lorem ipsum dolor sit amet, consectetuer adipiscing

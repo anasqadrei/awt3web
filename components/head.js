@@ -1,46 +1,47 @@
-import NextHead from 'next/head'
-import { string } from 'prop-types'
+import Head from 'next/head'
 
 const ROOT_WEBSITE_URL = 'https://www.awtarika.com'
 const WEBSITE_TITLE = 'أوتاريكا'
-const defaultDescription = ''
-const defaultOGImage = ''
+const DEFAULT_DESCRIPTION = 'موقع أوتاريكا للأغاني العربية'
+const DEFAULT_IMAGE = ''
 
-const Head = (props) => (
-  <NextHead>
-    <meta charSet="UTF-8"/>
-    <meta name="application-name" content="أوتاريكا"/>
-    <title>{ props.title ? `${ props.title } - ${ WEBSITE_TITLE }` : WEBSITE_TITLE }</title>
-    <meta name="title" content={ props.title ? `${ props.title } - ${ WEBSITE_TITLE }` : WEBSITE_TITLE }/>
-    <meta name="description" content={props.description || defaultDescription}/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="icon" sizes="192x192" href="/static/touch-icon.png"/>
-    <link rel="apple-touch-icon" href="/static/touch-icon.png"/>
-    <link rel="mask-icon" href="/static/favicon-mask.svg" color="#49B882"/>
-    <link rel="icon" href="/favicon.ico"/>
-    <meta property="og:url" content={ props.asPath ? `${ ROOT_WEBSITE_URL }${ props.asPath }` : `${ ROOT_WEBSITE_URL }/` }/>
-    <meta property="og:title" content={ props.title ? `${ props.title } - ${ WEBSITE_TITLE }` : WEBSITE_TITLE }/>
-    <meta property="og:description" content={props.description || defaultDescription}/>
-    <meta property="og:type" content="music.song"/>
-    <meta property="og:site_name" content={ WEBSITE_TITLE }/>
-    <meta name="twitter:site" content={ props.asPath ? `${ ROOT_WEBSITE_URL }${ props.asPath }` : `${ ROOT_WEBSITE_URL }/` }/>
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:image" content={props.ogImage || defaultOGImage}/>
-    <meta property="og:image" content={props.ogImage || defaultOGImage}/>
-    <meta property="og:image:width" content="1200"/>
-    <meta property="og:image:height" content="630"/>
-    <meta property="og:image:type" content="image/jpeg"/>
+export default (props) => {
+  const url = props.asPath ? `${ ROOT_WEBSITE_URL }${ props.asPath }` : `${ ROOT_WEBSITE_URL }/`
+  const title = props.title ? `${ props.title } - ${ WEBSITE_TITLE }` : WEBSITE_TITLE
+  const description = props.description || DEFAULT_DESCRIPTION
+  const image = props.image || DEFAULT_IMAGE
 
-    {/* Many other tags (google, facebook, twitter, microsoft, apple, android). do later */}
+  return (
+    <Head>
+      <meta charSet="UTF-8"/>
+      <title>{ title }</title>
+      <meta name="application-name" content="أوتاريكا"/>
+      <meta name="title" content={ title }/>
+      <meta name="description" content={ description }/>
+      <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-  </NextHead>
-)
+      <meta property="og:url" content={ url }/>
+      <meta property="og:title" content={ title }/>
+      <meta property="og:description" content={ description }/>
+      <meta property="og:type" content="music.song"/>
+      <meta property="og:site_name" content={ WEBSITE_TITLE }/>
+      <meta property="og:image" content={ image }/>
+      <meta property="og:image:width" content="1200"/>
+      <meta property="og:image:height" content="630"/>
+      <meta property="og:image:type" content="image/jpeg"/>
 
-Head.propTypes = {
-  title: string,
-  description: string,
-  asPath: string,
-  ogImage: string
+      <meta name="twitter:site" content={ url }/>
+      <meta name="twitter:card" content="summary_large_image"/>
+      <meta name="twitter:image" content={ image }/>
+
+      <link rel="icon" href="/favicon.ico"/>
+
+      {
+        // TODO: many other tags (google, facebook, twitter, microsoft, apple, android). do later
+        // check https://github.com/garmeeh/next-seo
+        // also change type (music.song) based on artist or song
+      }
+
+    </Head>
+  )
 }
-
-export default Head

@@ -3,12 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-// TODO: head here?
-import Head from 'components/head'
 import ErrorMessage from 'components/errorMessage'
-
-const title = "المدونة"
-const metaDescription = "مدونة موقع أوتاريكا للأغاني العربية"
 
 const SORT = '-createdDate'
 const PAGE_SIZE = 25
@@ -107,9 +102,7 @@ export default () => {
   // display data
   return (
     <section>
-      <Head title={ title } description={ metaDescription } asPath={ decodeURIComponent(router.asPath) }/>
-
-      <h1 className="title">{ title }</h1>
+      <h1 className="title">المدونة</h1>
       <p>Blogposts List</p>
 
       { listBlogposts.map(blogpost => (

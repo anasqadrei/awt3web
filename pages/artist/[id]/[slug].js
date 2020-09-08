@@ -57,17 +57,30 @@ export default ({ artist }) => {
 
   // if artist was not found or error (after running getStaticProps())
   if (!router.isFallback && !artist) {
-    return <Error statusCode={ 404 } title="Artist Not Found"/>;
+    return <Error statusCode={ 404 } title="Artist Not Found"/>
   }
 
   // If the page is not yet generated, this will be displayed initially until getStaticProps() finishes running
   if (router.isFallback) {
-    return (<div>Loading... (design it please)</div>)
+    return (
+      <div>
+        Loading... (design it please)
+      </div>
+    )
+  }
+
+  // TODO: doesn't work on dev. check on production
+  const META = {
+    asPath: `/artist/${ artist.id }/${ decodeURIComponent(artist.slug) }`,
+    title: artist.name,
+    description: artist.name,
+    image: artist.imageUrl,
   }
 
   return (
     <Layout>
-      <Head title={ artist.name } description={ artist.name } asPath={ `/artist/${ artist.id }/${ decodeURIComponent(artist.slug) }` } ogImage={ artist.imageUrl }/>
+      <Head asPath={ META.asPath } title={ META.title } description={ META.description } image={ META.image }/>
+
       <section>
         <div>
           <img src={ artist.imageUrl ? artist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>

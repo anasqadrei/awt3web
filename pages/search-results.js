@@ -11,15 +11,13 @@ import TopPlaylistsInClickedSearchResults from 'components/playlist.topInClicked
 import UserRecentlySearched from 'components/search.userRecentlySearched.comp'
 
 const META = {
-  title: `بحث:`,
+  title: `بحث`,
   description: `نتائج البحث`,
 }
 
-// TODO: title useRouter().query.q shows as undefined in Head. fix it
-
 export default () => (
   <Layout>
-    <Head title={ `${ META.title } ${ useRouter().query.q || `` }` } description={ META.description }/>
+  <Head title={ `${ META.title }: ${ useRouter().query.q || `` }` } description={ META.description }/>
     <div>
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
     </div>

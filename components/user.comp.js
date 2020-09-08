@@ -6,7 +6,6 @@ import * as Sentry from '@sentry/node'
 import Modal from 'react-modal'
 import { validateUrl } from 'lib/validateUrl'
 import { ROOT_APP_ELEMENT } from 'lib/constants'
-// TODO: does head work here?
 import Head from 'components/head'
 import UpdateUser from 'components/user.update.comp'
 import UpdateUserImage from 'components/user.updateImage.comp'
@@ -109,7 +108,7 @@ export default () => {
   // display data
   return (
     <section>
-      <Head title={ getUser.username } description={ getUser.username } asPath={ decodeURIComponent(router.asPath) } ogImage={ getUser.imageUrl }/>
+      <Head title={ getUser.username }/>
 
       <p>User Profile</p>
       <div>

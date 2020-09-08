@@ -5,13 +5,14 @@ import TopHashtagsInSongs from 'components/hashtag.topInSongs.comp'
 import TopHashtagsInPlaylists from 'components/hashtag.topInPlaylists.comp'
 
 const META = {
+  asPath: `/browse`,
   title: `تصفح`,
   description: `تصفح المطربين و الأغاني`,
 }
 
 export default () => (
   <Layout>
-    <Head title={ META.title } description={ META.description }/>
+    <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <div>Browse</div>
     <div>
       song hashtags

@@ -1,10 +1,18 @@
 import Layout from 'components/layout'
+import Head from 'components/head'
 import LibraryNav from 'components/libraryNav'
 import UserMostPlayedSongs from 'components/song.userMostPlayed.comp'
 import UserMostPlayedArtists from 'components/artist.userMostPlayed.comp'
 
+const META = {
+  asPath: `/most-played`,
+  title: `Most Played`,
+  description: `Most Played`,
+}
+
 export default () => (
   <Layout>
+    <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <LibraryNav/>
     <div>
       <UserMostPlayedSongs/>
