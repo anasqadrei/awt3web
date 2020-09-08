@@ -153,11 +153,11 @@ export default () => {
         <a>Library</a>
       </Link>
       <p>song uploads:</p>
-      <UserSongs snippet={ true }/>
+      <UserSongs userId={ getUser.id } snippet={ true }/>
       <p>song images uploads:</p>
-      <UserSongImages snippet={ true }/>
+      <UserSongImages userId={ getUser.id } snippet={ true }/>
       <p>lyrics added:</p>
-      <UserLyrics snippet={ true }/>
+      <UserLyrics userId={ getUser.id } snippet={ true }/>
       <p>
         <Link href="/user/[id]/[slug]/uploads" as={`/user/${ getUser.id }/${ getUser.slug }/uploads`}>
           <a>more uploads</a>

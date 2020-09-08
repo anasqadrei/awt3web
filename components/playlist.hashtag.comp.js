@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useRouter } from 'next/router'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import PlaylistItem from 'components/playlist.item.comp'
@@ -20,16 +19,14 @@ const LIST_HASHTAG_PLAYLISTS_QUERY = gql`
   }
 `
 
-export default () => {
-  const router = useRouter()
-
+export default (props) => {
   // paging
   const [nextPage, setNextPage] = useState(true)
   const [currentListLength, setCurrentListLength] = useState(0)
 
   // set query variables
   const vars = {
-    hashtag: router.query.hashtag,
+    hashtag: props.hashtag,
     sort: SORT,
     page: 1,
     pageSize: PAGE_SIZE,

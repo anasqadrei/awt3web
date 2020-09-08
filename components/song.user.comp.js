@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import Sort from 'components/sort.comp'
@@ -39,8 +38,6 @@ const LIST_USER_SONGS_QUERY = gql`
 `
 
 export default (props) => {
-  const router = useRouter()
-
   // paging
   const [nextPage, setNextPage] = useState(true)
   const [currentListLength, setCurrentListLength] = useState(0)
@@ -50,7 +47,7 @@ export default (props) => {
 
   // set query variables
   const vars = {
-    userId: router.query.id,
+    userId: props.userId,
     sort: sort,
     page: 1,
     pageSize: PAGE_SIZE,

@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import ErrorMessage from 'components/errorMessage'
@@ -26,15 +25,13 @@ const LIST_USER_SONG_IMAGES_QUERY = gql`
 `
 
 export default (props) => {
-  const router = useRouter()
-
   // paging
   const [nextPage, setNextPage] = useState(true)
   const [currentListLength, setCurrentListLength] = useState(0)
 
   // set query variables
   const vars = {
-    userId: router.query.id,
+    userId: props.userId,
     page: 1,
     pageSize: PAGE_SIZE,
   }

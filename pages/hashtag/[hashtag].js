@@ -15,7 +15,7 @@ export default () => (
   <Layout>
     <Head title={ `${ META.title } ${ useRouter().query.hashtag }` } description={ META.description }/>
     <h1>#{ useRouter().query.hashtag }</h1>
-    <HashtagSongs/>
-    <HashtagPlaylists/>
+    <HashtagSongs hashtag={ useRouter().query.hashtag }/>
+    <HashtagPlaylists hashtag={ useRouter().query.hashtag }/>
   </Layout>
 )
