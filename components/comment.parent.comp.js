@@ -2,7 +2,6 @@ import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
-import { LIST_COMMENTS_QUERY, PAGE_SIZE } from 'components/comment.list.comp'
 import CommentItem from 'components/comment.item.comp'
 import ErrorMessage from 'components/errorMessage'
 
@@ -72,30 +71,19 @@ export default (props) => {
     const text = formData.get(TEXTAREA_REPLY)
     form.reset()
 
-    // set query variables
-    const varsCreateReply = {
-      text: text,
-      reference: {
-        collection: props.comment.reference.collection,
-        id: props.comment.reference.id,
-      },
-      parentId: props.comment.id,
-      userId: loggedOnUser.id,
-    }
-    const varsListComments = {
-      reference: {
-        collection: props.comment.reference.collection,
-        id: props.comment.reference.id,
-      },
-      page: 1,
-      pageSize: PAGE_SIZE,
-    }
-
     // execute mutation and update the cache
     // add the newly created reply
     // update the number of comments
     createComment({
-      variables: varsCreateReply,
+      variables: {
+        text: text,
+        reference: {
+          collection: props.comment.reference.collection,
+          id: props.comment.reference.id,
+        },
+        parentId: props.comment.id,
+        userId: loggedOnUser.id,
+      },
       update: (cache, { data: { createComment } }) => {
         // add the newly created reply
         {

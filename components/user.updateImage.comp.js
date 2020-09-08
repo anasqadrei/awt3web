@@ -1,6 +1,5 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import { GET_USER_QUERY } from 'components/user.comp'
 import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism

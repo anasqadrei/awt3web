@@ -1,6 +1,5 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import { GET_USER_QUERY } from 'components/user.comp'
 import RemoveUserEmail from 'components/user.removeEmail.comp'
 import ErrorMessage from 'components/errorMessage'
 

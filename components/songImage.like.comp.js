@@ -1,7 +1,6 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_SONG_QUERY } from 'lib/graphql'
-import { GET_USER_QUERY } from 'components/user.comp'
 import ErrorMessage from 'components/errorMessage'
 
 // TEMP: until we decide on the login mechanism

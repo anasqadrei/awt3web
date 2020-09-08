@@ -28,7 +28,7 @@ const modalStyles = {
   }
 }
 
-export const GET_USER_QUERY = gql`
+const GET_USER_QUERY = gql`
   query getUser ($id: ID!) {
     getUser(id: $id) {
       id
