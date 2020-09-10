@@ -8,6 +8,7 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import Modal from 'react-modal'
 import { initializeApollo } from 'lib/apolloClient'
 import { ROOT_APP_ELEMENT } from 'lib/constants'
+import { authUser as lsAuthUser, queryAuthUser } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'
 
 const GET_USER_BY_PROVIDER_ID_OR_EMAIL_QUERY = gql`
@@ -202,6 +203,8 @@ export default () => {
   }, [authUser])
   // TODO: authUser is only for useEffect optimazation? check please
 
+  const qAuthUser = queryAuthUser()
+
   return (
     <div>
       {
@@ -228,6 +231,19 @@ export default () => {
           </Modal>
         </div>
       }
+      <button onClick={ () => { lsAuthUser({ id: "1", username: "Admin", admin: true, __typename: "User" }) } }>
+        ls Admin
+      </button>
+      <button onClick={ () => { lsAuthUser({ id: "2", username: "Anas", admin: false, __typename: "User" }) } }>
+        ls Anas
+      </button>
+      <button onClick={ () => { lsAuthUser({ id: "3", username: "Dunno", admin: true, __typename: "User" }) } }>
+        ls Dunno
+      </button>
+      <button onClick={ () => { lsAuthUser(null) } }>
+        ls null
+      </button>
+      { qAuthUser?.username }
     </div>
   )
 }

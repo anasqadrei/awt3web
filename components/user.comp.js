@@ -6,6 +6,7 @@ import * as Sentry from '@sentry/node'
 import Modal from 'react-modal'
 import { validateUrl } from 'lib/validateUrl'
 import { ROOT_APP_ELEMENT } from 'lib/constants'
+import { queryAuthUser } from 'lib/localState'
 import Head from 'components/head'
 import UpdateUser from 'components/user.update.comp'
 import UpdateUserImage from 'components/user.updateImage.comp'
@@ -62,6 +63,9 @@ export default () => {
   const [updateUserModalIsOpen, setUpdateUserModalIsOpen] = useState(false)
   const [updateUserImageModalIsOpen, setUpdateUserImageModalIsOpen] = useState(false)
 
+  // get authenticated user from local state
+  const authUser = queryAuthUser() 
+
   // set query variables
   const vars = {
     id: router.query.id
@@ -105,52 +109,68 @@ export default () => {
   // fix url in case it doesn't match the slug
   validateUrl(router, 'user', getUser.id, getUser.slug)
 
+  // show user details and allow updates only if it's the same as the authenticated user
+  let showPrivateDate = false
+  if (authUser?.id === getUser.id) {
+    showPrivateDate = true
+  } 
+
   // display data
   return (
     <section>
       <Head title={ getUser.username }/>
 
-      <p>User Profile</p>
-      <div>
-        <img src={ getUser.imageUrl ? getUser.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
-        <button onClick={ () => { setUpdateUserImageModalIsOpen(true) } }>
-          Update User Image
-        </button>
-        <Modal isOpen={ updateUserImageModalIsOpen } onRequestClose={ () => { setUpdateUserImageModalIsOpen(false) } } style={ modalStyles } contentLabel="update user image modal">
-          <button onClick={ () => { setUpdateUserImageModalIsOpen(false) } }>
-            Close
-          </button>
-          <h2>Update User Image</h2>
-          <UpdateUserImage/>
-        </Modal>
-        <h1 className="title">{ getUser.username }</h1>
-      </div>
+      <h1 className="title">{ getUser.username }</h1>
+      <img src={ getUser.imageUrl ? getUser.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
 
-      <div>
-        emails:{ getUser.emails ? getUser.emails.map(email => <p key={ email }>{ email }</p>) : `None` }
-      </div>
-      <p>social media: { getUser.profiles?.map(elem => elem.provider).join() }</p>
-      <p>birthDate: { getUser.birthDate }</p>
-      <p>Sex: { getUser.sex }</p>
-      <p>country: { getUser.country?.nameAR }</p>
-      <p>last seen: { getUser.lastSeenDate }</p>
-      <p>joined: { getUser.createdDate }</p>
-      <p>premium: { getUser.premium || 'No'}</p>
-      <div>
-        <button onClick={ () => { setUpdateUserModalIsOpen(true) } }>
-          Update User
-        </button>
-        <Modal isOpen={ updateUserModalIsOpen } onRequestClose={ () => { setUpdateUserModalIsOpen(false) } } style={ modalStyles } contentLabel="update user modal">
-          <button onClick={ () => { setUpdateUserModalIsOpen(false) } }>
-            Close
-          </button>
-          <h2>Update User</h2>
-          <UpdateUser user={ getUser }/>
-        </Modal>
-      </div>
-      <Link href="/user/playlists-list">
-        <a>Library</a>
-      </Link>
+      {
+        showPrivateDate && (
+          <div>
+            <p>User Profile</p>
+            <div>
+              <button onClick={ () => { setUpdateUserImageModalIsOpen(true) } }>
+                Update User Image
+              </button>
+              <Modal isOpen={ updateUserImageModalIsOpen } onRequestClose={ () => { setUpdateUserImageModalIsOpen(false) } } style={ modalStyles } contentLabel="update user image modal">
+                <button onClick={ () => { setUpdateUserImageModalIsOpen(false) } }>
+                  Close
+                </button>
+                <h2>Update User Image</h2>
+                <UpdateUserImage/>
+              </Modal>
+            </div>
+            <div>
+              emails:{ getUser.emails ? getUser.emails.map(email => <p key={ email }>{ email }</p>) : `None` }
+            </div>
+            <p>social media: { getUser.profiles?.map(elem => elem.provider).join() }</p>
+            <p>birthDate: { getUser.birthDate }</p>
+            <p>Sex: { getUser.sex }</p>
+            <p>country: { getUser.country?.nameAR }</p>
+            <p>last seen: { getUser.lastSeenDate }</p>
+            <p>joined: { getUser.createdDate }</p>
+            <p>premium: { getUser.premium || 'No'}</p>
+            <Link href="/user/playlists-list">
+              <a>My Library</a>
+            </Link>
+            <div>
+              <button onClick={ () => { setUpdateUserModalIsOpen(true) } }>
+                Update User
+              </button>
+              <Modal isOpen={ updateUserModalIsOpen } onRequestClose={ () => { setUpdateUserModalIsOpen(false) } } style={ modalStyles } contentLabel="update user modal">
+                <button onClick={ () => { setUpdateUserModalIsOpen(false) } }>
+                  Close
+                </button>
+                <h2>Update User</h2>
+                <UpdateUser user={ getUser }/>
+              </Modal>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        // TODO: add public playlists
+      }
       <p>song uploads:</p>
       <UserSongs userId={ getUser.id } snippet={ true }/>
       <p>song images uploads:</p>
