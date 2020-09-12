@@ -231,14 +231,53 @@ export default () => {
           </Modal>
         </div>
       }
-      <button onClick={ () => { lsAuthUser({ id: "1", username: "Admin", admin: true, __typename: "User" }) } }>
+      <button onClick={ () => { lsAuthUser({ 
+        id: "1", 
+        username: "Admin", 
+        admin: true,
+        emails: ["admin@awtarika.com"],
+        profiles: null,
+        __typename: "User" 
+        }) } }>
         ls Admin
       </button>
-      <button onClick={ () => { lsAuthUser({ id: "2", username: "Anas", admin: false, __typename: "User" }) } }>
+      <button onClick={ () => { lsAuthUser({ 
+        id: "2", 
+        username: "Anas", 
+        admin: false,
+        profiles: {
+          provider: "facebook",
+          providerId: "555",
+        },
+        emails: ["test@gmail.com"],
+        profiles: null,
+        __typename: "User" 
+        }) } }>
         ls Anas
       </button>
-      <button onClick={ () => { lsAuthUser({ id: "3", username: "Dunno", admin: true, __typename: "User" }) } }>
+      <button onClick={ () => { lsAuthUser({ 
+        id: "3", 
+        username: "Dunno", 
+        admin: true, 
+        emails: null,
+        profiles: null,
+        __typename: "User" 
+        }) } }>
         ls Dunno
+      </button>
+      <button onClick={ () => { lsAuthUser({ 
+        id: "4", 
+        username: "Heart & Soul", 
+        admin: false,
+        profiles: {
+          provider: "google",
+          providerId: "99",
+        },
+        emails: ["hns@gmail.com"],
+        profiles: null,
+        __typename: "User" 
+        }) } }>
+        ls Heart & Soul
       </button>
       <button onClick={ () => { lsAuthUser(null) } }>
         ls null

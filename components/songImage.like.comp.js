@@ -1,14 +1,8 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { GET_SONG_QUERY } from 'lib/graphql'
+import { queryAuthUser } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-  __typename: "User",
-}
 
 const CHECK_USER_LIKE_SONG_IMAGE_QUERY = gql`
   query checkUserLikeSongImage ($userId: ID!, $songImageId: ID!) {
@@ -76,46 +70,43 @@ export default (props) => {
     }
   )
 
-  // TODO: what if user is not logged on
+  // get authenticated user
+  const authUser = queryAuthUser()
+
   // set common query variables
   const vars = {
-    userId: loggedOnUser.id,
+    userId: authUser?.id,
     songImageId: props.imageId,
   }
 
-  // TODO: show the like always even if user wasn't logged in. then direct to log them in. use skip??
-  // decide to either show or hide like, unlike, dislike and undislike buttons
-  let hideLike = false
-  let hideDislike = false
-  if (loggedOnUser) {
-    // check if user like song image query
+  // TODO: show the like always even if user wasn't logged in. then direct to log them in
+
+  // check if authenticated user liked song image
+  const { data: dataLike }  = useQuery (
+    CHECK_USER_LIKE_SONG_IMAGE_QUERY,
     {
-      const { data }  = useQuery (
-        CHECK_USER_LIKE_SONG_IMAGE_QUERY,
-        {
-          variables: vars,
-          // skip: false,
-        }
-      )
-      // hide like button if user already liked song image
-      hideLike = data?.checkUserLikeSongImage || false
+      variables: vars,
+      skip: !authUser,
     }
-    // check if user dislike song image query
+  )
+
+  // decide to either show or hide like and unlike buttons
+  let hideLike = dataLike?.checkUserLikeSongImage || false
+
+  // check if authenticated user disliked song image
+  const { data: dataDislike }  = useQuery (
+    CHECK_USER_DISLIKE_SONG_IMAGE_QUERY,
     {
-      const { data }  = useQuery (
-        CHECK_USER_DISLIKE_SONG_IMAGE_QUERY,
-        {
-          variables: vars,
-          // skip: false,
-        }
-      )
-      // hide dislike button if user already disliked song image
-      hideDislike = data?.checkUserDislikeSongImage || false
+      variables: vars,
+      skip: !authUser,
     }
-  }
+  )
+
+  // decide to either show or hide dislike and undislike buttons
+  let hideDislike = dataDislike?.checkUserDislikeSongImage || false
 
   // excute query to display data. the query will most likey use cache
-  const { data }  = useQuery (
+  const { data: dataSong }  = useQuery (
     GET_SONG_QUERY,
     {
       variables: { id: props.songId },
@@ -123,7 +114,7 @@ export default (props) => {
   )
 
   // get data
-  const songImage = data?.getSong?.imagesList?.find(elem => elem.id === props.imageId)
+  const songImage = dataSong?.getSong?.imagesList?.find(elem => elem.id === props.imageId)
 
   // in case of initial loading or after delete (or the highly unlikely case of no data found)
   if (!songImage) {
@@ -166,15 +157,15 @@ export default (props) => {
               id: cache.identify(songImage),
               fields: {
                 likers(currentValue) {
-                  const loggedOnUserRef = cache.writeFragment({
-                    data: loggedOnUser,
+                  const authUserRef = cache.writeFragment({
+                    data: authUser,
                     fragment: gql`
                       fragment UserId on User {
                         id
                       }
                     `
                   })
-                  return [...currentValue || [], loggedOnUserRef]
+                  return [...currentValue || [], authUserRef]
                 },
               }
             })
@@ -220,7 +211,7 @@ export default (props) => {
               id: cache.identify(songImage),
               fields: {
                 likers(currentValue, { readField }) {
-                  return currentValue.filter(elem => readField('id', elem) !== loggedOnUser.id)
+                  return currentValue.filter(elem => readField('id', elem) !== authUser.id)
                 },
               }
             })
@@ -270,15 +261,15 @@ export default (props) => {
               id: cache.identify(songImage),
               fields: {
                 dislikers(currentValue) {
-                  const loggedOnUserRef = cache.writeFragment({
-                    data: loggedOnUser,
+                  const authUserRef = cache.writeFragment({
+                    data: authUser,
                     fragment: gql`
                       fragment UserId on User {
                         id
                       }
                     `
                   })
-                  return [...currentValue || [], loggedOnUserRef]
+                  return [...currentValue || [], authUserRef]
                 },
               }
             })
@@ -324,7 +315,7 @@ export default (props) => {
               id: cache.identify(songImage),
               fields: {
                 dislikers(currentValue, { readField }) {
-                  return currentValue.filter(elem => readField('id', elem) !== loggedOnUser.id)
+                  return currentValue.filter(elem => readField('id', elem) !== authUser.id)
                 },
               }
             })
@@ -339,6 +330,10 @@ export default (props) => {
     <section>
       <p>likes: { songImage.likers?.length }</p>
       <p>dislikes: { songImage.dislikers?.length }</p>
+
+      {
+        // TODO show login comp if not logged in then like after login
+      }
 
       <button hidden={ hideLike } onClick={ () => handleLike() } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideDislike }>
         Like
