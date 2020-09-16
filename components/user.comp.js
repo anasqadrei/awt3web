@@ -35,20 +35,6 @@ const GET_USER_QUERY = gql`
       username
       slug
       imageUrl
-      emails
-      profiles {
-        provider
-        providerId
-      }
-      birthDate
-      sex
-      country {
-        id
-        nameAR
-      }
-      createdDate
-      lastSeenDate
-      premium
     }
   }
 `
@@ -64,7 +50,7 @@ export default () => {
   const [updateUserImageModalIsOpen, setUpdateUserImageModalIsOpen] = useState(false)
 
   // get authenticated user from local state
-  const authUser = queryAuthUser() 
+  const getAuthUser = queryAuthUser() 
 
   // set query variables
   const vars = {
@@ -109,12 +95,6 @@ export default () => {
   // fix url in case it doesn't match the slug
   validateUrl(router, 'user', getUser.id, getUser.slug)
 
-  // show user details and allow updates only if it's the same as the authenticated user
-  let showPrivateDate = false
-  if (authUser?.id === getUser.id) {
-    showPrivateDate = true
-  } 
-
   // display data
   return (
     <section>
@@ -124,7 +104,7 @@ export default () => {
       <img src={ getUser.imageUrl ? getUser.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
 
       {
-        showPrivateDate && (
+        getAuthUser?.id === getUser.id && (
           <div>
             <p>User Profile</p>
             <div>
@@ -140,15 +120,15 @@ export default () => {
               </Modal>
             </div>
             <div>
-              emails:{ getUser.emails ? getUser.emails.map(email => <p key={ email }>{ email }</p>) : `None` }
+              emails:{ getAuthUser.emails ? getAuthUser.emails.map(email => <p key={ email }>{ email }</p>) : `None` }
             </div>
-            <p>social media: { getUser.profiles?.map(elem => elem.provider).join() }</p>
-            <p>birthDate: { getUser.birthDate }</p>
-            <p>Sex: { getUser.sex }</p>
-            <p>country: { getUser.country?.nameAR }</p>
-            <p>last seen: { getUser.lastSeenDate }</p>
-            <p>joined: { getUser.createdDate }</p>
-            <p>premium: { getUser.premium || 'No'}</p>
+            <p>social media: { getAuthUser.profiles?.map(elem => elem.provider).join() }</p>
+            <p>birthDate: { getAuthUser.birthDate }</p>
+            <p>Sex: { getAuthUser.sex }</p>
+            <p>country: { getAuthUser.country?.nameAR }</p>
+            <p>last seen: { getAuthUser.lastSeenDate }</p>
+            <p>joined: { getAuthUser.createdDate }</p>
+            <p>premium: { getAuthUser.premium || 'No'}</p>
             <Link href="/user/playlists-list">
               <a>My Library</a>
             </Link>
@@ -161,7 +141,7 @@ export default () => {
                   Close
                 </button>
                 <h2>Update User</h2>
-                <UpdateUser user={ getUser }/>
+                <UpdateUser user={ getAuthUser }/>
               </Modal>
             </div>
           </div>

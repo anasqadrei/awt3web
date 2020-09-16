@@ -32,7 +32,7 @@ const CREATE_REPLY_MUTATION = gql`
     }
   }
 `
-const COMMENT_CHILDREN_FRAGMENT = gql`fragment commentChildren on Comment {
+const COMMENT_CHILDREN_FRAGMENT = gql`fragment CommentChildren on Comment {
   children {
     id
     reference {

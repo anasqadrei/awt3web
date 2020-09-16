@@ -1,82 +1,43 @@
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { gql } from '@apollo/client'
+import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import Modal from 'react-modal'
-import { initializeApollo } from 'lib/apolloClient'
 import { ROOT_APP_ELEMENT } from 'lib/constants'
-import { authUser as lsAuthUser, queryAuthUser } from 'lib/localState'
+import { AUTH_USER_FRAGMENT } from 'lib/graphql'
+import { authUser, postLoginAction } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'
 
 const GET_USER_BY_PROVIDER_ID_OR_EMAIL_QUERY = gql`
   query getUserByProviderIdOrEmail ($provider: String!, $providerId: ID!, $email: AWSEmail) {
     getUserByProviderIdOrEmail(provider: $provider, providerId: $providerId, email: $email) {
-      id
-      username
-      slug
-      imageUrl
-      emails
-      profiles {
-        provider
-        providerId
-      }
-      birthDate
-      sex
-      country {
-        id
-        nameAR
-      }
-      createdDate
-      lastSeenDate
-      premium
+      ...AuthUser
     }
   }
+  ${ AUTH_USER_FRAGMENT }
 `
 const CREATE_USER_MUTATION = gql`
   mutation createUser ($username: String!, $emails: [AWSEmail], $user: UserInput, $provider: String!, $providerId: ID!, $providerData: AWSJSON) {
     createUser(username: $username, emails: $emails, user: $user, provider: $provider, providerId: $providerId, providerData: $providerData) {
-      id
-      username
-      slug
-      imageUrl
-      emails
-      profiles {
-        provider
-        providerId
-      }
-      birthDate
-      sex
-      country {
-        id
-        nameAR
-      }
-      createdDate
-      lastSeenDate
-      premium
+      ...AuthUser
     }
   }
+  ${ AUTH_USER_FRAGMENT }
 `
 
-const FIREBASE_PROVIDER_ID = {
-  FACEBOOK: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-  GOOGLE: firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-  APPLE: 'apple.com',
-  TWITTER: firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-  MICROSOFT: 'microsoft.com',
-  YAHOO: 'yahoo.com',
-}
-
-const AWTARIKA_PROVIDER = {
-  FACEBOOK: 'facebook',
-  GOOGLE: 'google',
-  APPLE: 'apple',
-  TWITTER: 'twitter',
-  MICROSOFT: 'microsoft',
-  YAHOO: 'yahoo',
-}
+// provider names mapping
+// key: firebase provider name
+// value: awtarika provider name
+const PROVIDERS = new Map([
+  [firebase.auth.FacebookAuthProvider.PROVIDER_ID, 'facebook'],
+  [firebase.auth.GoogleAuthProvider.PROVIDER_ID, 'google'],
+  ['apple.com', 'apple'],
+  [firebase.auth.TwitterAuthProvider.PROVIDER_ID, 'twitter'],
+  ['microsoft.com', 'microsoft'],
+  ['yahoo.com', 'yahoo'],
+])
 
 // configure and initialize Firebase
 // https://github.com/vercel/next.js/issues/1999
@@ -87,83 +48,6 @@ if (!firebase.apps.length) {
     projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECTID,
     appId: process.env.NEXT_PUBLIC_FIREBASE_APPID,
   })
-}
-
-// TODO: upgrade apollo first
-// StyledFirebaseAuth config.
-const uiConfig = {
-  signInFlow: 'popup',
-  callbacks: {
-    signInSuccessWithAuthResult: (authResult) => {
-      console.log(authResult);
-
-      // try {
-      //   let vars = {}
-      //   switch (authResult.credential.providerId) {
-      //     case FIREBASE_PROVIDER_ID.FACEBOOK:
-      //       vars.provider = AWTARIKA_PROVIDER.FACEBOOK
-      //       vars.providerId = 'twitter'
-      //       break
-      //     case FIREBASE_PROVIDER_ID.GOOGLE:
-      //       vars.provider = AWTARIKA_PROVIDER.GOOGLE
-      //       vars.providerId = 'twitter'
-      //       vars.email = 'twitter'
-      //       break
-      //     case FIREBASE_PROVIDER_ID.APPLE:
-      //       vars.provider = AWTARIKA_PROVIDER.APPLE
-      //       vars.providerId = 'twitter'
-      //       break
-      //     case FIREBASE_PROVIDER_ID.TWITTER:
-      //       vars.provider = AWTARIKA_PROVIDER.TWITTER
-      //       vars.providerId = authResult.additionalUserInfo?.profile?.id_str
-      //       break
-      //     case FIREBASE_PROVIDER_ID.MICROSOFT:
-      //       vars.provider = AWTARIKA_PROVIDER.MICROSOFT
-      //       vars.providerId = 'twitter'
-      //       break
-      //     case FIREBASE_PROVIDER_ID.YAHOO:
-      //       vars.provider = AWTARIKA_PROVIDER.YAHOO
-      //       vars.providerId = 'twitter'
-      //       vars.email = 'twitter'
-      //       break
-      //   }
-      //
-      //   console.log(`about to createApolloClient`);
-      //   // TODO: reuse client instead of creating a new one. fix when upgrading to apollo 3.0
-      //   const client = createApolloClient()
-      //   console.log(client);
-      //   const R = client.query({
-      //     query: GET_USER_BY_PROVIDER_ID_OR_EMAIL_QUERY,
-      //     variables: vars,
-      //   })
-      //   // .then((R) => {
-      //     console.log(R);
-      //   // })
-
-
-        //check first if user in mongodb
-        //if not, add them
-        //if yes, check if data match with custom attribute, email in case of inconsistency
-
-      // } catch (error) {
-      //   // TODO: email and show error?
-      //   // also email? it means the user is in firebase but not in db
-      //   // show error comp or not?
-      //   Sentry.captureException(error)
-      // }
-
-      // avoid redirects after sign-in.
-      // return false
-    }
-  },
-  signInOptions: [
-    FIREBASE_PROVIDER_ID.FACEBOOK,
-    FIREBASE_PROVIDER_ID.GOOGLE,
-    FIREBASE_PROVIDER_ID.APPLE,
-    FIREBASE_PROVIDER_ID.TWITTER,
-    FIREBASE_PROVIDER_ID.MICROSOFT,
-    FIREBASE_PROVIDER_ID.YAHOO,
-  ],
 }
 
 // TODO: scrolling overflow?
@@ -179,110 +63,109 @@ const modalStyles = {
   }
 }
 
-export default () => {
+// function: log user out from firebase and local state
+export function logout() {
+  firebase.auth().signOut()
+  authUser(null)
+}
+
+export default (props) => {
   // for accessibility
   Modal.setAppElement(ROOT_APP_ELEMENT)
 
   // state variables
   const [authModalIsOpen, setAuthModalIsOpen] = useState(false)
-  const [authUser, setAuthUser] = useState(null)
+  const [firebaseAuthUser, setFirebaseAuthUser] = useState(null)
 
+  // observe user sign-in and sign-out -> change firebaseAuthUser state variable -> query/mutate graphql accordingly
   useEffect(() => {
-    //
+    // adds an observer for changes to the user's sign-in state
     const unsubscribe = firebase.auth().onAuthStateChanged(
-      authUser => {
-        // TODO: remove
-        console.log(authUser);
-        authUser ? setAuthUser(authUser) : setAuthUser(null)
-      },
+      user => setFirebaseAuthUser(user)
     )
     // clean up
     return () => {
       unsubscribe()
     }
-  }, [authUser])
-  // TODO: authUser is only for useEffect optimazation? check please
+  }, [])
 
-  const qAuthUser = queryAuthUser()
+  // mutation tuple
+  const [createUser, { loading: loadingCreateUser, error: errorCreateUser }] = useMutation(
+    CREATE_USER_MUTATION,
+    {
+      onCompleted: (data) => {
+        // set reactive variable
+        authUser(data?.createUser) 
+      },
+      onError: (error) => {
+        Sentry.captureException(error)
+      },
+    }
+  )
 
+  // query awtarika db to see if firebase user exist
+  const { loading: loadingGetUser, error: errorGetUser }  = useQuery (
+    GET_USER_BY_PROVIDER_ID_OR_EMAIL_QUERY,
+    {
+      variables: {
+        provider: PROVIDERS.get(firebaseAuthUser?.providerData?.[0]?.providerId),
+        providerId: firebaseAuthUser?.providerData?.[0]?.uid,
+        email: firebaseAuthUser?.providerData?.[0]?.email,
+      },
+      skip: !firebaseAuthUser,
+      onCompleted: (data) => {
+        if (data?.getUserByProviderIdOrEmail) {
+          // set reactive variable
+          authUser(data?.getUserByProviderIdOrEmail) 
+        } else {
+          // create user otherwise
+          createUser({
+            variables: {
+              username: firebaseAuthUser.providerData?.[0]?.displayName, 
+              emails: firebaseAuthUser.providerData?.[0]?.email, 
+              user: { 
+                image: firebaseAuthUser.providerData?.[0]?.photoURL, 
+              }, 
+              provider: PROVIDERS.get(firebaseAuthUser.providerData?.[0]?.providerId), 
+              providerId: firebaseAuthUser.providerData?.[0]?.uid, 
+            },
+          })
+        }
+      },
+    }
+  )
+
+  // StyledFirebaseAuth config
+  const uiConfig = {
+    signInOptions: Array.from(PROVIDERS.keys()),
+    signInFlow: 'popup',
+    callbacks: {
+      signInSuccessWithAuthResult: () => {
+        // pass back the action in the reactive variable (global state)
+        // this is to say that the user "clicked" login and completed the process successfully. Not just a component render
+        postLoginAction(props?.postLoginAction || null)
+      },
+    },
+  }
+
+  // display component
   return (
     <div>
-      {
-        !!firebase.auth().currentUser ?
-        <div>
-          <Link href="/user/[id]/[slug]" as={ `/user/1/xxx` }>
-            <a>{ firebase.auth().currentUser.displayName } (fix link)</a>
-          </Link>
-          <button onClick={ () => { firebase.auth().signOut(); setAuthModalIsOpen(false) } }>
-            Logout
-          </button>
-        </div>
-        :
-        <div>
-          <button onClick={ () => { setAuthModalIsOpen(true) } }>
-            Login
-          </button>
-          <Modal isOpen={ authModalIsOpen } onRequestClose={ () => { setAuthModalIsOpen(false) } } style={ modalStyles } contentLabel="auth modal">
-            <button onClick={ () => { setAuthModalIsOpen(false) } }>
-              Close
-            </button>
-            <h2>Login with...</h2>
-            <StyledFirebaseAuth uiConfig={ uiConfig } firebaseAuth={ firebase.auth() }/>
-          </Modal>
-        </div>
-      }
-      <button onClick={ () => { lsAuthUser({ 
-        id: "1", 
-        username: "Admin", 
-        admin: true,
-        emails: ["admin@awtarika.com"],
-        profiles: null,
-        __typename: "User" 
-        }) } }>
-        ls Admin
+      <button onClick={ () => { setAuthModalIsOpen(true) } }>
+        { props.buttonText || `Login` }
       </button>
-      <button onClick={ () => { lsAuthUser({ 
-        id: "2", 
-        username: "Anas", 
-        admin: false,
-        profiles: {
-          provider: "facebook",
-          providerId: "555",
-        },
-        emails: ["test@gmail.com"],
-        profiles: null,
-        __typename: "User" 
-        }) } }>
-        ls Anas
-      </button>
-      <button onClick={ () => { lsAuthUser({ 
-        id: "3", 
-        username: "Dunno", 
-        admin: true, 
-        emails: null,
-        profiles: null,
-        __typename: "User" 
-        }) } }>
-        ls Dunno
-      </button>
-      <button onClick={ () => { lsAuthUser({ 
-        id: "4", 
-        username: "Heart & Soul", 
-        admin: false,
-        profiles: {
-          provider: "google",
-          providerId: "99",
-        },
-        emails: ["hns@gmail.com"],
-        profiles: null,
-        __typename: "User" 
-        }) } }>
-        ls Heart & Soul
-      </button>
-      <button onClick={ () => { lsAuthUser(null) } }>
-        ls null
-      </button>
-      { qAuthUser?.username }
+      <Modal isOpen={ authModalIsOpen } onRequestClose={ () => { setAuthModalIsOpen(false) } } style={ modalStyles } contentLabel="auth modal">
+        <button onClick={ () => { setAuthModalIsOpen(false) } }>
+          Close
+        </button>
+        <h2>Login with...</h2>
+        { !firebaseAuthUser && <StyledFirebaseAuth uiConfig={ uiConfig } firebaseAuth={ firebase.auth() }/> }
+
+        { loadingGetUser && <div>loading get user (design this)</div> }
+        { loadingCreateUser && <div>loading create user (design this)</div> }
+
+        { (errorGetUser || errorCreateUser) && <ErrorMessage/> }
+      </Modal>
     </div>
   )
 }

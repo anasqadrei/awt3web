@@ -79,7 +79,6 @@ export default () => {
 
   // error handling
   if (error) {
-    console.log(error);
     Sentry.captureException(error)
     return <ErrorMessage/>
   }

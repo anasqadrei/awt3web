@@ -23,7 +23,7 @@ export default () => {
   )
 
   // get authenticated user
-  const authUser = queryAuthUser()
+  const getAuthUser = queryAuthUser()
   
   // function: handle onSubmit event. get data from form and execute mutation
   const handleSubmit = (event) => {
@@ -39,11 +39,11 @@ export default () => {
     contactUs({
       variables: {
         message: message,
-        userId: authUser.id,
-        username: authUser.username,
-        provider: authUser.profiles?.provider || 'xxx',
-        handler: authUser.profiles?.providerId || '123',
-        email: authUser.emails?.[0],
+        userId: getAuthUser.id,
+        username: getAuthUser.username,
+        provider: getAuthUser.profiles?.provider || 'xxx',
+        handler: getAuthUser.profiles?.providerId || '123',
+        email: getAuthUser.emails?.[0],
       }
     })
   }
@@ -54,11 +54,11 @@ export default () => {
       <form onSubmit={ handleSubmit }>
         <textarea name={ FORM_MESSAGE } type="text" row="3" maxLength="500" placeholder="message here" required/>
         {
-          authUser && (
+          getAuthUser && (
             <div>
-              <p>name: { authUser.username }</p>
-              <p>provider: { `${ authUser.profiles?.provider } ${ authUser.profiles?.providerId }` }</p>
-              { authUser.emails?.[0] && <p>email: { authUser.emails[0] }</p> }
+              <p>name: { getAuthUser.username }</p>
+              <p>provider: { `${ getAuthUser.profiles?.provider } ${ getAuthUser.profiles?.providerId }` }</p>
+              { getAuthUser.emails?.[0] && <p>email: { getAuthUser.emails[0] }</p> }
 
               <button type="submit" disabled={ loading || data?.contactUs }>
                 Send Message
@@ -73,7 +73,7 @@ export default () => {
       </form>
 
       {
-        !authUser && (
+        !getAuthUser && (
           <div>
             Log in please!
             <AuthUser/>

@@ -1,13 +1,15 @@
 import Link from 'next/link'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import { queryAuthUser } from 'lib/localState'
+import { queryAuthUser, postLoginAction, queryPostLoginAction } from 'lib/localState'
+import AuthUser from 'components/user.auth.comp'
 import { getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE as LIST_COMMENTS_PAGE_SIZE } from 'components/comment.list.comp'
 import CommentLikers, { LIST_COMMENT_LIKERS_QUERY, PAGE_SIZE as LIST_COMMENT_LIKERS_PAGE_SIZE } from 'components/comment.Likers.comp'
 import ErrorMessage from 'components/errorMessage'
 
+const POST_LOGIN_ACTION = 'LIKE_COMMENT'
 const CHECK_USER_LIKE_COMMENTS_QUERY = gql`
   query checkUserLikeComments ($userId: ID!, $commentIds: [ID]!) {
     checkUserLikeComments(userId: $userId, commentIds: $commentIds)
@@ -70,7 +72,7 @@ export default (props) => {
   )
 
   // get authenticated user
-  const authUser = queryAuthUser()
+  const getAuthUser = queryAuthUser()
 
   // set common query variables
   const varsListComments = {
@@ -82,7 +84,7 @@ export default (props) => {
     pageSize: LIST_COMMENTS_PAGE_SIZE,
   }
   const varsCheckUserLikeComments = {
-    userId: authUser?.id,
+    userId: getAuthUser?.id,
     commentIds: [props.comment.id],
   }
   const varsListCommentLikers = {
@@ -96,7 +98,7 @@ export default (props) => {
     CHECK_USER_LIKE_COMMENTS_QUERY,
     {
       variables: varsCheckUserLikeComments,
-      skip: !authUser,
+      skip: !getAuthUser,
     }
   )
 
@@ -109,7 +111,7 @@ export default (props) => {
     likeComment({
       variables: {
         commentId: props.comment.id,
-        userId: authUser.id,
+        userId: getAuthUser.id,
       },
       update: (cache, { data: { likeComment } }) => {
         // if a successful like (not a repeated one)
@@ -160,7 +162,7 @@ export default (props) => {
             let dataWrite = JSON.parse(JSON.stringify(dataRead))
 
             // update list of likers
-            dataWrite.listCommentLikers = [...dataWrite.listCommentLikers || [], authUser]
+            dataWrite.listCommentLikers = [...dataWrite.listCommentLikers || [], getAuthUser]
 
             // write to cache
             cache.writeQuery({
@@ -180,7 +182,7 @@ export default (props) => {
     unlikeComment({
       variables: {
         commentId: props.comment.id,
-        userId: authUser.id,
+        userId: getAuthUser.id,
       },
       update: (cache, { data: { unlikeComment } }) => {
         // if a successful unlike (not a repeated one)
@@ -231,7 +233,7 @@ export default (props) => {
             let dataWrite = JSON.parse(JSON.stringify(dataRead))
 
             // update list of likers
-            dataWrite.listCommentLikers = dataWrite.listCommentLikers.filter(elem => elem.id != authUser.id)
+            dataWrite.listCommentLikers = dataWrite.listCommentLikers.filter(elem => elem.id != getAuthUser.id)
 
             // write to cache
             cache.writeQuery({
@@ -251,7 +253,7 @@ export default (props) => {
     flagComment({
       variables: {
         commentId: props.comment.id,
-        userId: authUser.id,
+        userId: getAuthUser.id,
         reason: reason,
       },
     })
@@ -311,6 +313,17 @@ export default (props) => {
     }
   }
 
+  // get post login action
+  const getPostLoginAction = queryPostLoginAction()
+
+  // if actions and properties match then reset and execute the action
+  if (getAuthUser && getPostLoginAction?.action === POST_LOGIN_ACTION && getPostLoginAction?.id === props.comment.id && !loadingLike) {
+    //reset
+    postLoginAction(null)
+    //execute
+    handleLike()
+  }
+
   // display component
   return (
     <div>
@@ -326,11 +339,14 @@ export default (props) => {
 
       <CommentLikers commentId={ props.comment.id }/>
       <div>
-        <button hidden={ hideLike } onClick={ () => handleLike() } disabled={ loadingLike }>
-          Like
-        </button>
         {
-          // TODO show login comp if not logged in then like after login
+          getAuthUser ? (
+            <button hidden={ hideLike } onClick={ () => handleLike() } disabled={ loadingLike }>
+              Like
+            </button>
+          ) : (
+            <AuthUser buttonText="Like" postLoginAction={ { action: POST_LOGIN_ACTION, id: props.comment.id } }/>
+          )
         }
 
         { loadingLike && <div>mutating (design this)</div> }
@@ -346,7 +362,7 @@ export default (props) => {
         { errorUnlike && <ErrorMessage/> }
       </div>
 
-      <div hidden={ !authUser }>
+      <div hidden={ !getAuthUser }>
         <button onClick={ () => handleFlag('قلة ادب') } disabled={ loadingFlag }>
           flag - قلة ادب
         </button>
@@ -358,7 +374,7 @@ export default (props) => {
         { errorFlag && <ErrorMessage/> }
       </div>
 
-      <div hidden={ !(authUser?.id === props.comment.user.id || authUser?.admin) }>
+      <div hidden={ !(getAuthUser?.id === props.comment.user.id || getAuthUser?.admin) }>
         <button onClick={ () => handleDelete() } disabled={ loadingDelete }>
           X delete
         </button>

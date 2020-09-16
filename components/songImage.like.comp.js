@@ -71,11 +71,11 @@ export default (props) => {
   )
 
   // get authenticated user
-  const authUser = queryAuthUser()
+  const getAuthUser = queryAuthUser()
 
   // set common query variables
   const vars = {
-    userId: authUser?.id,
+    userId: getAuthUser?.id,
     songImageId: props.imageId,
   }
 
@@ -86,7 +86,7 @@ export default (props) => {
     CHECK_USER_LIKE_SONG_IMAGE_QUERY,
     {
       variables: vars,
-      skip: !authUser,
+      skip: !getAuthUser,
     }
   )
 
@@ -98,7 +98,7 @@ export default (props) => {
     CHECK_USER_DISLIKE_SONG_IMAGE_QUERY,
     {
       variables: vars,
-      skip: !authUser,
+      skip: !getAuthUser,
     }
   )
 
@@ -158,7 +158,7 @@ export default (props) => {
               fields: {
                 likers(currentValue) {
                   const authUserRef = cache.writeFragment({
-                    data: authUser,
+                    data: getAuthUser,
                     fragment: gql`
                       fragment UserId on User {
                         id
@@ -211,7 +211,7 @@ export default (props) => {
               id: cache.identify(songImage),
               fields: {
                 likers(currentValue, { readField }) {
-                  return currentValue.filter(elem => readField('id', elem) !== authUser.id)
+                  return currentValue.filter(elem => readField('id', elem) !== getAuthUser.id)
                 },
               }
             })
@@ -262,7 +262,7 @@ export default (props) => {
               fields: {
                 dislikers(currentValue) {
                   const authUserRef = cache.writeFragment({
-                    data: authUser,
+                    data: getAuthUser,
                     fragment: gql`
                       fragment UserId on User {
                         id
@@ -315,7 +315,7 @@ export default (props) => {
               id: cache.identify(songImage),
               fields: {
                 dislikers(currentValue, { readField }) {
-                  return currentValue.filter(elem => readField('id', elem) !== authUser.id)
+                  return currentValue.filter(elem => readField('id', elem) !== getAuthUser.id)
                 },
               }
             })
