@@ -21,7 +21,7 @@ export default (props) => {
   const [deletePlaylist, { loading, error }] = useMutation(
     DELETE_PLAYLIST_MUTATION,
     {
-      onCompleted: (data) => {
+      onCompleted: () => {
         Router.push(`/user/playlists-list`)
       },
       onError: (error) => {

@@ -63,7 +63,7 @@ export default (props) => {
           sex: sex,
           country: country,
           lastSeenDate: new Date(),
-        }
+        },
       },
       update: (_cache, { data: { updateUser } }) => {
         // update cache

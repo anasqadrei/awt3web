@@ -13,6 +13,7 @@ import UpdateUserImage from 'components/user.updateImage.comp'
 import UserSongs from 'components/song.user.comp'
 import UserSongImages from 'components/songImage.user.comp'
 import UserLyrics from 'components/lyrics.user.comp'
+import DeleteUser from 'components/user.delete.comp'
 import ErrorMessage from 'components/errorMessage'
 
 // TODO: scrolling overflow?
@@ -144,6 +145,7 @@ export default () => {
                 <UpdateUser user={ getAuthUser }/>
               </Modal>
             </div>
+            <DeleteUser user={ getAuthUser }/>
           </div>
         )
       }
