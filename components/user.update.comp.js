@@ -1,13 +1,9 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { AUTH_USER_FRAGMENT } from 'lib/graphql'
+import { authUser } from 'lib/localState'
 import RemoveUserEmail from 'components/user.removeEmail.comp'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const FORM_USERNAME = "username"
 const FORM_BIRTH_DATE = "birthDate"
@@ -24,18 +20,10 @@ const LIST_COUNTRIES_QUERY = gql`
 const UPDATE_USER_MUTATION = gql`
   mutation updateUser ($userId: ID!, $user: UserInput!) {
     updateUser(userId: $userId, user: $user) {
-      id
-      username
-      slug
-      birthDate
-      sex
-      country {
-        id
-        nameAR
-      }
-      lastSeenDate
+      ...AuthUser
     }
   }
+  ${ AUTH_USER_FRAGMENT }
 `
 
 export default (props) => {
@@ -68,39 +56,18 @@ export default (props) => {
     // execute mutation and update the cache
     updateUser({
       variables: {
-        userId: loggedOnUser.id,
+        userId: props.user.id,
         user: {
           username: username,
-          // TODO: wait til using css and validation framework
-          // birthDate: birthDate,
+          birthDate: birthDate,
           sex: sex,
           country: country,
           lastSeenDate: new Date(),
         }
       },
-      update: (cache, { data: { updateUser } }) => {
+      update: (_cache, { data: { updateUser } }) => {
         // update cache
-        // TODO: does it even work? check after deciding on login way
-        cache.modify({
-          id: cache.identify(loggedOnUser),
-          fields: {
-            username() {
-              return updateUser.username
-            },
-            birthDate() {
-              return updateUser.birthDate
-            },
-            sex() {
-              return updateUser.sex
-            },
-            country() {
-              return updateUser.country
-            },
-            lastSeenDate() {
-              return updateUser.lastSeenDate
-            },
-          }
-        })
+        authUser(updateUser)
       },
     })
   }
@@ -115,20 +82,23 @@ export default (props) => {
         { props.user.emails ? props.user.emails.map(email => (
           <div key={ email }>
             { email }
-            <RemoveUserEmail email={ email }/>
+            {/* NOTE: not sure if we want this feature */}
+            {/* <RemoveUserEmail user={ props.user } email={ email }/> */}
           </div>
         ))
         :
-          `None`
+          `X`
         }
       </div>
       Birth Date:
-      <input name={ FORM_BIRTH_DATE } type="text" disabled={ loadingUpdate } defaultValue={ props.user.birthDate } placeholder="birthDate here" required/>
+      {/* TODO: find a proper date picker. keep pattern? */}
+      <input name={ FORM_BIRTH_DATE } type="date" disabled={ loadingUpdate } defaultValue={ props.user.birthDate } placeholder="yyyy-mm-dd" pattern="\d{4}-\d{2}-\d{2}" required/>
       <div>
         Sex:
+        {/* validate this not empty */}
         <select name={ FORM_SEX } disabled={ loadingUpdate } defaultValue={ props.user.sex || "" } required>
-          <option value="m">ذكر</option>
-          <option value="f">أنثى</option>
+          <option key="m" value="m">ذكر</option>
+          <option key="f" value="f">أنثى</option>
           <option value=""></option>
         </select>
       </div>
@@ -136,11 +106,12 @@ export default (props) => {
       { dataCountries?.listCountries &&
           <div>
             Country:
-            <select name={ FORM_COUNTRY } disabled={ loadingUpdate } defaultValue={ props.user.country.id } required>
-            { dataCountries?.listCountries?.map(country => (
-                <option key={ country.id } value={ country.id }>{ country.nameAR }</option>
-              ))
-            }
+            <select name={ FORM_COUNTRY } disabled={ loadingUpdate } defaultValue={ props.user.country?.id || "" } required>
+              <option value=""></option>
+              { dataCountries?.listCountries?.map(country => (
+                  <option key={ country.id } value={ country.id }>{ country.nameAR }</option>
+                ))
+              }
             </select>
           </div>
       }
@@ -150,7 +121,7 @@ export default (props) => {
 
       { loadingUpdate && <div>mutating (design this)</div> }
       { errorUpdate && <ErrorMessage/> }
-      { dataUpdate?.updateUser && <div>User Added</div> }
+      { dataUpdate?.updateUser && <div>User Updated</div> }
     </form>
   )
 }

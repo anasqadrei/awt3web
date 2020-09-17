@@ -1,25 +1,20 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { AUTH_USER_FRAGMENT } from 'lib/graphql'
+import { authUser } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const FORM_FILE = "file"
 const UPDATE_USER_MUTATION = gql`
   mutation updateUser ($userId: ID!, $user: UserInput!) {
     updateUser(userId: $userId, user: $user) {
-      id
-      imageUrl
-      lastSeenDate
+      ...AuthUser
     }
   }
+  ${ AUTH_USER_FRAGMENT }
 `
 
-export default () => {
+export default (props) => {
   // mutation tuple
   const [updateUser, { loading, error, data }] = useMutation(
     UPDATE_USER_MUTATION,
@@ -42,27 +37,16 @@ export default () => {
     // execute mutation and update the cache
     updateUser({
       variables: {
-        userId: loggedOnUser.id,
+        userId: props.user.id,
         user: {
           // TODO: add real image file
-          image: loggedOnUser.id,
+          image: `http://www.awtarika.com/x/${ props.user.id }`,
           lastSeenDate: new Date(),
         }
       },
-      update: (cache, { data: { updateUser } }) => {
+      update: (_cache, { data: { updateUser } }) => {
         // update cache
-        // TODO: does it even work? check after deciding on login way
-        cache.modify({
-          id: cache.identify(loggedOnUser),
-          fields: {
-            imageUrl() {
-              return updateUser.imageUrl
-            },
-            lastSeenDate() {
-              return updateUser.lastSeenDate
-            },
-          }
-        })
+        authUser(updateUser)
       },
     })
   }

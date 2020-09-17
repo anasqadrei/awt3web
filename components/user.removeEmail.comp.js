@@ -1,21 +1,16 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { AUTH_USER_FRAGMENT } from 'lib/graphql'
+import { authUser } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-  admin: true,
-}
 
 const REMOVE_USER_EMAIL_MUTATION = gql`
   mutation removeUserEmail ($userId: ID!, $email: AWSEmail!) {
     removeUserEmail(userId: $userId, email: $email) {
-      id
-      emails
+      ...AuthUser
     }
   }
+  ${ AUTH_USER_FRAGMENT }
 `
 
 export default (props) => {
@@ -37,20 +32,12 @@ export default (props) => {
       // execute mutation and update the cache
       removeUserEmail({
         variables: {
-          userId: loggedOnUser.id,
+          userId: props.user.id,
           email: props.email,
         },
-        update: (cache, { data: { removeUserEmail } }) => {
+        update: (_cache, { data: { removeUserEmail } }) => {
           // update cache
-          // TODO: does it even work? check after deciding on login way
-          cache.modify({
-            id: cache.identify(loggedOnUser),
-            fields: {
-              emails() {
-                return removeUserEmail.emails
-              },
-            }
-          })
+          authUser(removeUserEmail)
         },
       })
     }
@@ -59,7 +46,7 @@ export default (props) => {
   // display component
   return (
     <div>
-      <button hidden={ !loggedOnUser.admin } onClick={ (event) => handleRemoveEmail(event) } disabled={ loading }>
+      <button hidden={ !props.user.admin } onClick={ (event) => handleRemoveEmail(event) } disabled={ loading }>
         Remove Email
       </button>
 

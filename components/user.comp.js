@@ -116,17 +116,17 @@ export default () => {
                   Close
                 </button>
                 <h2>Update User Image</h2>
-                <UpdateUserImage/>
+                <UpdateUserImage user={ getAuthUser }/>
               </Modal>
             </div>
             <div>
-              emails:{ getAuthUser.emails ? getAuthUser.emails.map(email => <p key={ email }>{ email }</p>) : `None` }
+              emails:{ getAuthUser.emails ? getAuthUser.emails.map(email => <p key={ email }>{ email }</p>) : `X` }
             </div>
             <p>social media: { getAuthUser.profiles?.map(elem => elem.provider).join() }</p>
-            <p>birthDate: { getAuthUser.birthDate }</p>
-            <p>Sex: { getAuthUser.sex }</p>
-            <p>country: { getAuthUser.country?.nameAR }</p>
-            <p>last seen: { getAuthUser.lastSeenDate }</p>
+            <p>birthDate: { getAuthUser.birthDate || `X` }</p>
+            <p>Sex: { getAuthUser.sex || `X` }</p>
+            <p>country: { getAuthUser.country?.nameAR || `X` }</p>
+            <p>last seen: { getAuthUser.lastSeenDate || getAuthUser.createdDate }</p>
             <p>joined: { getAuthUser.createdDate }</p>
             <p>premium: { getAuthUser.premium || 'No'}</p>
             <Link href="/user/playlists-list">
