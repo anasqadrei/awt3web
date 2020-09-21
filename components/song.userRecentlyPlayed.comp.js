@@ -1,14 +1,9 @@
 import { useState } from 'react'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import SongItem from 'components/song.item.comp'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const SORT = '-lastPlayedDate'
 const PAGE_SIZE = 1
@@ -37,9 +32,12 @@ export default (props) => {
   const [nextPage, setNextPage] = useState(true)
   const [currentListLength, setCurrentListLength] = useState(0)
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // set query variables
   const vars = {
-    userId: loggedOnUser.id,
+    userId: getAuthUser?.id,
     sort: SORT,
     page: 1,
     pageSize: PAGE_SIZE,
@@ -57,6 +55,7 @@ export default (props) => {
     {
       variables: vars,
       notifyOnNetworkStatusChange: true,
+      skip: !getAuthUser,
       onCompleted: (data) => {
         // get new length of data (cached + newly fetched) with default = 0
         const newListLength = data?.listUserPlayedSongs?.length ?? 0;

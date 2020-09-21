@@ -1,15 +1,11 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser, postLoginAction, queryPostLoginAction } from 'lib/localState'
+import AuthUser from 'components/user.auth.comp'
 import { GET_ARTIST_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
 
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-  __typename: "User",
-}
-
+const POST_LOGIN_ACTION = 'LIKE_ARTIST'
 const CHECK_USER_LIKE_ARTIST_QUERY = gql`
   query checkUserLikeArtist ($userId: ID!, $artistId: ID!) {
     checkUserLikeArtist(userId: $userId, artistId: $artistId)
@@ -45,31 +41,29 @@ export default (props) => {
     }
   )
 
-  // TODO: what if user is not logged on
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // set common query variables
   const vars = {
-    userId: loggedOnUser?.id,
+    userId: getAuthUser?.id,
     artistId: props.artistId,
   }
+  
+  // check if authenticated user liked artist
+  const { data: dataCheckLike }  = useQuery (
+    CHECK_USER_LIKE_ARTIST_QUERY,
+    {
+      variables: vars,
+      skip: !getAuthUser,
+    }
+  )
 
-  // TODO: show the like always even if user wasn't logged in. then direct to log them in. use skip??
   // decide to either show or hide like and unlike buttons
-  let hideLike = false
-  if (loggedOnUser) {
-    // check if user like artist query
-    const { data }  = useQuery (
-      CHECK_USER_LIKE_ARTIST_QUERY,
-      {
-        variables: vars,
-        // skip: false,
-      }
-    )
-    // hide like button if user already liked artist
-    hideLike = data?.checkUserLikeArtist || false
-  }
+  const hideLike = dataCheckLike?.checkUserLikeArtist || false
 
   // excute query to display data. the query will most likey use cache
-  const { data }  = useQuery (
+  const { data: dataArtist }  = useQuery (
     GET_ARTIST_QUERY,
     {
       variables: { id: props.artistId },
@@ -77,17 +71,17 @@ export default (props) => {
   )
 
   // in case of initial loading (or the highly unlikely case of no data found)
-  if (!data?.getArtist) {
+  if (!dataArtist?.getArtist) {
     return null
   }
 
   // get data
-  const { getArtist } = data
+  const { getArtist } = dataArtist
 
   // function: handle onClick event
   const handleLike = () => {
     // execute mutation and update the cache
-    likeArtist({
+    getAuthUser && likeArtist({
       variables: vars,
       update: (cache, { data: { likeArtist } }) => {
         // if a successful like (not a repeated one)
@@ -176,13 +170,30 @@ export default (props) => {
     })
   }
 
+  // get post login action
+  const getPostLoginAction = queryPostLoginAction()
+
+  // if actions and properties match then reset and execute the action
+  if (getAuthUser && getPostLoginAction?.action === POST_LOGIN_ACTION && getPostLoginAction?.id === props.artistId && !loadingLike) {
+    //reset
+    postLoginAction(null)
+    //execute
+    handleLike()
+  }
+
   // display component
   return (
     <section>
       <div>
-        <button hidden={ hideLike } onClick={ () => handleLike() } disabled={ loadingLike }>
-          Like
-        </button>
+        {
+          getAuthUser ? (
+            <button hidden={ hideLike } onClick={ () => handleLike() } disabled={ loadingLike }>
+              Like
+            </button>
+          ) : (
+            <AuthUser buttonText="Like" postLoginAction={ { action: POST_LOGIN_ACTION, id: props.artistId } }/>
+          )
+        }
 
         { loadingLike && <div>mutating (design this)</div> }
         { errorLike && <ErrorMessage/> }

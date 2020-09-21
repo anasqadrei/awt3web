@@ -1,13 +1,8 @@
 import Link from 'next/link'
 import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const SORT = '-lastSearchedDate'
 const PAGE_SIZE = 10
@@ -18,9 +13,12 @@ const LIST_USER_SEARCHES_QUERY = gql`
 `
 
 export default () => {
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // set query variables
   const vars = {
-    userId: loggedOnUser.id,
+    userId: getAuthUser?.id,
     sort: SORT,
     page: 1,
     pageSize: PAGE_SIZE,
@@ -31,6 +29,7 @@ export default () => {
     LIST_USER_SEARCHES_QUERY,
     {
       variables: vars,
+      skip: !getAuthUser,
     }
   )
 

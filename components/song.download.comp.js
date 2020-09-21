@@ -1,15 +1,10 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser, postLoginAction, queryPostLoginAction } from 'lib/localState'
+import AuthUser from 'components/user.auth.comp'
 import { GET_SONG_QUERY } from 'lib/graphql'
-import ErrorMessage from 'components/errorMessage'
 
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-  __typename: "User",
-}
-
+const POST_LOGIN_ACTION = 'DOWNLOAD_SONG'
 const DOWNLOAD_SONG_MUTATION = gql`
   mutation downloadSong ($songId: ID!, $userId: ID!) {
     downloadSong(songId: $songId, userId: $userId)
@@ -18,7 +13,7 @@ const DOWNLOAD_SONG_MUTATION = gql`
 
 export default (props) => {
   // mutation tuple
-  const [downloadSong, { loading, error }] = useMutation(
+  const [downloadSong, { loading }] = useMutation(
     DOWNLOAD_SONG_MUTATION,
     {
       onError: (error) => {
@@ -26,6 +21,9 @@ export default (props) => {
       },
     }
   )
+
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
 
   // excute query to display data. the query will most likey use cache
   const { data }  = useQuery (
@@ -48,9 +46,9 @@ export default (props) => {
     // TODO: download song
 
     // execute mutation and update the cache
-    downloadSong({
+    getAuthUser && downloadSong({
       variables: {
-        userId: loggedOnUser.id,
+        userId: getAuthUser.id,
         songId: props.songId,
       },
       update: (cache, { data: { downloadSong } }) => {
@@ -69,12 +67,29 @@ export default (props) => {
     })
   }
 
+  // get post login action
+  const getPostLoginAction = queryPostLoginAction()
+
+  // if actions and properties match then reset and execute the action
+  if (getAuthUser && getPostLoginAction?.action === POST_LOGIN_ACTION && getPostLoginAction?.id === props.songId && !loading) {
+    //reset
+    postLoginAction(null)
+    //execute
+    handleDownload()
+  }
+
   // display component
   return (
     <section>
-      <button onClick={ () => handleDownload() } disabled={ loading }>
-        Download
-      </button>
+      {
+        getAuthUser ? (
+          <button onClick={ () => handleDownload() } disabled={ loading }>
+            Download
+          </button>
+        ) : (
+          <AuthUser buttonText="Download" postLoginAction={ { action: POST_LOGIN_ACTION, id: props.songId } }/>
+        )
+      }
 
       { getSong.downloads && `Downloaded ${ getSong.downloads } times` }
     </section>

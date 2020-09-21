@@ -1,14 +1,7 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
-import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-  __typename: "User",
-}
 
 const SHARE_SONG_MUTATION = gql`
   mutation shareSong ($songId: ID!, $userId: ID!) {
@@ -18,7 +11,7 @@ const SHARE_SONG_MUTATION = gql`
 
 export default (props) => {
   // mutation tuple
-  const [shareSong, { loading, error }] = useMutation(
+  const [shareSong, { loading }] = useMutation(
     SHARE_SONG_MUTATION,
     {
       onError: (error) => {
@@ -26,6 +19,9 @@ export default (props) => {
       },
     }
   )
+
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
 
   // excute query to display data. the query will most likey use cache
   const { data }  = useQuery (
@@ -50,9 +46,9 @@ export default (props) => {
     // $scope.share('https://twitter.com/share?via=awtarika&lang=ar&text=' + $scope.data.title + '&url=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/#!' + $location.url()));
 
     // execute mutation and update the cache
-    shareSong({
+    getAuthUser && shareSong({
       variables: {
-        userId: loggedOnUser.id,
+        userId: getAuthUser.id,
         songId: props.songId,
       },
       update: (cache, { data: { shareSong } }) => {

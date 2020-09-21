@@ -103,12 +103,12 @@ export default (props) => {
   )
 
   // decide to either show or hide like and unlike buttons
-  let hideLike = (data?.checkUserLikeComments?.[0] == props.comment.id) || false
+  const hideLike = (data?.checkUserLikeComments?.[0] == props.comment.id) || false
 
   // function: handle onClick event
   const handleLike = () => {
     // execute mutation and update the cache
-    likeComment({
+    getAuthUser && likeComment({
       variables: {
         commentId: props.comment.id,
         userId: getAuthUser.id,

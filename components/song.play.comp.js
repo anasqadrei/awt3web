@@ -1,24 +1,17 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
-import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-  __typename: "User",
-}
 
 const PLAY_SONG_MUTATION = gql`
-  mutation playSong ($songId: ID!, $userId: ID!) {
+  mutation playSong ($songId: ID!, $userId: ID) {
     playSong(songId: $songId, userId: $userId)
   }
 `
 
 export default (props) => {
   // mutation tuple
-  const [playSong, { loading, error }] = useMutation(
+  const [playSong, { loading }] = useMutation(
     PLAY_SONG_MUTATION,
     {
       onError: (error) => {
@@ -26,6 +19,9 @@ export default (props) => {
       },
     }
   )
+
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
 
   // excute query to display data. the query will most likey use cache
   const { data }  = useQuery (
@@ -50,7 +46,7 @@ export default (props) => {
     // execute mutation and update the cache
     playSong({
       variables: {
-        userId: loggedOnUser.id,
+        userId: getAuthUser?.id,
         songId: props.songId,
       },
       update: (cache, { data: { playSong } }) => {

@@ -3,14 +3,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  // id: "1",
-  // username: "Admin",
-  // __typename: "User",
-}
 
 const PAGE_SIZE = 1
 const SEARCH_QUERY = gql`
@@ -32,13 +26,16 @@ export default () => {
   const [nextPage, setNextPage] = useState(true)
   const [currentListLength, setCurrentListLength] = useState(0)
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // set query variables
   const vars = {
     query: useRouter().query.q,
     indexes: ['playlists'],
     page: 1,
     pageSize: PAGE_SIZE,
-    userId: loggedOnUser.id && loggedOnUser.id,
+    userId: getAuthUser?.id,
   }
 
   // excute query
