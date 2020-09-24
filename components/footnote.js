@@ -22,7 +22,7 @@ export default () => (
         <a>Copyright</a>
       </Link>
       <Link href="/contact">
-        <a>Contact Us</a>
+        <a>Contact Us | اتصل بنا</a>
       </Link>
     </div>
     <div>

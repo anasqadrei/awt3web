@@ -108,7 +108,7 @@ export default (props) => {
             Country:
             <select name={ FORM_COUNTRY } disabled={ loadingUpdate } defaultValue={ props.user.country?.id || "" } required>
               <option value=""></option>
-              { dataCountries?.listCountries?.map(country => (
+              { dataCountries.listCountries?.map(country => (
                   <option key={ country.id } value={ country.id }>{ country.nameAR }</option>
                 ))
               }

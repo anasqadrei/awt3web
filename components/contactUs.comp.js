@@ -4,10 +4,11 @@ import { queryAuthUser } from 'lib/localState'
 import AuthUser from 'components/user.auth.comp'
 import ErrorMessage from 'components/errorMessage'
 
+const FORM_EMAIL = "email"
 const FORM_MESSAGE = "message"
 const CONTACT_US_MUTATION = gql`
-  mutation contactUs ($message: String!, $userId: ID!, $username: String!, $provider: String!, $handler: String!, $email: AWSEmail) {
-    contactUs(message: $message, userId: $userId, username: $username, provider: $provider, handler: $handler, email: $email)
+  mutation contactUs ($message: String!, $userId: ID!, $email: AWSEmail!) {
+    contactUs(message: $message, userId: $userId, email: $email)
   }
 `
 
@@ -31,19 +32,16 @@ export default () => {
     event.preventDefault()
     const form = event.target
     const formData = new window.FormData(form)
+    const email = formData.get(FORM_EMAIL)
     const message = formData.get(FORM_MESSAGE).replace(/\n/g, '<br/>')
     form.reset()
 
-    // TEMP remove default profiles once login is connected with firebase
     // execute mutation
     contactUs({
       variables: {
         message: message,
         userId: getAuthUser.id,
-        username: getAuthUser.username,
-        provider: getAuthUser.profiles?.provider || 'xxx',
-        handler: getAuthUser.profiles?.providerId || '123',
-        email: getAuthUser.emails?.[0],
+        email: email,
       }
     })
   }
@@ -57,8 +55,30 @@ export default () => {
           getAuthUser && (
             <div>
               <p>name: { getAuthUser.username }</p>
-              <p>provider: { `${ getAuthUser.profiles?.provider } ${ getAuthUser.profiles?.providerId }` }</p>
-              { getAuthUser.emails?.[0] && <p>email: { getAuthUser.emails[0] }</p> }
+              {
+                getAuthUser.emails?.length > 0 ? (
+                  <div>
+                    Email: 
+                    {
+                      getAuthUser.emails.length === 1 ? (
+                        <input name={ FORM_EMAIL } type="email" disabled={ loading } maxLength="50" defaultValue={ getAuthUser.emails[0] } required/>
+                      ) : (
+                        <select name={ FORM_EMAIL } disabled={ loading } defaultValue={ getAuthUser.emails[0] } required>
+                          {
+                            getAuthUser.emails?.map(email => (
+                              <option key={ email } value={ email }>{ email }</option>
+                            ))
+                          }
+                        </select>
+                      )
+                    }                    
+                  </div>
+                ) : (
+                  <div>
+                    <input name={ FORM_EMAIL } type="email" disabled={ loading } maxLength="50" placeholder="email here" required/>
+                  </div>
+                )
+              }
 
               <button type="submit" disabled={ loading || data?.contactUs }>
                 Send Message
