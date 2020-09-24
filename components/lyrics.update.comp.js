@@ -1,14 +1,9 @@
 import { useState } from 'react'
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const FORM_CONTENT = "content"
 const UPDATE_LYRICS_MUTATION = gql`
@@ -43,6 +38,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onChange event
   const handleContentChange = (event) => {
     // handling change in content related to the issue of <br> in HTML and new line is textarea
@@ -64,7 +62,7 @@ export default (props) => {
       variables: {
         lyricsId: props.lyrics.id,
         content: content,
-        userId: loggedOnUser.id,
+        userId: getAuthUser.id,
       },
       refetchQueries: () => [{
         query: GET_SONG_QUERY,
@@ -77,7 +75,7 @@ export default (props) => {
   // display component
   return (
     <form onSubmit={ handleSubmit }>
-      <div hidden={ !(loggedOnUser?.id === props.lyrics.user.id || loggedOnUser?.admin) }>
+      <div hidden={ getAuthUser?.id !== props.lyrics.user.id }>
         <textarea name={ FORM_CONTENT } type="text" disabled={ loading } row="20" maxLength="500" value={ stateContent } onChange={ (event) => handleContentChange(event) } placeholder="lyrics here" required/>
         <button type="submit" disabled={ loading || data?.updateLyrics }>
           Update Lyrics

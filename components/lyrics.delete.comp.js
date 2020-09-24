@@ -1,13 +1,8 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const DELETE_LYRICS_MUTATION = gql`
   mutation deleteLyrics ($lyricsId: ID!, $userId: ID!) {
@@ -26,6 +21,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onClick event
   const handleDelete = () => {
     if (confirm("Are you sure?")) {
@@ -34,7 +32,7 @@ export default (props) => {
       deleteLyrics({
         variables: {
           lyricsId: props.lyrics.id,
-          userId: loggedOnUser.id,
+          userId: getAuthUser.id,
         },
         refetchQueries: () => [{
           query: GET_SONG_QUERY,
@@ -47,16 +45,14 @@ export default (props) => {
 
   // display component
   return (
-    <div>
-      <div hidden={ !(loggedOnUser?.id === props.lyrics.user.id || loggedOnUser?.admin) }>
-        <button onClick={ () => handleDelete() } disabled={ loading || data?.deleteLyrics }>
-          Delete Lyrics
-        </button>
+    <div hidden={ !(getAuthUser?.id === props.lyrics.user.id || getAuthUser?.admin) }>
+      <button onClick={ () => handleDelete() } disabled={ loading || data?.deleteLyrics }>
+        Delete Lyrics
+      </button>
 
-        { loading && <div>mutating (design this)</div> }
-        { error && <ErrorMessage/> }
-        { data?.deleteLyrics && <div>Lyrics is being Deleted. Check later(won't show instantly)</div> }
-      </div>
+      { loading && <div>mutating (design this)</div> }
+      { error && <ErrorMessage/> }
+      { data?.deleteLyrics && <div>Lyrics is being Deleted. Check later(won't show instantly)</div> }
     </div>
   )
 }

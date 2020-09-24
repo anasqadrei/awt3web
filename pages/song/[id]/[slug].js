@@ -6,6 +6,7 @@ import Modal from 'react-modal'
 import * as Sentry from '@sentry/node'
 import { initializeApollo } from 'lib/apolloClient'
 import { validateUrl } from 'lib/validateUrl'
+import { queryAuthUser } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import { SONGS_COLLECTION, ROOT_APP_ELEMENT } from 'lib/constants'
 import Layout from 'components/layout'
@@ -73,6 +74,9 @@ export async function getStaticPaths() {
 
 export default ({ song }) => {
   const router = useRouter()
+
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
 
   // fix url in case it doesn't match the slug
   useEffect(() => {
@@ -269,7 +273,7 @@ export default ({ song }) => {
           <div>
             <div dangerouslySetInnerHTML={{ __html: song.lyrics.content }}/>
             { song.lyrics.createdDate && `created on ${ song.lyrics.createdDate }` } { song.lyrics.lastUpdatedDate && `last modified on ${ song.lyrics.lastUpdatedDate }` } by <Link href="/user/[id]/[slug]" as={ `/user/${ song.lyrics.user.id }/${ song.lyrics.user.slug }` }><a>{ song.lyrics.user.username }</a></Link>
-            <div>
+            <div hidden={ getAuthUser?.id !== song.lyrics.user.id }>
               <button onClick={ () => { setUpdateLyricsModalIsOpen(true) } }>
                 Update Lyrics
               </button>
