@@ -1,15 +1,11 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
+import AuthUser from 'components/user.auth.comp'
 import { getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
 import CommentItem from 'components/comment.item.comp'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const TEXTAREA_REPLY = "reply"
 const CREATE_REPLY_MUTATION = gql`
@@ -62,6 +58,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onSubmit event. get data from form and execute mutation
   const handleSubmit = (event) => {
     // get data from form and set its behaviour
@@ -82,7 +81,7 @@ export default (props) => {
           id: props.comment.reference.id,
         },
         parentId: props.comment.id,
-        userId: loggedOnUser.id,
+        userId: getAuthUser.id,
       },
       update: (cache, { data: { createComment } }) => {
         // add the newly created reply
@@ -156,13 +155,26 @@ export default (props) => {
 
       <form onSubmit={ handleSubmit }>
         <textarea name={ TEXTAREA_REPLY } type="text" row="2" maxLength="200" placeholder="اكتب رداً هنا" required/>
-        <button type="submit" disabled={ loading }>
-          أضف رداً
-        </button>
+        {
+          getAuthUser && (
+            <button type="submit" disabled={ loading }>
+              أضف رداً
+            </button>
+          )
+        }
 
         { loading && <div>mutating (design this)</div> }
         { error && <ErrorMessage/> }
       </form>
+
+      {
+        !getAuthUser && (
+          <div>
+            سجل دخول لإضافة الرد!
+            <AuthUser/>
+          </div>
+        )
+      }
 
       <style jsx>{`
         .title, .description {

@@ -1,15 +1,11 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
+import AuthUser from 'components/user.auth.comp'
 import { validateCommentsCollection, getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE } from 'components/comment.list.comp'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const TEXTAREA_COMMENT = "comment"
 const CREATE_COMMENT_MUTATION = gql`
@@ -36,6 +32,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onSubmit event. get data from form and execute mutation
   const handleSubmit = (event) => {
     // get data from form and set its behaviour
@@ -52,7 +51,7 @@ export default (props) => {
         collection: props.collection,
         id: props.id,
       },
-      userId: loggedOnUser.id,
+      userId: getAuthUser.id,
     }
     const varsListComments = {
       reference: {
@@ -112,23 +111,36 @@ export default (props) => {
 
   // display component
   return (
-    <form onSubmit={ handleSubmit }>
-      <textarea name={ TEXTAREA_COMMENT } type="text" row="2" maxLength="200" placeholder="اكتب تعليقك هنا" required/>
-      <button type="submit" disabled={ loading }>
-        أضف تعليقك
-      </button>
+    <div>
+      <form onSubmit={ handleSubmit }>
+        <textarea name={ TEXTAREA_COMMENT } type="text" row="2" maxLength="200" placeholder="اكتب تعليقك هنا" required/>
+        {
+          getAuthUser && (
+            <button type="submit" disabled={ loading }>
+              أضف تعليقك
+            </button>
+          ) 
+        }
 
-      { loading && <div>mutating (design this)</div> }
-      { error && <ErrorMessage/> }
+        { loading && <div>mutating (design this)</div> }
+        { error && <ErrorMessage/> }
+      </form>
+
+      {
+        !getAuthUser && (
+          <div>
+            سجل دخول لإضافة التعليق!
+            <AuthUser/>
+          </div>
+        )
+      }
 
       <style jsx>{`
-        form {
-          border-bottom: 1px solid #ececec;
-        }
-        input {
-          display: block;
-        }
-      `}</style>
-    </form>
+          input {
+            display: block;
+          }
+        `}
+      </style>
+    </div>
   )
 }
