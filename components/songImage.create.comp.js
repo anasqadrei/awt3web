@@ -1,13 +1,8 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const FORM_FILE = "file"
 const CREATE_SONG_IMAGE_MUTATION = gql`
@@ -29,6 +24,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onSubmit event. get data from form and execute mutation
   const handleSubmit = (event) => {
     // get data from form and set its behaviour
@@ -45,7 +43,7 @@ export default (props) => {
         // TODO: file
         // file: file,
         songId: props.songId,
-        userId: loggedOnUser.id,
+        userId: getAuthUser?.id,
       },
       refetchQueries: () => [{
         query: GET_SONG_QUERY,

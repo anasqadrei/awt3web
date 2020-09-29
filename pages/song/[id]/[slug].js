@@ -250,7 +250,7 @@ export default ({ song }) => {
           </div>
         ))}
         <div>
-          <button onClick={ () => { setCreateSongImageModalIsOpen(true) } }>
+          <button hidden={ !getAuthUser } onClick={ () => { setCreateSongImageModalIsOpen(true) } }>
             Add Song Image
           </button>
           <Modal isOpen={ createSongImageModalIsOpen } onRequestClose={ () => { setCreateSongImageModalIsOpen(false) } } style={ modalStyles } contentLabel="add song image modal">
