@@ -4,6 +4,7 @@ import Head from 'components/head'
 import UserSongs from 'components/song.user.comp'
 import UserSongImages from 'components/songImage.user.comp'
 import UserLyrics from 'components/lyrics.user.comp'
+import Playlists from 'components/playlist.user.comp'
 
 const META = {
   title: `Uploads`,
@@ -19,5 +20,7 @@ export default () => (
     <UserSongImages userId={ useRouter().query.id } snippet={ false }/>
     <p>Lyrics</p>
     <UserLyrics userId={ useRouter().query.id } snippet={ false }/>
+    <p>Public Playlists</p>
+    <Playlists userId={ useRouter().query.id } snippet={ false } private={ false }/>
   </Layout>
 )

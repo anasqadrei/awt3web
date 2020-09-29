@@ -11,6 +11,7 @@ import { GET_SONG_QUERY } from 'lib/graphql'
 import { SONGS_COLLECTION, ROOT_APP_ELEMENT } from 'lib/constants'
 import Layout from 'components/layout'
 import Head from 'components/head'
+import AuthUser from 'components/user.auth.comp'
 import UpdateSong from 'components/song.update.comp'
 import LikeSong from 'components/song.like.comp'
 import PlaySong from 'components/song.play.comp'
@@ -172,9 +173,15 @@ export default ({ song }) => {
       </div>
 
       <div>
-        <button onClick={ openAddSongToPlaylistModal }>
-          Add to a playlist
-        </button>
+        {
+          getAuthUser ? (
+            <button onClick={ openAddSongToPlaylistModal }>
+              Add to a playlist
+            </button>
+          ) : (
+            <AuthUser buttonText="Login to Add to a playlist"/>
+          )
+        }
         <Modal isOpen={ addSongToPlaylistModalIsOpen } onRequestClose={ closeAddSongToPlaylistModal } style={ modalStyles } contentLabel="Add song to playlist modal">
           <button onClick={ closeAddSongToPlaylistModal }>
             Close

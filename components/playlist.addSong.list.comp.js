@@ -2,15 +2,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { gql, useQuery, useMutation, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const ADD_SONG_TO_PLAYLIST_MUTATION = gql`
   mutation addSongToPlaylist ($playlistId: ID!, $songId: ID!) {
@@ -69,9 +64,12 @@ export default (props) => {
   const [nextPage, setNextPage] = useState(true)
   const [currentListLength, setCurrentListLength] = useState(0)
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // set list playlists query variables
   const vars = {
-    userId: loggedOnUser.id,
+    userId: getAuthUser?.id,
     private: props.private,
     page: 1,
     pageSize: PAGE_SIZE,
@@ -90,6 +88,7 @@ export default (props) => {
     {
       variables: vars,
       notifyOnNetworkStatusChange: true,
+      skip: !getAuthUser,
       onCompleted: (data) => {
         // get new length of data (cached + newly fetched) with default = 0
         const newListLength = data?.listUserPlaylists?.length ?? 0;

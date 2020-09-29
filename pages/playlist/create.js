@@ -12,6 +12,7 @@ const META = {
 export default () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
+    <LibraryNav/>
     <CreatePlaylist/>
   </Layout>
 )

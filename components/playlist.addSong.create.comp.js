@@ -1,15 +1,9 @@
 import Link from 'next/link'
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import { GET_PLAYLIST_QUERY } from 'lib/graphql'
+import { queryAuthUser } from 'lib/localState'
 import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const FORM_NAME = "name"
 const FORM_PRIVACY = "privacy"
@@ -58,6 +52,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onSubmit event. get data from form and execute mutation
   const handleSubmit = (event) => {
     // get data from form and set its behaviour
@@ -73,12 +70,12 @@ export default (props) => {
       variables: {
         name: name,
         privacy: privacy,
-        userId: loggedOnUser.id,
+        userId: getAuthUser?.id,
       },
       refetchQueries: () => [{
         query: LIST_USER_PLAYLISTS_QUERY,
         variables: {
-          userId: loggedOnUser.id,
+          userId: getAuthUser?.id,
           private: privacy,
           page: 1,
           pageSize: PAGE_SIZE,

@@ -1,17 +1,9 @@
 import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import Sort from 'components/sort.comp'
 import PlaylistItem from 'components/playlist.item.comp'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const SORT_OPTIONS = [
   { sort: 'likes', label: 'LIKES' },
@@ -48,7 +40,7 @@ export default (props) => {
 
   // set query variables
   const vars = {
-    userId: loggedOnUser.id,
+    userId: props.userId,
     private: props.private,
     sort: sort,
     page: 1,
@@ -67,6 +59,7 @@ export default (props) => {
     {
       variables: vars,
       notifyOnNetworkStatusChange: true,
+      skip: !props.userId,
       onCompleted: (data) => {
         // get new length of data (cached + newly fetched) with default = 0
         const newListLength = data?.listUserPlaylists?.length ?? 0;

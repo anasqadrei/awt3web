@@ -5,6 +5,7 @@ import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import Modal from 'react-modal'
 import { validateUrl } from 'lib/validateUrl'
+import { queryAuthUser } from 'lib/localState'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import { PLAYLISTS_COLLECTION, ROOT_APP_ELEMENT } from 'lib/constants'
 import Head from 'components/head'
@@ -37,6 +38,9 @@ export default () => {
 
   // for accessibility
   Modal.setAppElement(ROOT_APP_ELEMENT)
+
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
 
   // state variables
   const [updatePlaylistModalIsOpen, setUpdatePlaylistModalIsOpen] = useState(false)
@@ -96,7 +100,11 @@ export default () => {
       </div>
 
       <div>
-        <PlayPlaylist playlistId={ getPlaylist.id } shuffle={ false }/> | <PlayPlaylist playlistId={ getPlaylist.id } shuffle={ true }/> | <button onClick={ () => { setUpdatePlaylistModalIsOpen(true) } }>Update Playlist</button> | <DeletePlaylist playlist={ getPlaylist }/>
+        <PlayPlaylist playlistId={ getPlaylist.id } shuffle={ false }/> | <PlayPlaylist playlistId={ getPlaylist.id } shuffle={ true }/> | 
+        <div hidden={ getAuthUser?.id !== getPlaylist.user.id }>
+          <button onClick={ () => { setUpdatePlaylistModalIsOpen(true) } }>Update Playlist</button> | 
+        </div>
+        <DeletePlaylist playlist={ getPlaylist }/>
       </div>
 
       <Modal isOpen={ updatePlaylistModalIsOpen } onRequestClose={ () => { setUpdatePlaylistModalIsOpen(false) } } style={ modalStyles } contentLabel="update playlist modal">

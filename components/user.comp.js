@@ -13,6 +13,7 @@ import UpdateUserImage from 'components/user.updateImage.comp'
 import UserSongs from 'components/song.user.comp'
 import UserSongImages from 'components/songImage.user.comp'
 import UserLyrics from 'components/lyrics.user.comp'
+import Playlists from 'components/playlist.user.comp'
 import DeleteUser from 'components/user.delete.comp'
 import ErrorMessage from 'components/errorMessage'
 
@@ -150,15 +151,15 @@ export default () => {
         )
       }
 
-      {
-        // TODO: add public playlists
-      }
+      <p>Uploads:</p>
       <p>song uploads:</p>
       <UserSongs userId={ getUser.id } snippet={ true }/>
       <p>song images uploads:</p>
       <UserSongImages userId={ getUser.id } snippet={ true }/>
       <p>lyrics added:</p>
       <UserLyrics userId={ getUser.id } snippet={ true }/>
+      <p>Public Playlists added:</p>
+      <Playlists userId={ getUser.id } snippet={ true } private={ false }/>
       <p>
         <Link href="/user/[id]/[slug]/uploads" as={`/user/${ getUser.id }/${ getUser.slug }/uploads`}>
           <a>more uploads</a>

@@ -1,14 +1,10 @@
 import Router from 'next/router'
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
+import AuthUser from 'components/user.auth.comp'
 import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const FORM_NAME = "name"
 const FORM_DESC = "desc"
@@ -36,6 +32,9 @@ export default () => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onSubmit event. get data from form and execute mutation
   const handleSubmit = (event) => {
     // get data from form and set its behaviour
@@ -53,12 +52,12 @@ export default () => {
         name: name,
         desc: desc,
         privacy: privacy,
-        userId: loggedOnUser.id,
+        userId: getAuthUser?.id,
       },
       refetchQueries: () => [{
         query: LIST_USER_PLAYLISTS_QUERY,
         variables: {
-          userId: loggedOnUser.id,
+          userId: getAuthUser?.id,
           private: privacy,
           page: 1,
           pageSize: PAGE_SIZE,
@@ -71,17 +70,32 @@ export default () => {
 
   // display component
   return (
-    <form onSubmit={ handleSubmit }>
-      playlist name: <input name={ FORM_NAME } type="text" disabled={ loading } maxLength="50" placeholder="playlist name here" required/>
-      description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" placeholder="desc here"/>
-      <input name={ FORM_PRIVACY } type="checkbox" disabled={ loading }/> private playlist
-      <button type="submit" disabled={ loading || data?.createPlaylist }>
-        Add Playlist
-      </button>
+    <div>
+      <form onSubmit={ handleSubmit }>
+        playlist name: <input name={ FORM_NAME } type="text" disabled={ loading } maxLength="50" placeholder="playlist name here" required/>
+        description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" placeholder="desc here"/>
+        <input name={ FORM_PRIVACY } type="checkbox" disabled={ loading }/> private playlist
+        {
+          getAuthUser && (
+            <button type="submit" disabled={ loading || data?.createPlaylist }>
+              Add Playlist
+            </button>
+          )
+        }
 
-      { loading && <div>mutating (design this)</div> }
-      { error && <ErrorMessage/> }
-      { data?.createPlaylist && <div>playlist created. redirect shortly</div> }
+        { loading && <div>mutating (design this)</div> }
+        { error && <ErrorMessage/> }
+        { data?.createPlaylist && <div>playlist created. redirect shortly</div> }
+      </form>
+
+      {
+        !getAuthUser && (
+          <div>
+            سجل دخول لإضافة قائمة!
+            <AuthUser/>
+          </div>
+        )
+      }
 
       <style jsx>{`
         form {
@@ -91,6 +105,6 @@ export default () => {
           display: block;
         }
       `}</style>
-    </form>
+    </div>
   )
 }

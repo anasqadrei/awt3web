@@ -1,14 +1,9 @@
 import Router from 'next/router'
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const DELETE_PLAYLIST_MUTATION = gql`
   mutation deletePlaylist ($playlistId: ID!, $userId: ID!) {
@@ -30,6 +25,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onClick event
   const handleDelete = () => {
     if (confirm("Are you sure?")) {
@@ -38,12 +36,12 @@ export default (props) => {
       deletePlaylist({
         variables: {
           playlistId: props.playlist.id,
-          userId: loggedOnUser.id,
+          userId: getAuthUser?.id,
         },
         refetchQueries: () => [{
           query: LIST_USER_PLAYLISTS_QUERY,
           variables: {
-            userId: loggedOnUser.id,
+            userId: getAuthUser?.id,
             private: props.playlist.private,
             page: 1,
             pageSize: PAGE_SIZE,
@@ -57,7 +55,7 @@ export default (props) => {
 
   // display component
   return (
-    <div hidden={ !(loggedOnUser?.id === props.playlist.user.id || loggedOnUser?.admin) }>
+    <div hidden={ !(getAuthUser?.id === props.playlist.user.id || getAuthUser?.admin) }>
       <button onClick={ () => handleDelete() } disabled={ loading }>
         Delete Playlist
       </button>

@@ -1,13 +1,8 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const REMOVE_SONG_FROM_PLAYLIST_MUTATION = gql`
   mutation removeSongFromPlaylist($playlistId: ID!, $songId: ID!, $index: Int!) {
@@ -62,6 +57,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onClick event
   const handleRemove = () => {
     if (confirm("Are you sure?")) {
@@ -86,7 +84,7 @@ export default (props) => {
 
   // display component
   return (
-    <div hidden={ !(loggedOnUser?.id === props.playlist.user.id || loggedOnUser?.admin) }>
+    <div hidden={ !(getAuthUser?.id === props.playlist.user.id || getAuthUser?.admin) }>
       <button onClick={ () => handleRemove() } disabled={ loading }>
         Remove Song
       </button>

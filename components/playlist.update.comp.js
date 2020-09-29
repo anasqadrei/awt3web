@@ -1,14 +1,9 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 // TODO: still image and list of songs can be updated
 const FORM_NAME = "name"
@@ -33,6 +28,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onSubmit event. get data from form and execute mutation
   const handleSubmit = (event) => {
     // get data from form and set its behaviour
@@ -49,7 +47,7 @@ export default (props) => {
       playlist: {},
     }
     const varsListPlaylists = {
-      userId: loggedOnUser.id,
+      userId: getAuthUser?.id,
       page: 1,
       pageSize: PAGE_SIZE,
       sort: DEFAULT_SORT,
@@ -93,7 +91,7 @@ export default (props) => {
   // display component
   return (
     <form onSubmit={ handleSubmit }>
-      <div hidden={ !(loggedOnUser?.id === props.playlist.user.id || loggedOnUser?.admin) }>
+      <div hidden={ getAuthUser?.id !== props.playlist.user.id }>
         playlist name: <input name={ FORM_NAME } type="text" disabled={ loading } maxLength="50" defaultValue={ props.playlist.name } placeholder="playlist name here" required/>
         description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" defaultValue={ props.playlist?.desc?.replace(/<br\/>/g, '\n') } placeholder="desc here"/>
         <input name={ FORM_PRIVACY } type="checkbox" disabled={ loading } defaultChecked={ props.playlist.private }/> private playlist
