@@ -182,7 +182,7 @@ export default (props) => {
     unlikeComment({
       variables: {
         commentId: props.comment.id,
-        userId: getAuthUser.id,
+        userId: getAuthUser?.id,
       },
       update: (cache, { data: { unlikeComment } }) => {
         // if a successful unlike (not a repeated one)
@@ -253,7 +253,7 @@ export default (props) => {
     flagComment({
       variables: {
         commentId: props.comment.id,
-        userId: getAuthUser.id,
+        userId: getAuthUser?.id,
         reason: reason,
       },
     })

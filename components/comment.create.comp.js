@@ -51,7 +51,7 @@ export default (props) => {
         collection: props.collection,
         id: props.id,
       },
-      userId: getAuthUser.id,
+      userId: getAuthUser?.id,
     }
     const varsListComments = {
       reference: {

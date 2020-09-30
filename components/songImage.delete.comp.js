@@ -32,7 +32,7 @@ export default (props) => {
       deleteSongImage({
         variables: {
           songImageId:  props.image.id,
-          userId: getAuthUser.id,
+          userId: getAuthUser?.id,
         },
         refetchQueries: () => [{
           query: GET_SONG_QUERY,

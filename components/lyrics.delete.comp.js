@@ -32,7 +32,7 @@ export default (props) => {
       deleteLyrics({
         variables: {
           lyricsId: props.lyrics.id,
-          userId: getAuthUser.id,
+          userId: getAuthUser?.id,
         },
         refetchQueries: () => [{
           query: GET_SONG_QUERY,

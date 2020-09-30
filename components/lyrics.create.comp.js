@@ -43,7 +43,7 @@ export default (props) => {
       variables: {
         songId: props.songId,
         content: content,
-        userId: getAuthUser.id,
+        userId: getAuthUser?.id,
       },
       refetchQueries: () => [{
         query: GET_SONG_QUERY,

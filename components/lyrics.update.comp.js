@@ -62,7 +62,7 @@ export default (props) => {
       variables: {
         lyricsId: props.lyrics.id,
         content: content,
-        userId: getAuthUser.id,
+        userId: getAuthUser?.id,
       },
       refetchQueries: () => [{
         query: GET_SONG_QUERY,

@@ -81,7 +81,7 @@ export default (props) => {
           id: props.comment.reference.id,
         },
         parentId: props.comment.id,
-        userId: getAuthUser.id,
+        userId: getAuthUser?.id,
       },
       update: (cache, { data: { createComment } }) => {
         // add the newly created reply

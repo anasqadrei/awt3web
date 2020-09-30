@@ -40,7 +40,7 @@ export default () => {
     contactUs({
       variables: {
         message: message,
-        userId: getAuthUser.id,
+        userId: getAuthUser?.id,
         email: email,
       }
     })
