@@ -1,8 +1,8 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { queryAuthUser, postLoginAction, queryPostLoginAction } from 'lib/localState'
-import AuthUser from 'components/user.auth.comp'
 import { GET_SONG_QUERY } from 'lib/graphql'
+import AuthUser from 'components/user.auth.comp'
 
 const POST_LOGIN_ACTION = 'DOWNLOAD_SONG'
 const DOWNLOAD_SONG_MUTATION = gql`
@@ -72,9 +72,9 @@ export default (props) => {
 
   // if actions and properties match then reset and execute the action
   if (getAuthUser && getPostLoginAction?.action === POST_LOGIN_ACTION && getPostLoginAction?.id === props.songId && !loading) {
-    //reset
+    // reset
     postLoginAction(null)
-    //execute
+    // execute
     handleDownload()
   }
 

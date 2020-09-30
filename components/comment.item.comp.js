@@ -2,9 +2,9 @@ import Link from 'next/link'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { queryAuthUser, postLoginAction, queryPostLoginAction } from 'lib/localState'
-import AuthUser from 'components/user.auth.comp'
 import { getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
+import AuthUser from 'components/user.auth.comp'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE as LIST_COMMENTS_PAGE_SIZE } from 'components/comment.list.comp'
 import CommentLikers, { LIST_COMMENT_LIKERS_QUERY, PAGE_SIZE as LIST_COMMENT_LIKERS_PAGE_SIZE } from 'components/comment.Likers.comp'
 import ErrorMessage from 'components/errorMessage'
@@ -318,9 +318,9 @@ export default (props) => {
 
   // if actions and properties match then reset and execute the action
   if (getAuthUser && getPostLoginAction?.action === POST_LOGIN_ACTION && getPostLoginAction?.id === props.comment.id && !loadingLike) {
-    //reset
+    // reset
     postLoginAction(null)
-    //execute
+    // execute
     handleLike()
   }
 

@@ -1,8 +1,8 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { queryAuthUser } from 'lib/localState'
-import AuthUser from 'components/user.auth.comp'
 import { GET_SONG_QUERY } from 'lib/graphql'
+import AuthUser from 'components/user.auth.comp'
 import ErrorMessage from 'components/errorMessage'
 
 const FORM_CONTENT = "content"

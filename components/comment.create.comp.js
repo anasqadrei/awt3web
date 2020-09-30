@@ -1,9 +1,9 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { queryAuthUser } from 'lib/localState'
-import AuthUser from 'components/user.auth.comp'
 import { validateCommentsCollection, getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
+import AuthUser from 'components/user.auth.comp'
 import { LIST_COMMENTS_QUERY, PAGE_SIZE } from 'components/comment.list.comp'
 import ErrorMessage from 'components/errorMessage'
 
