@@ -1,12 +1,7 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const DELETE_SONG_MUTATION = gql`
   mutation deleteSong ($songId: ID!, $userId: ID!) {
@@ -25,6 +20,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onClick event
   const handleDelete = () => {
     if (confirm("Are you sure?")) {
@@ -32,7 +30,7 @@ export default (props) => {
       deleteSong({
         variables: {
           songId: props.song.id,
-          userId: loggedOnUser.id,
+          userId: getAuthUser?.id,
         },
       })
       // NOTE: deleted song could exist in many places in the cache such as artist list, new songs, playlists...
@@ -42,7 +40,7 @@ export default (props) => {
 
   // display component
   return (
-    <div hidden={ !(loggedOnUser?.id === props.song.user.id || loggedOnUser?.admin) }>
+    <div hidden={ !(getAuthUser?.id === props.song.user.id || getAuthUser?.admin) }>
       <button onClick={ () => handleDelete() } disabled={ loading || data?.deleteSong }>
         Delete Song
       </button>

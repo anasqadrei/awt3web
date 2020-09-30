@@ -224,7 +224,7 @@ export default ({ song }) => {
         <p>الجودة: { song.bitRate }kbps</p>
         أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ song.user.id }/${ song.user.slug }` }><a>{ song.user.username }</a></Link> on { song.createdDate }
         <div>
-          <div>
+          <div hidden={ getAuthUser?.id !== song.user.id }>
             <button onClick={ () => { setUpdateSongModalIsOpen(true) } }>
               Update Song
             </button>
@@ -236,6 +236,7 @@ export default ({ song }) => {
               <UpdateSong song={ song }/>
             </Modal>
           </div>
+          
           <DeleteSong song={ song }/>
         </div>
       </div>

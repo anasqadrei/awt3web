@@ -1,13 +1,8 @@
 import { gql, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
+import { queryAuthUser } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
-
-// TEMP: until we decide on the login mechanism
-const loggedOnUser = {
-  id: "1",
-  username: "Admin",
-}
 
 const FORM_TITLE = "title"
 const FORM_ARTIST = "artist"
@@ -31,6 +26,9 @@ export default (props) => {
     }
   )
 
+  // get authenticated user
+  const getAuthUser = queryAuthUser()
+
   // function: handle onSubmit event. get data from form and execute mutation
   const handleSubmit = (event) => {
     // get data from form and set its behaviour
@@ -44,7 +42,7 @@ export default (props) => {
     // set query variables. update only what's changed
     const vars = {
       songId: props.song.id,
-      userId: loggedOnUser.id,
+      userId: getAuthUser?.id,
     }
 
     if (title != props.song.title) {
@@ -72,7 +70,7 @@ export default (props) => {
   // display component
   return (
     <form onSubmit={ handleSubmit }>
-      <div hidden={ !(loggedOnUser?.id === props.song.user.id || loggedOnUser?.admin) }>
+      <div hidden={ getAuthUser?.id !== props.song.user.id }>
         song title: <input name={ FORM_TITLE } type="text" disabled={ loading } maxLength="50" defaultValue={ props.song.title } placeholder="title here" required/>
         artist name: <input name={ FORM_ARTIST } type="text" disabled={ loading } maxLength="50" defaultValue={ props.song.artist.name } placeholder="artist here" required/>
         description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" defaultValue={ props.song?.desc?.replace(/<br\/>/g, '\n') } placeholder="desc here" required/>
