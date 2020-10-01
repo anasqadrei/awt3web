@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/node'
 import { queryAuthUser, postLoginAction, queryPostLoginAction } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import AuthUser from 'components/user.auth.comp'
+import { LIST_USER_LIKED_SONGS_QUERY, SORT, PAGE_SIZE } from 'components/song.userLiked.comp'
 import ErrorMessage from 'components/errorMessage'
 
 const POST_LOGIN_ACTION = 'LIKE_SONG'
@@ -164,6 +165,16 @@ export default (props) => {
           }
         }
       },
+      refetchQueries: () => [{
+        query: LIST_USER_LIKED_SONGS_QUERY,
+        variables: {
+          userId: getAuthUser?.id,
+          sort: SORT,
+          page: 1,
+          pageSize: PAGE_SIZE,
+        },
+      }],
+      awaitRefetchQueries: false,
     })
   }
 
@@ -210,6 +221,16 @@ export default (props) => {
           }
         }
       },
+      refetchQueries: () => [{
+        query: LIST_USER_LIKED_SONGS_QUERY,
+        variables: {
+          userId: getAuthUser?.id,
+          sort: SORT,
+          page: 1,
+          pageSize: PAGE_SIZE,
+        },
+      }],
+      awaitRefetchQueries: false,
     })
   }
 

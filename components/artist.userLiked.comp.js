@@ -5,9 +5,9 @@ import { queryAuthUser } from 'lib/localState'
 import ArtistRowItem from 'components/artist.rowItem.comp'
 import ErrorMessage from 'components/errorMessage'
 
-const SORT = '-likedDate'
-const PAGE_SIZE = 1
-const LIST_USER_LIKED_ARTISTS_QUERY = gql`
+export const SORT = '-likedDate'
+export const PAGE_SIZE = 1
+export const LIST_USER_LIKED_ARTISTS_QUERY = gql`
   query listUserLikedArtists ($userId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {
     listUserLikedArtists(userId: $userId, sort: $sort, page: $page, pageSize: $pageSize) {
       id

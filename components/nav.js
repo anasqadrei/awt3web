@@ -11,18 +11,19 @@ export default () => {
   return (
     <nav>
       <Link href="/">
-        <a>Awtarika</a>
+        <a>أوتاريكا</a>
       </Link>
       <Search/>
       <Link href="/song/upload">
-        <a>Upload</a>
+        <a>إضافة أغاني</a>
       </Link>
       {
         getAuthUser ? (
           <div>
             <Link href="/user/playlists-list">
-              <a>Library</a>
+              <a>قوائمي</a>
             </Link>
+            { ` - ` }
             <Link href="/user/[id]/[slug]" as={ `/user/${ getAuthUser.id }/${ getAuthUser.slug }` }>
               <a>{ getAuthUser.username }</a>
             </Link>

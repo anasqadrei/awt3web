@@ -2,6 +2,7 @@ import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { queryAuthUser, postLoginAction, queryPostLoginAction } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
+import { LIST_USER_DOWNLOADED_SONGS_QUERY, SORT, PAGE_SIZE } from './song.userSaved.comp'
 import AuthUser from 'components/user.auth.comp'
 
 const POST_LOGIN_ACTION = 'DOWNLOAD_SONG'
@@ -64,6 +65,16 @@ export default (props) => {
           })
         }
       },
+      refetchQueries: () => [{
+        query: LIST_USER_DOWNLOADED_SONGS_QUERY,
+        variables: {
+          userId: getAuthUser?.id,
+          sort: SORT,
+          page: 1,
+          pageSize: PAGE_SIZE,
+        },
+      }],
+      awaitRefetchQueries: false,
     })
   }
 

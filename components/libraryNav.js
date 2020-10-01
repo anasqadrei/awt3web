@@ -3,19 +3,23 @@ import Link from 'next/link'
 export default () => (
   <nav>
     <Link href="/user/playlists-list">
-      <a>My Playlists</a>
+      <a>قوائم الأغاني</a>
     </Link>
+    { ` - ` }
     <Link href="/user/recently-played">
-      <a>Recently Played</a>
+      <a>آخر ما استمعت</a>
     </Link>
+    { ` - ` }
     <Link href="/user/most-played">
-      <a>Most Played</a>
+      <a>أكثر ما سمعت</a>
     </Link>
+    { ` - ` }
     <Link href="/user/liked">
-      <a>Liked</a>
+      <a>المفضلة</a>
     </Link>
+    { ` - ` }
     <Link href="/user/saved">
-      <a>Saved</a>
+      <a>المنزلة</a>
     </Link>
   </nav>
 )

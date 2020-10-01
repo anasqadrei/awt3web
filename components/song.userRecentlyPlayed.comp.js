@@ -5,9 +5,9 @@ import { queryAuthUser } from 'lib/localState'
 import SongItem from 'components/song.item.comp'
 import ErrorMessage from 'components/errorMessage'
 
-const SORT = '-lastPlayedDate'
-const PAGE_SIZE = 1
-const LIST_USER_PLAYED_SONGS_QUERY = gql`
+export const SORT = '-lastPlayedDate'
+export const PAGE_SIZE = 1
+export const LIST_USER_PLAYED_SONGS_QUERY = gql`
   query listUserPlayedSongs ($userId: ID!, $sort: String!, $page: Int!, $pageSize: Int!) {
     listUserPlayedSongs(userId: $userId, sort: $sort, page: $page, pageSize: $pageSize) {
       id

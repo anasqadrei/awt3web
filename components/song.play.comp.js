@@ -2,6 +2,7 @@ import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { queryAuthUser } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
+import { LIST_USER_PLAYED_SONGS_QUERY, SORT, PAGE_SIZE } from 'components/song.userRecentlyPlayed.comp'
 
 const PLAY_SONG_MUTATION = gql`
   mutation playSong ($songId: ID!, $userId: ID) {
@@ -62,6 +63,16 @@ export default (props) => {
           })
         }
       },
+      refetchQueries: () => [{
+        query: LIST_USER_PLAYED_SONGS_QUERY,
+        variables: {
+          userId: getAuthUser?.id,
+          sort: SORT,
+          page: 1,
+          pageSize: PAGE_SIZE,
+        },
+      }],
+      awaitRefetchQueries: false,
     })
   }
 
