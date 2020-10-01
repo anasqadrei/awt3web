@@ -25,6 +25,7 @@ export default (props) => {
     LIST_COMMENT_LIKERS_QUERY,
     {
       variables: listCommentLikersQueryVariables,
+      ssr: false,
     }
   )
 

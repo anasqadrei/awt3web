@@ -51,6 +51,7 @@ export default () => {
     {
       variables: vars,
       notifyOnNetworkStatusChange: true,
+      ssr: false,
       onCompleted: (data) => {
         // get new length of data (cached + newly fetched) with default = 0
         const newListLength = data?.search?.length ?? 0;

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Link from 'next/link'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import Sort from 'components/sort.comp'
