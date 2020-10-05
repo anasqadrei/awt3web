@@ -8,7 +8,7 @@ const META = {
   description: `Cookies`,
 }
 
-export default () => (
+const Cookies = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     Cookies Page
@@ -34,3 +34,5 @@ export default () => (
     </p>
   </Layout>
 )
+
+export default Cookies

@@ -10,7 +10,7 @@ const META = {
   description: `Most Played`,
 }
 
-export default () => (
+const MostPlayed = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <LibraryNav/>
@@ -25,3 +25,5 @@ export default () => (
     </div>
   </Layout>
 )
+
+export default MostPlayed

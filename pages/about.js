@@ -8,7 +8,7 @@ const META = {
   description: `عن موقع أوتاريكا`,
 }
 
-export default () => (
+const About = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     About page
@@ -52,5 +52,7 @@ export default () => (
       Aenean imperdiet. Etiam ultricies nisi vel augue.
       Curabitur ullamcorper ultricies nisi.
     </p>
-  </Layout>
+  </Layout>  
 )
+
+export default About

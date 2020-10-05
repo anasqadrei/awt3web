@@ -8,10 +8,12 @@ const META = {
   description: `Upload Song`,
 }
 
-export default () => (
+const Upload = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     upload page
     <CreateSong/>
   </Layout>
 )
+
+export default Upload

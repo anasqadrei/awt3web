@@ -44,7 +44,7 @@ export async function getStaticPaths() {
   }
 }
 
-export default ({ artist }) => {
+const ArtistPage = ({ artist }) => {
   const router = useRouter()
 
   // fix url in case it doesn't match the slug
@@ -117,3 +117,5 @@ export default ({ artist }) => {
     </Layout>
   )
 }
+
+export default ArtistPage

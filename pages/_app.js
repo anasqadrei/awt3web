@@ -8,10 +8,10 @@ Sentry.init({
 
 // TODO: err is a workaround. Check when this closes: https://github.com/zeit/next.js/issues/8592
 
-export default ({ Component, pageProps, err }) => {
-  return (
-    <ApolloProvider client={ useApollo(pageProps.initialApolloState) }>
-      <Component { ...pageProps } err={ err }/>
-    </ApolloProvider>
-  )
-}
+const App = ({ Component, pageProps, err }) => (
+  <ApolloProvider client={ useApollo(pageProps.initialApolloState) }>
+    <Component { ...pageProps } err={ err }/>
+  </ApolloProvider>
+)
+
+export default App

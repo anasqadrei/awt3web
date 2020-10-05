@@ -8,7 +8,7 @@ const META = {
   description: `Terms & Conditions`,
 }
 
-export default () => (
+const Terms = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     terms page
@@ -54,3 +54,5 @@ export default () => (
     </p>
   </Layout>
 )
+
+export default Terms

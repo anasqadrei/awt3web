@@ -10,7 +10,7 @@ const META = {
   description: `تصفح المطربين و الأغاني`,
 }
 
-export default () => (
+const Browse = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <div>Browse</div>
@@ -29,3 +29,5 @@ export default () => (
     <ArtistsGrid/>
   </Layout>
 )
+
+export default Browse

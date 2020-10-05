@@ -8,7 +8,7 @@ const META = {
   description: `Copyright`,
 }
 
-export default () => (
+const Copyright = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     copyright page
@@ -54,3 +54,5 @@ export default () => (
     </p>
   </Layout>
 )
+
+export default Copyright

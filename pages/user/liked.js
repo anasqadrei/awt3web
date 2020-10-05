@@ -11,9 +11,9 @@ const META = {
   description: `Liked`,
 }
 
-export default () => (
+const Liked = () => (
   <Layout>
-  <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
+    <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <LibraryNav/>
     <div>
       <UserLikedSongs/>
@@ -29,3 +29,6 @@ export default () => (
     </div>
   </Layout>
 )
+
+
+export default Liked

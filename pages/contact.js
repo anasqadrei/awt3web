@@ -8,10 +8,12 @@ const META = {
   description: `لمراسلة الموقع`,
 }
 
-export default () => (
+const Contact = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     contact us page
     <ContactUs/>
   </Layout>
 )
+
+export default Contact

@@ -9,7 +9,7 @@ const META = {
   description: `saved songs`,
 }
 
-export default () => (
+const Saved = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <LibraryNav/>
@@ -20,4 +20,6 @@ export default () => (
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
     </div>
   </Layout>
-)
+) 
+
+export default Saved

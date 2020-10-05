@@ -10,7 +10,7 @@ const META = {
   title: `Uploads`,
 }
 
-export default () => (
+const Uploads = () => (
   <Layout>
     <Head title={ META.title }/>
     <p>User Uploads</p>
@@ -24,3 +24,5 @@ export default () => (
     <Playlists userId={ useRouter().query.id } snippet={ false } private={ false }/>
   </Layout>
 )
+
+export default Uploads

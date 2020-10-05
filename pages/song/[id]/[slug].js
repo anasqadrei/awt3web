@@ -73,7 +73,7 @@ export async function getStaticPaths() {
   }
 }
 
-export default ({ song }) => {
+const SongPage = ({ song }) => {
   const router = useRouter()
 
   // get authenticated user
@@ -308,3 +308,5 @@ export default ({ song }) => {
     </Layout>
   )
 }
+
+export default SongPage

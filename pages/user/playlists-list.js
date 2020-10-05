@@ -11,7 +11,7 @@ const META = {
   description: `Playlists List`,
 }
 
-export default () => {
+const PlaylistsList = () => {
   // get authenticated user
   const getAuthUser = queryAuthUser()
 
@@ -36,4 +36,6 @@ export default () => {
       </div>
     </Layout>
   )
-} 
+}
+
+export default PlaylistsList

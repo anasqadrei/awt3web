@@ -42,7 +42,7 @@ export async function getStaticPaths() {
   }
 }
 
-export default ({ blogpost }) => {
+const BlogpostPage = ({ blogpost }) => {
   const router = useRouter()
 
   // fix url in case it doesn't match the slug
@@ -95,3 +95,5 @@ export default ({ blogpost }) => {
     </Layout>
   )
 }
+
+export default BlogpostPage

@@ -2,18 +2,6 @@ import React from 'react'
 import NextError from 'next/error'
 import * as Sentry from '@sentry/node'
 
-const ErrorPage = ({ statusCode, hasGetInitialPropsRun, err }) => {
-  if (!hasGetInitialPropsRun && err) {
-    // TODO: wait for the below issue to be fixed
-    // getInitialProps is not called in case of
-    // https://github.com/zeit/next.js/issues/8592. As a workaround, we pass
-    // err via _app.js so it can be captured
-    Sentry.captureException(err)
-  }
-
-  return <NextError statusCode={ statusCode }/>
-}
-
 ErrorPage.getInitialProps = async ({ res, err, asPath }) => {
   const errorInitialProps = await NextError.getInitialProps({ res, err })
 
@@ -51,6 +39,18 @@ ErrorPage.getInitialProps = async ({ res, err, asPath }) => {
   Sentry.captureException(new Error(`_error.js getInitialProps missing data at path: ${ asPath }`))
   await Sentry.flush(2000)
   return errorInitialProps
+}
+
+const ErrorPage = ({ statusCode, hasGetInitialPropsRun, err }) => {
+  if (!hasGetInitialPropsRun && err) {
+    // TODO: wait for the below issue to be fixed
+    // getInitialProps is not called in case of
+    // https://github.com/zeit/next.js/issues/8592. As a workaround, we pass
+    // err via _app.js so it can be captured
+    Sentry.captureException(err)
+  }
+
+  return <NextError statusCode={ statusCode }/>
 }
 
 export default ErrorPage

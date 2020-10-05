@@ -15,9 +15,9 @@ const META = {
   description: `نتائج البحث`,
 }
 
-export default () => (
+const SearchResults = () => (
   <Layout>
-  <Head title={ `${ META.title }: ${ useRouter().query.q || `` }` } description={ META.description }/>
+    <Head title={ `${ META.title }: ${ useRouter().query.q || `` }` } description={ META.description }/>
     <div>
       <img src="https://via.placeholder.com/728x90?text=728x90+Leaderboard+Ad+but+will+be+responsive"/>
     </div>
@@ -42,3 +42,5 @@ export default () => (
     </div>
   </Layout>
 )
+
+export default SearchResults

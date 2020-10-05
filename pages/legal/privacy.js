@@ -8,7 +8,7 @@ const META = {
   description: `Privacy Policy`,
 }
 
-export default () => (
+const Privacy = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     privacy page
@@ -54,3 +54,5 @@ export default () => (
     </p>
   </Layout>
 )
+
+export default Privacy
