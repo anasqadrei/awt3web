@@ -331,10 +331,6 @@ export default (props) => {
       <p>likes: { songImage.likers?.length }</p>
       <p>dislikes: { songImage.dislikers?.length }</p>
 
-      {
-        // TODO show login comp if not logged in then like after login
-      }
-
       <button hidden={ hideLike } onClick={ () => handleLike() } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideDislike }>
         Like
       </button>

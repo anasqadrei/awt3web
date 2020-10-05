@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import Modal from 'react-modal'
 import { validateUrl } from 'lib/validateUrl'
