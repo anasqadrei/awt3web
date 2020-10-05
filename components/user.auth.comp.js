@@ -69,7 +69,7 @@ export function logout() {
   authUser(null)
 }
 
-export default (props) => {
+const Comp = (props) => {
   // for accessibility
   Modal.setAppElement(ROOT_APP_ELEMENT)
 
@@ -169,3 +169,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

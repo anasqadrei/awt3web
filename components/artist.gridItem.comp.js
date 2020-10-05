@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default (props) => (
+const Comp = (props) => (
   <section>
     <Link href="/artist/[id]/[slug]" as={ `/artist/${ props.artist.id }/${ props.artist.slug }` }>
       <a><img src={ props.artist.imageUrl ? props.artist.imageUrl : `https://via.placeholder.com/150?text=no+photo?` } alt={ props.artist.name }/></a>
@@ -16,3 +16,5 @@ export default (props) => (
     </div>
   </section>
 )
+
+export default Comp

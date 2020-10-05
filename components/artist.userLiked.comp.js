@@ -19,7 +19,7 @@ export const LIST_USER_LIKED_ARTISTS_QUERY = gql`
   }
 `
 
-export default () => {
+const Comp = () => {
   // paging
   const [nextPage, setNextPage] = useState(true)
   const [currentListLength, setCurrentListLength] = useState(0)
@@ -120,3 +120,5 @@ export default () => {
     </section>
   )
 }
+
+export default Comp

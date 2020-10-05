@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default () => (
+const Comp = () => (
   <nav>
     <Link href="/user/playlists-list">
       <a>قوائم الأغاني</a>
@@ -23,3 +23,5 @@ export default () => (
     </Link>
   </nav>
 )
+
+export default Comp

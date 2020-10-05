@@ -18,7 +18,7 @@ const CREATE_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default () => {
+const Comp = () => {
   // mutation tuple
   const [createPlaylist, { loading, error, data }] = useMutation(
     CREATE_PLAYLIST_MUTATION,
@@ -99,3 +99,5 @@ export default () => {
     </div>
   )
 }
+
+export default Comp

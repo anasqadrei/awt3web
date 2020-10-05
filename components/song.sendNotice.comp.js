@@ -22,7 +22,7 @@ const SEND_COPYRIGHT_INFRINGEMENT_NOTICE_MUTATION = gql`
 
 // TODO: add form validation
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuple
   const [sendCopyrightInfringementNotice, { loading, error, data }] = useMutation(
     SEND_COPYRIGHT_INFRINGEMENT_NOTICE_MUTATION,
@@ -110,3 +110,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

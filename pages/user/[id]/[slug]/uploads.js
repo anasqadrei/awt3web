@@ -10,7 +10,7 @@ const META = {
   title: `Uploads`,
 }
 
-const Uploads = () => (
+const Page = () => (
   <Layout>
     <Head title={ META.title }/>
     <p>User Uploads</p>
@@ -25,4 +25,4 @@ const Uploads = () => (
   </Layout>
 )
 
-export default Uploads
+export default Page

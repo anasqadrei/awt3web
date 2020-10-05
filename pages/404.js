@@ -5,11 +5,11 @@ const META = {
   title: `Not Found`,
 }
 
-const NotFound = () => (
+const Page = () => (
   <Layout>
     <Head title={ META.title }/>
     404 Page not found. you can customise
   </Layout>
 )
 
-export default NotFound
+export default Page

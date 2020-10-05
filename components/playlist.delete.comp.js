@@ -11,7 +11,7 @@ const DELETE_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuble
   const [deletePlaylist, { loading, error }] = useMutation(
     DELETE_PLAYLIST_MUTATION,
@@ -65,3 +65,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

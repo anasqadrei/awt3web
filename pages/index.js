@@ -9,7 +9,7 @@ import TopHashtagsInSongs from 'components/hashtag.topInSongs.comp'
 import TopHashtagsInPlaylists from 'components/hashtag.topInPlaylists.comp'
 import TopSearchTerms from 'components/search.topTerms.comp'
 
-const Index = () => (
+const Page = () => (
   <Layout>
     <Head/>
     <div>
@@ -57,4 +57,4 @@ const Index = () => (
   </Layout>
 )
 
-export default Index
+export default Page

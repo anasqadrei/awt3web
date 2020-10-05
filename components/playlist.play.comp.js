@@ -9,7 +9,7 @@ const PLAY_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuple
   const [playPlaylist, { loading }] = useMutation(
     PLAY_PLAYLIST_MUTATION,
@@ -72,3 +72,5 @@ export default (props) => {
     </button>
   )
 }
+
+export default Comp

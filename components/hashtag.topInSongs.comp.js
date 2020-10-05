@@ -10,7 +10,7 @@ const LIST_SONG_HASHTAGS_QUERY = gql`
   }
 `
 
-export default () => {
+const Comp = () => {
   // set query variables
   const vars = {
     page: 1,
@@ -63,3 +63,5 @@ export default () => {
     </section>
   )
 }
+
+export default Comp

@@ -19,7 +19,7 @@ const LIST_BLOGPOSTS_QUERY = gql`
   }
 `
 
-export default () => {
+const Comp = () => {
   const router = useRouter()
 
   // paging
@@ -124,3 +124,5 @@ export default () => {
     </section>
   )
 }
+
+export default Comp

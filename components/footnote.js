@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default () => (
+const Comp = () => (
   <footer>
     <div>
       <Link href="/about">
@@ -51,3 +51,5 @@ export default () => (
     </div>
   </footer>
 )
+
+export default Comp

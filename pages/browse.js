@@ -10,7 +10,7 @@ const META = {
   description: `تصفح المطربين و الأغاني`,
 }
 
-const Browse = () => (
+const Page = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <div>Browse</div>
@@ -30,4 +30,4 @@ const Browse = () => (
   </Layout>
 )
 
-export default Browse
+export default Page

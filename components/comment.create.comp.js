@@ -16,7 +16,7 @@ const CREATE_COMMENT_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // validate collection name
   if (!validateCommentsCollection(props.collection)) {
     return <ErrorMessage message='invalid collection name'/>
@@ -137,3 +137,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

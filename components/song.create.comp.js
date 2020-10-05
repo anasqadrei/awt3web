@@ -18,7 +18,7 @@ const CREATE_SONG_MUTATION = gql`
   }
 `
 
-export default () => {
+const Comp = () => {
   // mutation tuple
   const [createSong, { loading, error, data }] = useMutation(
     CREATE_SONG_MUTATION,
@@ -103,3 +103,5 @@ export default () => {
     </div>
   )
 }
+
+export default Comp

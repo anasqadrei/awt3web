@@ -15,7 +15,7 @@ const META = {
   description: `نتائج البحث`,
 }
 
-const SearchResults = () => (
+const Page = () => (
   <Layout>
     <Head title={ `${ META.title }: ${ useRouter().query.q || `` }` } description={ META.description }/>
     <div>
@@ -43,4 +43,4 @@ const SearchResults = () => (
   </Layout>
 )
 
-export default SearchResults
+export default Page

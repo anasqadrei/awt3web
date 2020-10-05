@@ -13,7 +13,7 @@ const REMOVE_USER_EMAIL_MUTATION = gql`
   ${ AUTH_USER_FRAGMENT }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuple
   const [removeUserEmail, { loading, error }] = useMutation(
     REMOVE_USER_EMAIL_MUTATION,
@@ -55,3 +55,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

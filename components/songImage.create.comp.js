@@ -13,7 +13,7 @@ const CREATE_SONG_IMAGE_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuple
   const [createSongImage, { loading, error, data }] = useMutation(
     CREATE_SONG_IMAGE_MUTATION,
@@ -67,3 +67,5 @@ export default (props) => {
     </form>
   )
 }
+
+export default Comp

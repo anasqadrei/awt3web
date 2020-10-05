@@ -12,7 +12,7 @@ export const LIST_COMMENT_LIKERS_QUERY = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // set query variables
   const listCommentLikersQueryVariables = {
     commentId: props.commentId,
@@ -63,3 +63,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

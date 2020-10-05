@@ -9,7 +9,7 @@ const META = {
   description: `وسم و كلمة مفتاحية و هاش تاجات`,
 }
 
- const HashtagPage = () => (
+ const Page = () => (
   <Layout>
     <Head title={ `${ META.title }: ${ useRouter().query.hashtag || `` }` } description={ META.description }/>
     <h1>#{ useRouter().query.hashtag }</h1>
@@ -18,4 +18,4 @@ const META = {
   </Layout>
 )
 
-export default HashtagPage
+export default Page

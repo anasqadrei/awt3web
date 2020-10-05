@@ -9,7 +9,7 @@ const META = {
   description: `saved songs`,
 }
 
-const Saved = () => (
+const Page = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <LibraryNav/>
@@ -22,4 +22,4 @@ const Saved = () => (
   </Layout>
 ) 
 
-export default Saved
+export default Page

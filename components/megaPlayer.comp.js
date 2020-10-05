@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default () => (
+const Comp = () => (
   <div>
     <Link href="/"><img src="https://via.placeholder.com/80?text=Song+Img" alt="Song Title - Artist Name"/></Link>
     <Link href="/"><a>Song Title</a></Link>
@@ -19,3 +19,5 @@ export default () => (
     <Link href="/"><a>Share</a></Link>
   </div>
 )
+
+export default Comp

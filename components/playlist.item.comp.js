@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default (props) => (
+const Comp = (props) => (
   <section>
     <img src={ props.playlist.imageUrl ? props.playlist.imageUrl : `https://via.placeholder.com/30?text=no+photo?` }/>
     <Link href="/playlist/[id]/[slug]" as={ `/playlist/${ props.playlist.id }/${ props.playlist.slug }` }>
@@ -10,3 +10,5 @@ export default (props) => (
     <img src="https://via.placeholder.com/30?text=plays"/> { props.playlist.plays ? props.playlist.plays : 0 }
   </section>
 )
+
+export default Comp

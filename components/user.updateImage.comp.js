@@ -14,7 +14,7 @@ const UPDATE_USER_MUTATION = gql`
   ${ AUTH_USER_FRAGMENT }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuple
   const [updateUser, { loading, error, data }] = useMutation(
     UPDATE_USER_MUTATION,
@@ -65,3 +65,5 @@ export default (props) => {
     </form>
   )
 }
+
+export default Comp

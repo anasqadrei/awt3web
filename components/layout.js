@@ -3,7 +3,7 @@ import Footnote from 'components/footnote'
 import MiniPlayer from 'components/miniPlayer.comp'
 import MegaPlayer from 'components/megaPlayer.comp'
 
-export default (props) => (
+const Comp = (props) => (
   <div dir="rtl">
     <Nav/>
     {props.children}
@@ -12,3 +12,5 @@ export default (props) => (
     <MegaPlayer/>
   </div>
 )
+
+export default Comp

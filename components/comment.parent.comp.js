@@ -47,7 +47,7 @@ const COMMENT_CHILDREN_FRAGMENT = gql`fragment CommentChildren on Comment {
   }
 }`
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuple
   const [createComment, { loading, error }] = useMutation(
     CREATE_REPLY_MUTATION,
@@ -178,3 +178,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

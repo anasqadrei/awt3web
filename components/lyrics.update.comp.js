@@ -14,7 +14,7 @@ const UPDATE_LYRICS_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // set props.lyrics.content in a state variable (stateContent)
   const [stateContent, setStateContent] = useState(props.lyrics.content.replace(/<br\/>/g, '\n'))
 
@@ -88,3 +88,5 @@ export default (props) => {
     </form>
   )
 }
+
+export default Comp

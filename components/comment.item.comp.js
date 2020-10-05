@@ -36,7 +36,7 @@ const DELETE_COMMENT_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuples
   const [likeComment, { loading: loadingLike, error: errorLike }] = useMutation(
     LIKE_COMMENT_MUTATION,
@@ -385,3 +385,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

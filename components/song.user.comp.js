@@ -36,7 +36,7 @@ const LIST_USER_SONGS_QUERY = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // paging
   const [nextPage, setNextPage] = useState(true)
   const [currentListLength, setCurrentListLength] = useState(0)
@@ -151,3 +151,5 @@ export default (props) => {
     </section>
   )
 }
+
+export default Comp

@@ -10,7 +10,7 @@ const DELETE_LYRICS_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuble
   const [deleteLyrics, { loading, error, data }] = useMutation(
     DELETE_LYRICS_MUTATION,
@@ -56,3 +56,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

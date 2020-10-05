@@ -10,7 +10,7 @@ const LIST_TOP_SEARCHES_QUERY = gql`
   }
 `
 
-export default () => {
+const Comp = () => {
   // set since date
   const since = new Date()
   since.setHours(0, 0, 0, 0)
@@ -72,3 +72,5 @@ export default () => {
     </section>
   )
 }
+
+export default Comp

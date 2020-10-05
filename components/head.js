@@ -5,7 +5,7 @@ const WEBSITE_TITLE = 'أوتاريكا'
 const DEFAULT_DESCRIPTION = 'موقع أوتاريكا للأغاني العربية'
 const DEFAULT_IMAGE = ''
 
-export default (props) => {
+const Comp = (props) => {
   const url = props.asPath ? `${ ROOT_WEBSITE_URL }${ props.asPath }` : `${ ROOT_WEBSITE_URL }/`
   const title = props.title ? `${ props.title } - ${ WEBSITE_TITLE }` : WEBSITE_TITLE
   const description = props.description || DEFAULT_DESCRIPTION
@@ -45,3 +45,5 @@ export default (props) => {
     </Head>
   )
 }
+
+export default Comp

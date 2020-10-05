@@ -38,7 +38,7 @@ const UNDISLIKE_SONG_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuples
   const [likeSong, { loading: loadingLike, error: errorLike }] = useMutation(
     LIKE_SONG_MUTATION,
@@ -392,3 +392,5 @@ export default (props) => {
     </section>
   )
 }
+
+export default Comp

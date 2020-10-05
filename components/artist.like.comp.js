@@ -23,7 +23,7 @@ const UNLIKE_ARTIST_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuples
   const [likeArtist, { loading: loadingLike, error: errorLike }] = useMutation(
     LIKE_ARTIST_MUTATION,
@@ -233,3 +233,5 @@ export default (props) => {
     </section>
   )
 }
+
+export default Comp

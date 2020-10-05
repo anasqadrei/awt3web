@@ -46,7 +46,7 @@ const REMOVE_SONG_FROM_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuple
   const [removeSongFromPlaylist, { loading, error }] = useMutation(
     REMOVE_SONG_FROM_PLAYLIST_MUTATION,
@@ -94,3 +94,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

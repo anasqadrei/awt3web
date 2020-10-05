@@ -33,7 +33,7 @@ const modalStyles = {
   }
 }
 
-export default () => {
+const Comp = () => {
   const router = useRouter()
 
   // for accessibility
@@ -163,3 +163,5 @@ export default () => {
     </section>
   )
 }
+
+export default Comp

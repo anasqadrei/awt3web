@@ -8,7 +8,7 @@ const META = {
   description: `لمراسلة الموقع`,
 }
 
-const Contact = () => (
+const Page = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     contact us page
@@ -16,4 +16,4 @@ const Contact = () => (
   </Layout>
 )
 
-export default Contact
+export default Page

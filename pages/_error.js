@@ -41,7 +41,7 @@ ErrorPage.getInitialProps = async ({ res, err, asPath }) => {
   return errorInitialProps
 }
 
-const ErrorPage = ({ statusCode, hasGetInitialPropsRun, err }) => {
+const Page = ({ statusCode, hasGetInitialPropsRun, err }) => {
   if (!hasGetInitialPropsRun && err) {
     // TODO: wait for the below issue to be fixed
     // getInitialProps is not called in case of
@@ -53,4 +53,4 @@ const ErrorPage = ({ statusCode, hasGetInitialPropsRun, err }) => {
   return <NextError statusCode={ statusCode }/>
 }
 
-export default ErrorPage
+export default Page

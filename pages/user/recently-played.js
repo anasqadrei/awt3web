@@ -9,7 +9,7 @@ const META = {
   description: `Recently Played`,
 }
 
-const RecentlyPlayed = () => (
+const Page = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <LibraryNav/>
@@ -22,4 +22,4 @@ const RecentlyPlayed = () => (
   </Layout>
 ) 
 
-export default RecentlyPlayed
+export default Page

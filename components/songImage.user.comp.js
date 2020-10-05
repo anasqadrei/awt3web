@@ -24,7 +24,7 @@ const LIST_USER_SONG_IMAGES_QUERY = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // paging
   const [nextPage, setNextPage] = useState(true)
   const [currentListLength, setCurrentListLength] = useState(0)
@@ -130,3 +130,5 @@ export default (props) => {
     </section>
   )
 }
+
+export default Comp

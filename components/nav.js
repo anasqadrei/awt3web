@@ -3,7 +3,7 @@ import Search from 'components/search.comp'
 import { queryAuthUser } from 'lib/localState'
 import AuthUser, { logout } from 'components/user.auth.comp'
 
-export default () => {
+const Comp = () => {
   // get authenticated user
   const getAuthUser = queryAuthUser()
   
@@ -41,3 +41,5 @@ export default () => {
     </nav>
   )
 }
+
+export default Comp

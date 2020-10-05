@@ -2,7 +2,7 @@ import Router from 'next/router'
 
 const FORM_QUERY = "query"
 
-export default () => {
+const Comp = () => {
   // handling submit event
   const handleSubmit = event => {
     event.preventDefault()
@@ -22,3 +22,5 @@ export default () => {
     </form>
   )
 }
+
+export default Comp

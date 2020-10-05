@@ -15,7 +15,7 @@ const UPDATE_SONG_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuble
   const [updateSong, { loading, error, data }] = useMutation(
     UPDATE_SONG_MUTATION,
@@ -85,3 +85,5 @@ export default (props) => {
     </form>
   )
 }
+
+export default Comp

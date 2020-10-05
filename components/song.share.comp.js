@@ -9,7 +9,7 @@ const SHARE_SONG_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuple
   const [shareSong, { loading }] = useMutation(
     SHARE_SONG_MUTATION,
@@ -90,3 +90,5 @@ export default (props) => {
     </section>
   )
 }
+
+export default Comp

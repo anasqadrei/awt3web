@@ -12,7 +12,7 @@ const CONTACT_US_MUTATION = gql`
   }
 `
 
-export default () => {
+const Comp = () => {
   // mutation tuple
   const [contactUs, { loading, error, data }] = useMutation(
     CONTACT_US_MUTATION,
@@ -103,3 +103,5 @@ export default () => {
     </div>
   )
 }
+
+export default Comp

@@ -11,7 +11,7 @@ const META = {
   description: `Liked`,
 }
 
-const Liked = () => (
+const Page = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
     <LibraryNav/>
@@ -31,4 +31,4 @@ const Liked = () => (
 )
 
 
-export default Liked
+export default Page

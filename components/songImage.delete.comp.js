@@ -10,7 +10,7 @@ const DELETE_SONG_IMAGE_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuple
   const [deleteSongImage, { loading, error, data }] = useMutation(
     DELETE_SONG_IMAGE_MUTATION,
@@ -56,3 +56,5 @@ export default (props) => {
     </div>
   )
 }
+
+export default Comp

@@ -24,7 +24,7 @@ const ADD_SONG_TO_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuples
   const [createPlaylist, { loading: loadingCreate, error: errorCreate }] = useMutation(
     CREATE_PLAYLIST_MUTATION,
@@ -118,3 +118,5 @@ export default (props) => {
     </form>
   )
 }
+
+export default Comp

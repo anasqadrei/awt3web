@@ -4,7 +4,7 @@
 // disableAll: true/false flag
 // onClick: a refernce to onClick function
 
-export default ({ optionsList, sort, disableAll, onClick }) => {
+const Comp = ({ optionsList, sort, disableAll, onClick }) => {
   return (
     <div>
       { optionsList.map(option => (
@@ -15,3 +15,5 @@ export default ({ optionsList, sort, disableAll, onClick }) => {
     </div>
   )
 }
+
+export default Comp

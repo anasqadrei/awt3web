@@ -17,7 +17,7 @@ const UPDATE_PLAYLIST_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuble
   const [updatePlaylist, { loading, error, data }] = useMutation(
     UPDATE_PLAYLIST_MUTATION,
@@ -106,3 +106,5 @@ export default (props) => {
     </form>
   )
 }
+
+export default Comp

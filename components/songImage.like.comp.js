@@ -35,7 +35,7 @@ const UNDISLIKE_SONG_IMAGE_MUTATION = gql`
   }
 `
 
-export default (props) => {
+const Comp = (props) => {
   // mutation tuples
   const [likeSongImage, { loading: loadingLike, error: errorLike }] = useMutation(
     LIKE_SONG_IMAGE_MUTATION,
@@ -367,3 +367,5 @@ export default (props) => {
     </section>
   )
 }
+
+export default Comp

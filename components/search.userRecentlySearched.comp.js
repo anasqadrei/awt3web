@@ -12,7 +12,7 @@ const LIST_USER_SEARCHES_QUERY = gql`
   }
 `
 
-export default () => {
+const Comp = () => {
   // get authenticated user
   const getAuthUser = queryAuthUser()
 
@@ -74,3 +74,5 @@ export default () => {
     </section>
   )
 }
+
+export default Comp
