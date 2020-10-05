@@ -24,11 +24,13 @@ export async function getStaticProps(context) {
       variables: { id: context.params.id }
     })
     // return apollo cache and artist
+    // incremental static regeneration every 10 minutes (600 seconds)
     return {
       props: {
         initialApolloState: client.cache.extract(),
         artist: data.getArtist,
       },
+      revalidate: 600,
     }
   } catch (error) {
     Sentry.captureException(error)
