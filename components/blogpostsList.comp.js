@@ -121,12 +121,6 @@ export default () => {
         :
         <p>all blogposts has been shown</p>
       }
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

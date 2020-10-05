@@ -125,12 +125,6 @@ export default () => {
         :
         <p>all songs has been shown</p>
       }
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

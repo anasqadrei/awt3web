@@ -69,12 +69,6 @@ export default () => {
           {` `}
         </span>
       ))}
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

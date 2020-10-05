@@ -1,6 +1,6 @@
 {
   "name": "awt3web",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "awtarika website",
   "author": "Anas Qaderi",
   "license": "UNLICENSED",
@@ -11,20 +11,24 @@
     "start": "next start"
   },
   "devDependencies": {
-    "@zeit/next-source-maps": "0.0.4-canary.1",
+    "@zeit/next-source-maps": "^0.0.3",
     "babel-plugin-transform-define": "^2.0.0",
     "graphql": "^15.3.0"
   },
   "dependencies": {
-    "@apollo/client": "^3.1.4",
-    "@sentry/browser": "^5.15.4",
-    "@sentry/node": "^5.15.4",
-    "aws-appsync": "^4.0.0",
-    "firebase": "^7.17.2",
-    "next": "^9.4.1",
+    "@apollo/client": "^3.2.2",
+    "@sentry/browser": "^5.24.2",
+    "@sentry/node": "^5.24.2",
+    "aws-appsync-auth-link": "^3.0.2",
+    "firebase": "^7.22.0",
+    "next": "^9.5.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-firebaseui": "^4.1.0",
     "react-modal": "^3.11.2"
+  },
+  "resolutions": {
+    "node-fetch": "^2.6.1",
+    "kind-of": "^6.0.3"
   }
 }

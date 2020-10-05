@@ -7,10 +7,5 @@ export default (props) => (
       <a>{ props.artist.name }</a>
     </Link>
     <img src="https://via.placeholder.com/30?text=plays"/> { props.artist.songPlays }
-    <style jsx>{`
-      .title, .description {
-        text-align: center;
-      }
-    `}</style>
   </section>
 )

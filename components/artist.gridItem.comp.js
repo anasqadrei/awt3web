@@ -14,10 +14,5 @@ export default (props) => (
       { props.artist.songs && ` songs: ${ props.artist.songs }` }
       { props.artist.likes && ` | likes: ${ props.artist.likes }` }
     </div>
-    <style jsx>{`
-      .title, .description {
-        text-align: center;
-      }
-    `}</style>
   </section>
 )

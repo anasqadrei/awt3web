@@ -114,11 +114,6 @@ export default ({ artist }) => {
         <CreateComment collection={ ARTISTS_COLLECTION } id={ artist.id }/>
         <CommentsList collection={ ARTISTS_COLLECTION } id={ artist.id }/>
       </section>
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </Layout>
   )
 }

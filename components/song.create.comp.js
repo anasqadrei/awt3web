@@ -100,15 +100,6 @@ export default () => {
           </div>
         )
       }
-
-      <style jsx>{`
-        form {
-          border-bottom: 1px solid #ececec;
-        }
-        input {
-          display: block;
-        }
-      `}</style>
     </div>
   )
 }

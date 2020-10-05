@@ -175,12 +175,6 @@ export default (props) => {
           </div>
         )
       }
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </div>
   )
 }

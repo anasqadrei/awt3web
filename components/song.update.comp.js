@@ -82,15 +82,6 @@ export default (props) => {
         { error && <ErrorMessage/> }
         { data?.updateSong && <div>Song Updated. Check later(won't show instantly)</div> }
       </div>
-
-      <style jsx>{`
-        form {
-          border-bottom: 1px solid #ececec;
-        }
-        input {
-          display: block;
-        }
-      `}</style>
     </form>
   )
 }

@@ -8,10 +8,5 @@ export default (props) => (
     </Link>
     <img src="https://via.placeholder.com/30?text=duration"/> { props.playlist.duration }
     <img src="https://via.placeholder.com/30?text=plays"/> { props.playlist.plays ? props.playlist.plays : 0 }
-    <style jsx>{`
-      .title, .description {
-        text-align: center;
-      }
-    `}</style>
   </section>
 )

@@ -173,12 +173,6 @@ export default (props) => {
         :
         <p>all comments has been shown تم عرض جميع التعليقات</p>
       }
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

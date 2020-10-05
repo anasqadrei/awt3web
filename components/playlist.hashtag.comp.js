@@ -114,12 +114,6 @@ export default (props) => {
         :
         <p>all playlists has been shown تم عرض جميع الاغاني</p>
       }
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

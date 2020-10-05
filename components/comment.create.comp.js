@@ -134,13 +134,6 @@ export default (props) => {
           </div>
         )
       }
-
-      <style jsx>{`
-          input {
-            display: block;
-          }
-        `}
-      </style>
     </div>
   )
 }

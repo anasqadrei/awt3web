@@ -103,15 +103,6 @@ export default (props) => {
         { error && <ErrorMessage/> }
         { data?.updatePlaylist && <div>Playlist Updated</div> }
       </div>
-
-      <style jsx>{`
-        form {
-          border-bottom: 1px solid #ececec;
-        }
-        input {
-          display: block;
-        }
-      `}</style>
     </form>
   )
 }

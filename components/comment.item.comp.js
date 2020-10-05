@@ -382,12 +382,6 @@ export default (props) => {
         { loadingDelete && <div>mutating (design this)</div> }
         { errorDelete && <ErrorMessage/> }
       </div>
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </div>
   )
 }

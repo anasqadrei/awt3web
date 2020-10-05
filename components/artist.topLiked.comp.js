@@ -71,12 +71,6 @@ export default () => {
       { listTopLikedArtists.map(artist => (
         <ArtistGridItem key={ artist.id } artist={ artist }/>
       ))}
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

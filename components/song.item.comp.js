@@ -12,10 +12,5 @@ export default (props) => (
     </Link>
     <img src="https://via.placeholder.com/30?text=duration"/> { props.song.duration }
     <img src="https://via.placeholder.com/30?text=plays"/> { props.song.plays }
-    <style jsx>{`
-      .title, .description {
-        text-align: center;
-      }
-    `}</style>
   </section>
 )

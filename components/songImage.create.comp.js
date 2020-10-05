@@ -64,15 +64,6 @@ export default (props) => {
       { loading && <div>mutating (design this)</div> }
       { error && <ErrorMessage/> }
       { data?.createSongImage && <div>song-image added. Check later(won't show instantly)</div> }
-
-      <style jsx>{`
-        form {
-          border-bottom: 1px solid #ececec;
-        }
-        input {
-          display: block;
-        }
-      `}</style>
     </form>
   )
 }

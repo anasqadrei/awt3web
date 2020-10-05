@@ -60,12 +60,6 @@ export default (props) => {
       { listCommentLikers.map(user => (
         <div key={ user.id }>{ user.username }</div>
       ))}
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </div>
   )
 }

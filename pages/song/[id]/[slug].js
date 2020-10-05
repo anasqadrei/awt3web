@@ -305,12 +305,6 @@ export default ({ song }) => {
 
       <CreateComment collection={ SONGS_COLLECTION } id={ song.id }/>
       <CommentsList collection={ SONGS_COLLECTION } id={ song.id }/>
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </Layout>
   )
 }

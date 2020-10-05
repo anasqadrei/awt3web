@@ -83,12 +83,6 @@ export default () => {
       { listTopSongs.map(song => (
         <SongItem key={ song.id } song={ song }/>
       ))}
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

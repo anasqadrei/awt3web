@@ -12,9 +12,22 @@
 /dist
 /.next
 
-# misc
-.DS_Store
+# vercel
+.vercel
+
+# yarn Zero-Installs
+.yarn/*
+!.yarn/cache
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# misc
+.DS_Store
 run

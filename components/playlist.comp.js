@@ -160,12 +160,6 @@ export default () => {
           </div>
         )
       }
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

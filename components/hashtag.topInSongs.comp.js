@@ -60,12 +60,6 @@ export default () => {
             <a>#{ hashtag }</a>
           </Link>
       ))}
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

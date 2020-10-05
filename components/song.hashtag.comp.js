@@ -121,12 +121,6 @@ export default (props) => {
         :
         <p>all songs has been shown تم عرض جميع الاغاني</p>
       }
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

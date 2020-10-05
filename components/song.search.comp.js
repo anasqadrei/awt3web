@@ -127,12 +127,6 @@ export default () => {
         :
         <p>all songs in search results have been shown</p>
       }
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

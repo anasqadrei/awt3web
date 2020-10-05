@@ -92,11 +92,6 @@ export default ({ blogpost }) => {
       </div>
       <CreateComment collection={ BLOGPOSTS_COLLECTION } id={ blogpost.id }/>
       <CommentsList collection={ BLOGPOSTS_COLLECTION } id={ blogpost.id }/>
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </Layout>
   )
 }

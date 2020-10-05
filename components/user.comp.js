@@ -165,12 +165,6 @@ export default () => {
           <a>more uploads</a>
         </Link>
       </p>
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

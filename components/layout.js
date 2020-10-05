@@ -10,11 +10,5 @@ export default (props) => (
     <Footnote/>
     <MiniPlayer/>
     <MegaPlayer/>
-
-    <style jsx global>{`
-      div {
-        text-align: right;
-      }
-    `}</style>
   </div>
 )

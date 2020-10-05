@@ -72,12 +72,6 @@ export default () => {
       { listTopPlaylistsInClickedSearchResult.map(playlist => (
         <PlaylistItem key={ playlist.id } playlist={ playlist }/>
       ))}
-      
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }

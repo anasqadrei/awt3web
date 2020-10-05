@@ -127,12 +127,6 @@ export default (props) => {
           <p>all song images has been shown</p>
         )
       }
-
-      <style jsx>{`
-        .title, .description {
-          text-align: center;
-        }
-      `}</style>
     </section>
   )
 }
