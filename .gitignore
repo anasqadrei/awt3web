@@ -4,7 +4,7 @@
 # testing
 /coverage
 
-# env
+# local env files
 .env*.local
 
 # production
