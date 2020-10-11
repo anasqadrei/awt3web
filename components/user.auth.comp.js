@@ -63,6 +63,11 @@ const modalStyles = {
   }
 }
 
+// function: return authenticated user's ID token to be used for graph ql security
+export async function getAuthUserIdToken() {
+  return await firebase?.auth()?.currentUser?.getIdToken()
+}
+
 // function: log user out from firebase and local state
 export function logout() {
   firebase.auth().signOut()
