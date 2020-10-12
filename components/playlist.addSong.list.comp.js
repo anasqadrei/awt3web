@@ -188,6 +188,8 @@ const Comp = (props) => {
           <p>all playlists has been shown</p>
         )
       }
+
+      { errorAddSong && <ErrorMessage/> }
     </section>
   )
 }
