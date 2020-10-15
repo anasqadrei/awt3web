@@ -79,8 +79,6 @@ const Comp = (props) => {
     songImageId: props.imageId,
   }
 
-  // TODO: show the like always even if user wasn't logged in. then direct to log them in
-
   // check if authenticated user liked song image
   const { data: dataLike }  = useQuery (
     CHECK_USER_LIKE_SONG_IMAGE_QUERY,
@@ -331,39 +329,41 @@ const Comp = (props) => {
       <p>likes: { songImage.likers?.length }</p>
       <p>dislikes: { songImage.dislikers?.length }</p>
 
-      <button hidden={ hideLike } onClick={ () => handleLike() } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideDislike }>
-        Like
-      </button>
+      <div hidden={ !getAuthUser }>
+        <button hidden={ hideLike } onClick={ () => handleLike() } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideDislike }>
+          Like
+        </button>
 
-      { loadingLike && <div>mutating (design this)</div> }
-      { errorLike && <ErrorMessage/> }
+        { loadingLike && <div>mutating (design this)</div> }
+        { errorLike && <ErrorMessage/> }
 
-      <button hidden={ !hideLike } onClick={ () => handleUnlike() } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideDislike }>
-        Unlike
-      </button>
+        <button hidden={ !hideLike } onClick={ () => handleUnlike() } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideDislike }>
+          Unlike
+        </button>
 
-      { loadingUnlike && <div>mutating (design this)</div> }
-      { errorUnlike && <ErrorMessage/> }
+        { loadingUnlike && <div>mutating (design this)</div> }
+        { errorUnlike && <ErrorMessage/> }
 
-      <button hidden={ hideDislike } onClick={ () => handleDislike('الصورة غير واضحة') } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideLike }>
-        Dislike - الصورة غير واضحة
-      </button>
-      <button hidden={ hideDislike } onClick={ () => handleDislike('الصورة لا علاقة لها بالأغنية') } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideLike }>
-        Dislike - الصورة لا علاقة لها بالأغنية
-      </button>
-      <button hidden={ hideDislike } onClick={ () => handleDislike('الصورة مخالفة لشروط الموقع') } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideLike }>
-        Dislike - الصورة مخالفة لشروط الموقع
-      </button>
+        <button hidden={ hideDislike } onClick={ () => handleDislike('الصورة غير واضحة') } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideLike }>
+          Dislike - الصورة غير واضحة
+        </button>
+        <button hidden={ hideDislike } onClick={ () => handleDislike('الصورة لا علاقة لها بالأغنية') } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideLike }>
+          Dislike - الصورة لا علاقة لها بالأغنية
+        </button>
+        <button hidden={ hideDislike } onClick={ () => handleDislike('الصورة مخالفة لشروط الموقع') } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideLike }>
+          Dislike - الصورة مخالفة لشروط الموقع
+        </button>
 
-      { loadingDislike && <div>mutating (design this)</div> }
-      { errorDislike && <ErrorMessage/> }
+        { loadingDislike && <div>mutating (design this)</div> }
+        { errorDislike && <ErrorMessage/> }
 
-      <button hidden={ !hideDislike } onClick={ () => handleUndislike() } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideLike }>
-        Undislike
-      </button>
+        <button hidden={ !hideDislike } onClick={ () => handleUndislike() } disabled={ loadingLike || loadingUnlike || loadingDislike || loadingUndislike || hideLike }>
+          Undislike
+        </button>
 
-      { loadingUndislike && <div>mutating (design this)</div> }
-      { errorUndislike && <ErrorMessage/> }
+        { loadingUndislike && <div>mutating (design this)</div> }
+        { errorUndislike && <ErrorMessage/> }
+      </div>
     </section>
   )
 }
