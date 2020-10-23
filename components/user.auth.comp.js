@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { gql, useQuery, useMutation } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import * as firebase from 'firebase/app'
 import 'firebase/auth'
@@ -10,17 +10,10 @@ import { AUTH_USER_FRAGMENT } from 'lib/graphql'
 import { authUser, postLoginAction } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'
 
-const GET_USER_BY_PROVIDER_ID_OR_EMAIL_QUERY = gql`
-  query getUserByProviderIdOrEmail ($provider: String!, $providerId: ID!, $email: AWSEmail) {
-    getUserByProviderIdOrEmail(provider: $provider, providerId: $providerId, email: $email) {
-      ...AuthUser
-    }
-  }
-  ${ AUTH_USER_FRAGMENT }
-`
-const CREATE_USER_MUTATION = gql`
-  mutation createUser ($username: String!, $emails: [AWSEmail], $user: UserInput, $provider: String!, $providerId: ID!, $providerData: AWSJSON) {
-    createUser(username: $username, emails: $emails, user: $user, provider: $provider, providerId: $providerId, providerData: $providerData) {
+// NOTE: don't cache this query. it doesn't use variables (argument). it uses only idToken. will mix useres if cache is used
+const GET_LINKED_USER_QUERY = gql`
+  query getLinkedUser {
+    getLinkedUser {
       ...AuthUser
     }
   }
@@ -86,7 +79,14 @@ const Comp = (props) => {
   useEffect(() => {
     // adds an observer for changes to the user's sign-in state
     const unsubscribe = firebase.auth().onAuthStateChanged(
-      user => setFirebaseAuthUser(user)
+      user => {
+        // set state variable for re-rendering
+        setFirebaseAuthUser(user)
+        // if user logged in then refetch getLinkedUser
+        if (user) {
+          refetch()
+        }        
+      }
     )
     // clean up
     return () => {
@@ -94,48 +94,40 @@ const Comp = (props) => {
     }
   }, [])
 
-  // mutation tuple
-  const [createUser, { loading: loadingCreateUser, error: errorCreateUser }] = useMutation(
-    CREATE_USER_MUTATION,
-    {
-      onCompleted: (data) => {
-        // set reactive variable
-        authUser(data?.createUser) 
-      },
-      onError: (error) => {
-        Sentry.captureException(error)
-      },
-    }
-  )
+  // // if token doesn't have the user id then refresh. that's it
+  // useEffect(() => {
+  //   async function refreshToken() {
+  //     const idTokenResult = await firebaseAuthUser.getIdTokenResult()
+  //     if (!idTokenResult?.claims?.awtarika_user_id) {
+  //       console.log(`force refresh here`);
+  //       // await firebase?.auth()?.currentUser?.getIdToken(true)
+  //     }
+  //   }
+
+  //   if (firebaseAuthUser) {
+  //     refreshToken()
+  //   }
+    
+  // }, [firebaseAuthUser])
 
   // query awtarika db to see if firebase user exist
-  const { loading: loadingGetUser, error: errorGetUser }  = useQuery (
-    GET_USER_BY_PROVIDER_ID_OR_EMAIL_QUERY,
+  const { loading, error, refetch }  = useQuery (
+    GET_LINKED_USER_QUERY,
     {
-      variables: {
-        provider: PROVIDERS.get(firebaseAuthUser?.providerData?.[0]?.providerId),
-        providerId: firebaseAuthUser?.providerData?.[0]?.uid,
-        email: firebaseAuthUser?.providerData?.[0]?.email,
-      },
+      fetchPolicy: 'no-cache',
       skip: !firebaseAuthUser,
       onCompleted: (data) => {
-        if (data?.getUserByProviderIdOrEmail) {
+        if (data?.getLinkedUser) {
           // set reactive variable
-          authUser(data?.getUserByProviderIdOrEmail) 
+          authUser(data.getLinkedUser)
         } else {
-          // create user otherwise
-          createUser({
-            variables: {
-              username: firebaseAuthUser.providerData?.[0]?.displayName, 
-              emails: firebaseAuthUser.providerData?.[0]?.email, 
-              user: { 
-                image: firebaseAuthUser.providerData?.[0]?.photoURL, 
-              }, 
-              provider: PROVIDERS.get(firebaseAuthUser.providerData?.[0]?.providerId), 
-              providerId: firebaseAuthUser.providerData?.[0]?.uid, 
-            },
-          })
+          // if no user then log user out
+          firebase.auth().signOut()
         }
+      },
+      onError: (error) => {
+        firebase.auth().signOut()
+        Sentry.captureException(error)
       },
     }
   )
@@ -166,10 +158,8 @@ const Comp = (props) => {
         <h2>Login with...</h2>
         { !firebaseAuthUser && <StyledFirebaseAuth uiConfig={ uiConfig } firebaseAuth={ firebase.auth() }/> }
 
-        { loadingGetUser && <div>loading get user (design this)</div> }
-        { loadingCreateUser && <div>loading create user (design this)</div> }
-
-        { (errorGetUser || errorCreateUser) && <ErrorMessage/> }
+        { loading && <div>loading get linked user (design this)</div> }
+        { error && <ErrorMessage/> }
       </Modal>
     </div>
   )
