@@ -1,6 +1,5 @@
 import Layout from 'components/layout'
 import Head from 'components/head'
-import LibraryNav from 'components/libraryNav'
 import CreatePlaylist from 'components/playlist.create.comp'
 
 const META = {
@@ -12,7 +11,6 @@ const META = {
 const Page = () => (
   <Layout>
     <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
-    <LibraryNav/>
     <CreatePlaylist/>
   </Layout>
 )
