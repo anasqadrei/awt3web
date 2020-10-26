@@ -27,18 +27,20 @@ const Comp = (props) => {
 	// function: handle onClick event
   const handleDelete = () => {
     if (confirm("Are you sure?")) {
-			// logs out from firebase and update cache
-			logout()
-
 			// execute mutation
       deleteUser({
         variables: {
           userId: props.user.id,
 				},
-				update: (cache) => {
-					// remove user form cache
-					cache.evict({ id: cache.identify(props.user) })
-					cache.gc()
+				update: (cache, { data: { deleteUser } }) => { 
+          if (deleteUser) {
+            // logs out from firebase and update cache
+            logout()
+            
+            // remove user form cache
+            cache.evict({ id: cache.identify(props.user) })
+            cache.gc()
+          }
 				},
 			})
     }

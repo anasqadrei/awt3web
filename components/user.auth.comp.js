@@ -20,18 +20,6 @@ const GET_LINKED_USER_QUERY = gql`
   ${ AUTH_USER_FRAGMENT }
 `
 
-// provider names mapping
-// key: firebase provider name
-// value: awtarika provider name
-const PROVIDERS = new Map([
-  [firebase.auth.FacebookAuthProvider.PROVIDER_ID, 'facebook'],
-  [firebase.auth.GoogleAuthProvider.PROVIDER_ID, 'google'],
-  ['apple.com', 'apple'],
-  [firebase.auth.TwitterAuthProvider.PROVIDER_ID, 'twitter'],
-  ['microsoft.com', 'microsoft'],
-  ['yahoo.com', 'yahoo'],
-])
-
 // configure and initialize Firebase
 // https://github.com/vercel/next.js/issues/1999
 if (!firebase.apps.length) {
@@ -82,6 +70,7 @@ const Comp = (props) => {
       user => {
         // set state variable for re-rendering
         setFirebaseAuthUser(user)
+
         // if user logged in then refetch getLinkedUser
         if (user) {
           refetch()
@@ -94,32 +83,22 @@ const Comp = (props) => {
     }
   }, [])
 
-  // // if token doesn't have the user id then refresh. that's it
-  // useEffect(() => {
-  //   async function refreshToken() {
-  //     const idTokenResult = await firebaseAuthUser.getIdTokenResult()
-  //     if (!idTokenResult?.claims?.awtarika_user_id) {
-  //       console.log(`force refresh here`);
-  //       // await firebase?.auth()?.currentUser?.getIdToken(true)
-  //     }
-  //   }
-
-  //   if (firebaseAuthUser) {
-  //     refreshToken()
-  //   }
-    
-  // }, [firebaseAuthUser])
-
   // query awtarika db to see if firebase user exist
   const { loading, error, refetch }  = useQuery (
     GET_LINKED_USER_QUERY,
     {
       fetchPolicy: 'no-cache',
       skip: !firebaseAuthUser,
-      onCompleted: (data) => {
+      onCompleted: async (data) => {
         if (data?.getLinkedUser) {
           // set reactive variable
           authUser(data.getLinkedUser)
+          
+          // refresh idToken if it doesn't contain custom claims from awtarika
+          const idTokenResult = await firebaseAuthUser.getIdTokenResult()
+          if (!idTokenResult?.claims?.awtarika) {
+            await firebaseAuthUser.getIdToken(true)
+          }
         } else {
           // if no user then log user out
           firebase.auth().signOut()
@@ -134,7 +113,14 @@ const Comp = (props) => {
 
   // StyledFirebaseAuth config
   const uiConfig = {
-    signInOptions: Array.from(PROVIDERS.keys()),
+    signInOptions: [
+      'facebook.com',
+      'google.com',
+      'apple.com',
+      'twitter.com',
+      'microsoft.com',
+      'yahoo.com',
+    ],
     signInFlow: 'popup',
     callbacks: {
       signInSuccessWithAuthResult: () => {
