@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Search from 'components/search.comp'
 import { queryAuthUser } from 'lib/localState'
+import LibraryNav from 'components/libraryNav'
 import AuthUser, { logout } from 'components/user.auth.comp'
 
 const Comp = () => {
@@ -20,10 +21,6 @@ const Comp = () => {
       {
         getAuthUser ? (
           <div>
-            <Link href="/user/playlists-list">
-              <a>قوائمي</a>
-            </Link>
-            { ` - ` }
             <Link href="/user/[id]/[slug]" as={ `/user/${ getAuthUser.id }/${ getAuthUser.slug }` }>
               <a>{ getAuthUser.username }</a>
             </Link>
@@ -33,6 +30,8 @@ const Comp = () => {
             <button onClick={ logout }>
               Logout
             </button>
+            <br/>
+            <LibraryNav/>
           </div>
         ) : (
           <AuthUser/>

@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { queryAuthUser } from 'lib/localState'
 import Head from 'components/head'
 import Layout from 'components/layout'
-import LibraryNav from 'components/libraryNav'
 import Playlists from 'components/playlist.user.comp'
 
 const META = {
@@ -18,7 +17,6 @@ const Page = () => {
   return (
     <Layout>
       <Head asPath={ META.asPath } title={ META.title } description={ META.description }/>
-      <LibraryNav/>
       <div>
         My Playlists List
         <div>
