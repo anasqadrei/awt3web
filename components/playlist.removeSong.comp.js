@@ -5,8 +5,8 @@ import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import ErrorMessage from 'components/errorMessage'
 
 const REMOVE_SONG_FROM_PLAYLIST_MUTATION = gql`
-  mutation removeSongFromPlaylist($playlistId: ID!, $songId: ID!, $index: Int!) {
-    removeSongFromPlaylist(playlistId: $playlistId, songId: $songId, index: $index) {
+  mutation removeSongFromPlaylist($playlistId: ID!, $songId: ID!, $index: Int!, $userId: ID!) {
+    removeSongFromPlaylist(playlistId: $playlistId, songId: $songId, index: $index, userId: $userId) {
       id
       name
       slug
@@ -69,6 +69,7 @@ const Comp = (props) => {
           playlistId: props.playlist.id,
           songId: props.song.id,
           index: props.index,
+          userId: getAuthUser?.id,
         },
         update: (cache, { data: { removeSongFromPlaylist } }) => {
           // write to cache

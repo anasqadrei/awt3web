@@ -15,8 +15,8 @@ const CREATE_PLAYLIST_MUTATION = gql`
   }
 `
 const ADD_SONG_TO_PLAYLIST_MUTATION = gql`
-  mutation addSongToPlaylist ($playlistId: ID!, $songId: ID!) {
-    addSongToPlaylist(playlistId: $playlistId, songId: $songId) {
+  mutation addSongToPlaylist ($playlistId: ID!, $songId: ID!, $userId: ID!) {
+    addSongToPlaylist(playlistId: $playlistId, songId: $songId, userId: $userId) {
       id
       name
       slug
@@ -35,6 +35,7 @@ const Comp = (props) => {
           variables: {
             playlistId: data.createPlaylist.id,
             songId: props.song.id,
+            userId: getAuthUser?.id,
           },
         })
       },

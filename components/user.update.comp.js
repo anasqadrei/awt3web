@@ -80,12 +80,10 @@ const Comp = (props) => {
       <div>
         Emails:
         { props.user.emails ? props.user.emails.map(email => (
-          <div key={ email }>
-            { email }
-            {/* NOTE: not sure if we want this feature */}
-            {/* <RemoveUserEmail user={ props.user } email={ email }/> */}
-          </div>
-        ))
+            <div key={ email }>
+              { email }
+            </div>
+          ))
         :
           `X`
         }

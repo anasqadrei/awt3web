@@ -31,8 +31,8 @@ const FLAG_COMMENT_MUTATION = gql`
   }
 `
 const DELETE_COMMENT_MUTATION = gql`
-  mutation deleteCommentById ($id: ID!) {
-    deleteCommentById(id: $id)
+  mutation deleteComment ($commentId: ID!, $userId: ID!) {
+    deleteComment(commentId: $commentId, userId: $userId)
   }
 `
 
@@ -62,7 +62,7 @@ const Comp = (props) => {
       },
     }
   )
-  const [deleteCommentById, { loading: loadingDelete, error: errorDelete }] = useMutation(
+  const [deleteComment, { loading: loadingDelete, error: errorDelete }] = useMutation(
     DELETE_COMMENT_MUTATION,
     {
       onError: (error) => {
@@ -265,9 +265,10 @@ const Comp = (props) => {
       // execute mutation and update the cache
       // only update the number of comments in the cache
       // refetch listComments because updating them in cache is a hassle. paging becomes complicated.
-      deleteCommentById({
+      deleteComment({
         variables: {
-          id: props.comment.id,
+          commentId: props.comment.id,
+          userId: getAuthUser.id,
         },
         update: (cache) => {
           // read from cache

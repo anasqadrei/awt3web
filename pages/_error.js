@@ -43,7 +43,7 @@ ErrorPage.getInitialProps = async ({ res, err, asPath }) => {
 
 const Page = ({ statusCode, hasGetInitialPropsRun, err }) => {
   if (!hasGetInitialPropsRun && err) {
-    // TODO: wait for the below issue to be fixed
+    // BUG: wait for the below issue to be fixed
     // getInitialProps is not called in case of
     // https://github.com/zeit/next.js/issues/8592. As a workaround, we pass
     // err via _app.js so it can be captured

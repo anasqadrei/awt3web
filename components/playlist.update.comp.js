@@ -10,8 +10,8 @@ const FORM_NAME = "name"
 const FORM_DESC = "desc"
 const FORM_PRIVACY = "privacy"
 const UPDATE_PLAYLIST_MUTATION = gql`
-  mutation updatePlaylist ($playlistId: ID!, $playlist: PlaylistInput!) {
-    updatePlaylist(playlistId: $playlistId, playlist: $playlist) {
+  mutation updatePlaylist ($playlistId: ID!, $playlist: PlaylistInput!, $userId: ID!) {
+    updatePlaylist(playlistId: $playlistId, playlist: $playlist, userId: $userId) {
       id
     }
   }
@@ -45,6 +45,7 @@ const Comp = (props) => {
     const varsUpdatePlaylist = {
       playlistId: props.playlist.id,
       playlist: {},
+      userId: getAuthUser?.id,
     }
     const varsListPlaylists = {
       userId: getAuthUser?.id,

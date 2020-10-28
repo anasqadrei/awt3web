@@ -8,8 +8,8 @@ import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/p
 import ErrorMessage from 'components/errorMessage'
 
 const ADD_SONG_TO_PLAYLIST_MUTATION = gql`
-  mutation addSongToPlaylist ($playlistId: ID!, $songId: ID!) {
-    addSongToPlaylist(playlistId: $playlistId, songId: $songId) {
+  mutation addSongToPlaylist ($playlistId: ID!, $songId: ID!, $userId: ID!) {
+    addSongToPlaylist(playlistId: $playlistId, songId: $songId, userId: $userId) {
       id
       name
       slug
@@ -150,6 +150,7 @@ const Comp = (props) => {
       variables: {
         playlistId: playlistId,
         songId: props.song.id,
+        userId: getAuthUser?.id,
       },
       update: (cache, { data: { addSongToPlaylist } }) => {
         // write to cache
