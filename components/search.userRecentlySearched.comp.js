@@ -25,11 +25,13 @@ const Comp = () => {
   }
 
   // excute query
+  // cache-and-network fetch policy is to update the list of recent searches
   const { loading, error, data } = useQuery (
     LIST_USER_SEARCHES_QUERY,
     {
       variables: vars,
       skip: !getAuthUser,
+      fetchPolicy: "cache-and-network",
     }
   )
 

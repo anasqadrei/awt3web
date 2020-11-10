@@ -2,26 +2,24 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import { queryAuthUser } from 'lib/localState'
 import SongItem from 'components/song.item.comp'
 import ErrorMessage from 'components/errorMessage'
 
 const PAGE_SIZE = 2
-const SEARCH_SONGS_QUERY = gql`
-  query searchSongs ($query: String!, $page: Int!, $pageSize: Int!, $userId: ID) {
-    searchSongs(query: $query, page: $page, pageSize: $pageSize, userId: $userId) {
+const SEARCH_LYRICS_QUERY = gql`
+  query searchLyrics ($query: String!, $page: Int!, $pageSize: Int!) {
+    searchLyrics(query: $query, page: $page, pageSize: $pageSize) {
       id
-      title
-      slug
-      artist {
+      content
+      song {
         id
-        name
+        title
         slug
-      }
-      plays
-      duration
-      defaultImage {
-        url
+        artist {
+          id
+          name
+          slug
+        }
       }
     }
   }
@@ -32,15 +30,11 @@ const Comp = () => {
   const [nextPage, setNextPage] = useState(true)
   const [currentListLength, setCurrentListLength] = useState(0)
 
-  // get authenticated user
-  const getAuthUser = queryAuthUser()
-
   // set query variables
   const vars = {
     query: useRouter().query.q,
     page: 1,
     pageSize: PAGE_SIZE,
-    userId: getAuthUser?.id,
   }
 
   // excute query
@@ -51,14 +45,14 @@ const Comp = () => {
   // onCompleted() decides paging. it compares currentListLength with the newListLength.
   // if they're equal, then it means no more items which is an indication to stop paging.
   const { loading, error, data, fetchMore, networkStatus } = useQuery (
-    SEARCH_SONGS_QUERY,
+    SEARCH_LYRICS_QUERY,
     {
       variables: vars,
       notifyOnNetworkStatusChange: true,
       ssr: false,
       onCompleted: (data) => {
         // get new length of data (cached + newly fetched) with default = 0
-        const newListLength = data?.searchSongs?.length ?? 0
+        const newListLength = data?.searchLyrics?.length ?? 0
 
         // if there are no new items in the list then stop paging.
         if (newListLength == currentListLength) {
@@ -90,22 +84,22 @@ const Comp = () => {
   }
 
   // in case no data found
-  if (!data?.searchSongs?.length) {
+  if (!data?.searchLyrics?.length) {
     return (
       <div>
-        no songs found in searchSongs results (design this)
+        no songs found in searchLyrics results (design this)
       </div>
     )
   }
 
   // get data
-  const { searchSongs } = data
+  const { searchLyrics } = data
 
   // function: get (and append at cache) new fetched data
   const loadMore = () => {
     fetchMore({
       variables: {
-        page: Math.ceil(searchSongs.length / vars.pageSize) + 1
+        page: Math.ceil(searchLyrics.length / vars.pageSize) + 1
       },
     })
   }
@@ -113,9 +107,12 @@ const Comp = () => {
   // display data
   return (
     <section>
-      Songs in searchSongs results
-      { searchSongs.map(song => (
-        <SongItem key={ song.id } song={ song }/>
+      Songs in searchLyrics results
+      { searchLyrics.map(lyrics => (
+        <div key={ lyrics.id }>
+          <SongItem song={ lyrics.song }/>
+          <div dangerouslySetInnerHTML={{ __html: lyrics.content }}/>
+        </div>
       ))}
 
       { nextPage ?
@@ -123,7 +120,7 @@ const Comp = () => {
           { loadingMore ? 'Loading...' : 'Show More Songs المزيد' }
         </button>
         :
-        <p>all songs in searchSongs results have been shown</p>
+        <p>all songs in searchLyrics results have been shown</p>
       }
     </section>
   )
