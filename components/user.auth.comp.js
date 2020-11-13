@@ -91,14 +91,14 @@ const Comp = (props) => {
       skip: !firebaseAuthUser,
       onCompleted: async (data) => {
         if (data?.getLinkedUser) {
-          // set reactive variable
-          authUser(data.getLinkedUser)
-          
-          // refresh idToken if it doesn't contain custom claims from awtarika
+          // first: refresh idToken if it doesn't contain custom claims from awtarika
           const idTokenResult = await firebaseAuthUser.getIdTokenResult()
           if (!idTokenResult?.claims?.awtarika) {
             await firebaseAuthUser.getIdToken(true)
           }
+
+          // second: if token is all good, then set reactive variable
+          authUser(data.getLinkedUser)
         } else {
           // if no user then log user out
           firebase.auth().signOut()
