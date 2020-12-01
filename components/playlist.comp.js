@@ -10,6 +10,7 @@ import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import { PLAYLISTS_COLLECTION, ROOT_APP_ELEMENT } from 'lib/constants'
 import Head from 'components/head'
 import UpdatePlaylist from 'components/playlist.update.comp'
+import UpdatePlaylistImage from 'components/playlist.updateImage.comp'
 import LikePlaylist from 'components/playlist.like.comp'
 import PlayPlaylist from 'components/playlist.play.comp'
 import SharePlaylist from 'components/playlist.share.comp'
@@ -44,6 +45,7 @@ const Comp = () => {
 
   // state variables
   const [updatePlaylistModalIsOpen, setUpdatePlaylistModalIsOpen] = useState(false)
+  const [updatePlaylistImageModalIsOpen, setUpdatePlaylistImageModalIsOpen] = useState(false)
 
   // set query variables
   const vars = {
@@ -98,6 +100,18 @@ const Comp = () => {
 
             <div>
               <img src={ getPlaylist.imageUrl ? getPlaylist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
+              <div hidden={ getAuthUser?.id !== getPlaylist.user.id }>
+                <button onClick={ () => { setUpdatePlaylistImageModalIsOpen(true) } }>
+                  Update Playlist Image
+                </button>
+                <Modal isOpen={ updatePlaylistImageModalIsOpen } onRequestClose={ () => { setUpdatePlaylistImageModalIsOpen(false) } } style={ modalStyles } contentLabel="update Playlist image modal">
+                  <button onClick={ () => { setUpdatePlaylistImageModalIsOpen(false) } }>
+                    Close
+                  </button>
+                  <h2>Update Playlist Image</h2>
+                  <UpdatePlaylistImage playlist={ getPlaylist }/>
+                </Modal>
+              </div>
               <h1 className="title">{ getPlaylist.name }</h1>
               <LikePlaylist playlistId={ getPlaylist.id }/>
             </div>

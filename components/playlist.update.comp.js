@@ -5,7 +5,7 @@ import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'
 import ErrorMessage from 'components/errorMessage'
 
-// TODO: still image and list of songs can be updated
+// TODO: still list of songs can be updated
 const FORM_NAME = "name"
 const FORM_DESC = "desc"
 const FORM_PRIVACY = "privacy"
