@@ -3,11 +3,12 @@ import { gql, useApolloClient, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { queryAuthUser } from 'lib/localState'
 import { GET_SONG_QUERY, GET_UPLOAD_SIGNED_URL_QUERY } from 'lib/graphql'
+import { getUploadFileId } from 'lib/uploadFile'
 import ErrorMessage from 'components/errorMessage'
 
 const FORM_FILE = "file"
 const CREATE_SONG_IMAGE_MUTATION = gql`
-  mutation createSongImage ($file: String!, $songId: ID!, $userId: ID!) {
+  mutation createSongImage ($file: ID!, $songId: ID!, $userId: ID!) {
     createSongImage(file: $file, songId: $songId, userId: $userId) {
       id
     }
@@ -65,7 +66,7 @@ const Comp = (props) => {
         // refetch getSong because updating list of images in cache is a hassle
         createSongImage({
           variables: {
-            file: data.getUploadSignedURL.match(/(?:\.com\/)(.+)(?=\?)/)[1],
+            file: getUploadFileId(data.getUploadSignedURL),
             songId: props.songId,
             userId: getAuthUser?.id,
           },
@@ -90,7 +91,7 @@ const Comp = (props) => {
   // display component
   return (
     <form onSubmit={ handleSubmit }>
-      <input name={ FORM_FILE } type="file" accept="image/jpeg" required/>
+      <input name={ FORM_FILE } type="file" accept="image/jpeg" required disabled={ loading || data?.createSongImage }/>
       <button type="submit" disabled={ loading || data?.createSongImage }>
         Add Song Image
       </button>
