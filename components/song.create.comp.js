@@ -57,7 +57,7 @@ const Comp = () => {
     const desc = formData.get(FORM_DESC).replace(/\n/g, '<br/>')
     const file = formData.get(FORM_FILE)
 
-    // get signed URL to uoload the audio file to
+    // get signed URL to uoload the file to
     setLoadingGetUrl(true)
     const { data } = await apolloClient.query({
       fetchPolicy: 'no-cache',

@@ -18,6 +18,7 @@ const UPDATE_PLAYLIST_MUTATION = gql`
 
 const Comp = (props) => {
   // upload state variables
+  const [loadingGetUrl, setLoadingGetUrl] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [errorUpload, setErrorUpload] = useState(false)
 
@@ -73,7 +74,8 @@ const Comp = (props) => {
     const file = formData.get(FORM_FILE)
     form.reset()
 
-    // get signed URL to uoload the image file to
+    // get signed URL to uoload the file to
+    setLoadingGetUrl(true)
     const { data } = await apolloClient.query({
       fetchPolicy: 'no-cache',
       query: GET_UPLOAD_SIGNED_URL_QUERY,
@@ -116,6 +118,9 @@ const Comp = (props) => {
         setErrorUpload(true)
         Sentry.captureMessage(xhr.responseText)
       }
+
+      // reset
+      setLoadingGetUrl(false)
     }
 
     // upload file
@@ -126,17 +131,18 @@ const Comp = (props) => {
   // display component
   return (
     <div hidden={ getAuthUser?.id !== props.playlist.user.id }>
-      <button onClick={ () => handleRemoveImage() } disabled={ !props.playlist.imageUrl || uploadProgress > 0 || loading || data?.updatePlaylist }>
+      <button onClick={ () => handleRemoveImage() } disabled={ !props.playlist.imageUrl || loadingGetUrl || uploadProgress > 0 || loading || data?.updatePlaylist }>
         Remove Image
       </button>
 
       <form onSubmit={ handleSubmit }>
-        <input name={ FORM_FILE } type="file" accept="image/jpeg" required disabled={ uploadProgress > 0 || loading || data?.updatePlaylist }/>
-        <button type="submit" disabled={ uploadProgress > 0 || loading || data?.updatePlaylist }>
+        <input name={ FORM_FILE } type="file" accept="image/jpeg" required disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.updatePlaylist }/>
+        <button type="submit" disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.updatePlaylist }>
           Add playlist Image
         </button>
       </form>
 
+      { loadingGetUrl && <div>get signed url (design this)</div> }
       { uploadProgress > 0 && <div>uploading { uploadProgress }%</div> }
       { loading && <div>mutating (design this)</div> }
       { (errorUpload || errorUpdate) && <ErrorMessage/> }

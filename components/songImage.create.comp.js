@@ -17,6 +17,7 @@ const CREATE_SONG_IMAGE_MUTATION = gql`
 
 const Comp = (props) => {
   // upload state variables
+  const [loadingGetUrl, setLoadingGetUrl] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [errorUpload, setErrorUpload] = useState(false)
 
@@ -45,7 +46,8 @@ const Comp = (props) => {
     const file = formData.get(FORM_FILE)
     form.reset()
 
-    // get signed URL to uoload the image file to
+    // get signed URL to uoload the file to
+    setLoadingGetUrl(true)
     const { data } = await apolloClient.query({
       fetchPolicy: 'no-cache',
       query: GET_UPLOAD_SIGNED_URL_QUERY,
@@ -81,6 +83,9 @@ const Comp = (props) => {
         setErrorUpload(true)
         Sentry.captureMessage(xhr.responseText)
       }
+
+      // reset
+      setLoadingGetUrl(false)
     }
 
     // upload file
@@ -91,11 +96,12 @@ const Comp = (props) => {
   // display component
   return (
     <form onSubmit={ handleSubmit }>
-      <input name={ FORM_FILE } type="file" accept="image/jpeg" required disabled={ loading || data?.createSongImage }/>
-      <button type="submit" disabled={ loading || data?.createSongImage }>
+      <input name={ FORM_FILE } type="file" accept="image/jpeg" required disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.createSongImage }/>
+      <button type="submit" disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.createSongImage }>
         Add Song Image
       </button>
 
+      { loadingGetUrl && <div>get signed url (design this)</div> }
       { uploadProgress > 0 && <div>uploading { uploadProgress }%</div> }
       { loading && <div>mutating (design this)</div> }
       { (errorUpload || errorCreate) && <ErrorMessage/> }
