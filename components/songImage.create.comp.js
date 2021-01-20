@@ -46,7 +46,7 @@ const Comp = (props) => {
     const file = formData.get(FORM_FILE)
     form.reset()
 
-    // get signed URL to uoload the file to
+    // get signed URL to upload the file to
     setLoadingGetUrl(true)
     const { data } = await apolloClient.query({
       fetchPolicy: 'no-cache',
