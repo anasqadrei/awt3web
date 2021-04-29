@@ -68,6 +68,7 @@ const Comp = (props) => {
     // adds an observer for changes to the user's sign-in state
     const unsubscribe = firebase.auth().onAuthStateChanged(
       user => {
+        // NOTE: console.log(user?.xa);
         // set state variable for re-rendering
         setFirebaseAuthUser(user)
 
