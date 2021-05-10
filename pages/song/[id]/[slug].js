@@ -223,7 +223,7 @@ const Page = ({ song }) => {
         }
         <p>المدة: { song.duration }</p>
         <p>حجم الملف: { song.fileSize }MB</p>
-        <p>الجودة: { song.bitRate }kbps</p>
+        <p>الجودة: { song.bitrate }kbps</p>
         أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ song.user.id }/${ song.user.slug }` }><a>{ song.user.username }</a></Link> on { song.createdDate }
         <div>
           <div hidden={ getAuthUser?.id !== song.user.id }>

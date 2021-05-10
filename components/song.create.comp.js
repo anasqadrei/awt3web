@@ -97,7 +97,6 @@ const Comp = () => {
 
     // upload file
     xhr.open(`PUT`, data?.getUploadSignedURL)
-    // TODO: add request header metadata?
     xhr.send(file)
   }
 
