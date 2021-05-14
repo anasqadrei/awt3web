@@ -157,8 +157,8 @@ const Comp = () => {
             </div>
 
             <div>
-              { getPlaylist.songs && getPlaylist.songs.map((song, index) => (
-                <div key={ `${ index }-${ song.id }` }>
+              { getPlaylist.songs?.map((song, index) => song && (
+                <div key={ index }>
                   <SongItem song={ song }/>
                   <RemoveSongFromPlaylist playlist={ getPlaylist } song={ song } index={ index }/>
                 </div>

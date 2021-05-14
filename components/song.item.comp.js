@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 const Comp = (props) => (
   <section>
-    <img src={ props.song.defaultImage ? props.song.defaultImage.url : `https://via.placeholder.com/30?text=no+photo?` }/>
+    <img src={ props.song.defaultImage?.url || `https://via.placeholder.com/30?text=no+photo?` }/>
     <Link href="/song/[id]/[slug]" as={ `/song/${ props.song.id }/${ props.song.slug }` }>
       <a>{ props.song.title }</a>
     </Link>
