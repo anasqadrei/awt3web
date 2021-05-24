@@ -2,7 +2,6 @@ import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 import { AUTH_USER_FRAGMENT } from 'lib/graphql'
 import { authUser } from 'lib/localState'
-import RemoveUserEmail from 'components/user.removeEmail.comp'
 import ErrorMessage from 'components/errorMessage'
 
 const FORM_USERNAME = "username"
@@ -93,11 +92,10 @@ const Comp = (props) => {
       <input name={ FORM_BIRTH_DATE } type="date" disabled={ loadingUpdate } defaultValue={ props.user.birthDate } placeholder="yyyy-mm-dd" pattern="\d{4}-\d{2}-\d{2}" required/>
       <div>
         Sex:
-        {/* validate this not empty */}
         <select name={ FORM_SEX } disabled={ loadingUpdate } defaultValue={ props.user.sex || "" } required>
           <option key="m" value="m">ذكر</option>
           <option key="f" value="f">أنثى</option>
-          <option value=""></option>
+          { !props.user.sex && <option value=""></option>}
         </select>
       </div>
       { loadingCountries && <div>loading countries</div> }
