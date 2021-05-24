@@ -90,6 +90,7 @@ const Comp = () => {
         { loading && <div>mutating (design this)</div> }
         { error && <ErrorMessage/> }
         { data?.contactUs && <div>message sent</div> }
+        { data?.contactUs === false && <div>message not sent</div> }
       </form>
 
       {
