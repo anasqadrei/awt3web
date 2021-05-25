@@ -103,7 +103,7 @@ const Comp = () => {
     <section>
       Playlists in searchPlaylists results
       { searchPlaylists.map(playlist => (
-        <PlaylistItem key={ playlist.id } playlist={ playlist }/>
+        <PlaylistItem key={ playlist.id } playlist={ playlist } search={ true }/>
       ))}
 
       { nextPage ?

@@ -102,7 +102,7 @@ const Comp = () => {
     <section>
       Artists in searchArtists results
       { searchArtists.map(artist => (
-        <ArtistRowItem key={ artist.id } artist={ artist }/>
+        <ArtistRowItem key={ artist.id } artist={ artist } search={ true }/>
       ))}
 
       { nextPage ?

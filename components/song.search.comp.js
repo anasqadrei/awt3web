@@ -115,7 +115,7 @@ const Comp = () => {
     <section>
       Songs in searchSongs results
       { searchSongs.map(song => (
-        <SongItem key={ song.id } song={ song }/>
+        <SongItem key={ song.id } song={ song } search={ true }/>
       ))}
 
       { nextPage ?
