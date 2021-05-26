@@ -106,8 +106,8 @@ const Comp = () => {
     <div>
       <form onSubmit={ handleSubmit }>
         file: <input name={ FORM_FILE } type="file" disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.createSong } accept="audio/mp3" required/>
-        song title: <input name={ FORM_TITLE } type="text" disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.createSong } maxLength="50" placeholder="title here" required/>
-        artist name: <input name={ FORM_ARTIST } type="text" disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.createSong } maxLength="50" placeholder="artist here" required/>
+        song title: <input name={ FORM_TITLE } type="text" disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.createSong } maxLength="50" placeholder="title here" pattern="^[^%]*$" required/>
+        artist name: <input name={ FORM_ARTIST } type="text" disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.createSong } maxLength="50" placeholder="artist here" pattern="^[^%]*$" required/>
         description: <textarea name={ FORM_DESC } type="text" disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.createSong } row="7" maxLength="500" placeholder="desc here" required/>
         Name: { getAuthUser?.username }
         <input type="checkbox" disabled={ loadingGetUrl || uploadProgress > 0 || loading || data?.createSong } required/> I have the rights
