@@ -75,7 +75,7 @@ const Comp = (props) => {
   return (
     <form onSubmit={ handleSubmit }>
       Username
-      <input name={ FORM_USERNAME } type="text" disabled={ loadingUpdate } minLength="5" maxLength="50" defaultValue={ props.user.username } placeholder="username here" required/>
+      <input name={ FORM_USERNAME } type="text" disabled={ loadingUpdate } minLength="5" maxLength="50" defaultValue={ props.user.username } placeholder="username here" pattern="^[^%]*$" required/>
       <div>
         Emails:
         { props.user.emails ? props.user.emails.map(email => (
