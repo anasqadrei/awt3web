@@ -72,7 +72,7 @@ const Comp = () => {
   return (
     <div>
       <form onSubmit={ handleSubmit }>
-        playlist name: <input name={ FORM_NAME } type="text" disabled={ loading } maxLength="50" placeholder="playlist name here" required/>
+        playlist name: <input name={ FORM_NAME } type="text" disabled={ loading } maxLength="50" placeholder="playlist name here" pattern="^[^%]*$" required/>
         description: <textarea name={ FORM_DESC } type="text" disabled={ loading } row="7" maxLength="500" placeholder="desc here"/>
         <input name={ FORM_PRIVACY } type="checkbox" disabled={ loading }/> private playlist
         {

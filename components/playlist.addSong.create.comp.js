@@ -90,7 +90,7 @@ const Comp = (props) => {
   // display component
   return (
     <form onSubmit={ handleSubmit }>
-      playlist name: <input name={ FORM_NAME } type="text" disabled={ loadingCreate || loadingAddSong || dataAddSong } maxLength="50" placeholder="playlist name here" required/>
+      playlist name: <input name={ FORM_NAME } type="text" disabled={ loadingCreate || loadingAddSong || dataAddSong } maxLength="50" placeholder="playlist name here" pattern="^[^%]*$" required/>
       <input name={ FORM_PRIVACY } type="checkbox" disabled={ loadingCreate || loadingAddSong || dataAddSong } defaultChecked={ true }/> private playlist
       <button type="submit" disabled={ loadingCreate || loadingAddSong || dataAddSong }>
         Add to Playlist
