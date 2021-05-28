@@ -4,7 +4,7 @@ import { queryAuthUser } from 'lib/localState'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 
 const PLAY_PLAYLIST_MUTATION = gql`
-  mutation playPlaylist ($playlistId: ID!, $userId: ID!) {
+  mutation playPlaylist ($playlistId: ID!, $userId: ID) {
     playPlaylist(playlistId: $playlistId, userId: $userId)
   }
 `
@@ -44,9 +44,9 @@ const Comp = (props) => {
     // TODO: stream playlist
 
     // execute mutation and update the cache
-    getAuthUser && playPlaylist({
+    playPlaylist({
       variables: {
-        userId: getAuthUser.id,
+        userId: getAuthUser?.id,
         playlistId: props.playlistId,
       },
       update: (cache, { data: { playPlaylist } }) => {

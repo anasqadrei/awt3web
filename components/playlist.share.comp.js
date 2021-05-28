@@ -4,7 +4,7 @@ import { queryAuthUser } from 'lib/localState'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 
 const SHARE_PLAYLIST_MUTATION = gql`
-  mutation sharePlaylist ($playlistId: ID!, $userId: ID!) {
+  mutation sharePlaylist ($playlistId: ID!, $userId: ID) {
     sharePlaylist(playlistId: $playlistId, userId: $userId)
   }
 `
@@ -46,9 +46,9 @@ const Comp = (props) => {
     // $scope.share('https://twitter.com/share?via=awtarika&lang=ar&text=' + $scope.data.title + '&url=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/#!' + $location.url()));
 
     // execute mutation and update the cache
-    getAuthUser && sharePlaylist({
+    sharePlaylist({
       variables: {
-        userId: getAuthUser.id,
+        userId: getAuthUser?.id,
         playlistId: props.playlistId,
       },
       update: (cache, { data: { sharePlaylist } }) => {
