@@ -63,10 +63,10 @@ const Comp = (props) => {
           })
         }
       },
-      refetchQueries: () => [{
+      refetchQueries: () => getAuthUser && [{
         query: LIST_USER_PLAYED_SONGS_QUERY,
         variables: {
-          userId: getAuthUser?.id,
+          userId: getAuthUser.id,
           sort: SORT,
           page: 1,
           pageSize: PAGE_SIZE,
