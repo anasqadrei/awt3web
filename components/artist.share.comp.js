@@ -4,7 +4,7 @@ import { queryAuthUser } from 'lib/localState'
 import { GET_ARTIST_QUERY } from 'lib/graphql'
 
 const SHARE_ARTIST_MUTATION = gql`
-  mutation shareArtist ($artistId: ID!, $userId: ID!) {
+  mutation shareArtist ($artistId: ID!, $userId: ID) {
     shareArtist(artistId: $artistId, userId: $userId)
   }
 `
@@ -46,9 +46,9 @@ const Comp = (props) => {
     // $scope.share('https://twitter.com/share?via=awtarika&lang=ar&text=' + $scope.data.title + '&url=' + encodeURIComponent($location.protocol() + '://' + $location.host() + ':' + $location.port() + '/#!' + $location.url()));
 
     // execute mutation and update the cache
-    getAuthUser && shareArtist({
+    shareArtist({
       variables: {
-        userId: getAuthUser.id,
+        userId: getAuthUser?.id,
         artistId: props.artistId,
       },
       update: (cache, { data: { shareArtist } }) => {
