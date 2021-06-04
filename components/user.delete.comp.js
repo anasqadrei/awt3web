@@ -26,7 +26,7 @@ const Comp = (props) => {
 
 	// function: handle onClick event
   const handleDelete = () => {
-    if (confirm("Are you sure?")) {
+    if (confirm("To delete your user, you need to delete your songs, Song images, lyrics and public playlists first. Otherwise error will occur. Are you sure?")) {
 			// execute mutation
       deleteUser({
         variables: {
