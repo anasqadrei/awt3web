@@ -1,6 +1,6 @@
 import Router from 'next/router'
 import { gql, useMutation } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { logout } from 'components/user.auth.comp'
 import ErrorMessage from 'components/errorMessage'
 

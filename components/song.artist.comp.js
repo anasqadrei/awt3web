@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { DISPLAY } from 'lib/constants'
 import Sort from 'components/sort.comp'
 import ErrorMessage from 'components/errorMessage'

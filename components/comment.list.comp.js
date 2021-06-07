@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { validateCommentsCollection, getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'
 import ParentComment from 'components/comment.parent.comp'

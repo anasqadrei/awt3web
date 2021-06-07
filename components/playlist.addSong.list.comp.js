@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { gql, useQuery, useMutation, NetworkStatus } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { queryAuthUser } from 'lib/localState'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import ErrorMessage from 'components/errorMessage'
 
 const SORT = '-createdDate'

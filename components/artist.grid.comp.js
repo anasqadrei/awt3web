@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import Sort from 'components/sort.comp'
 import ArtistGridItem from 'components/artist.gridItem.comp'
 import ErrorMessage from 'components/errorMessage'

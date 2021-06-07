@@ -1,5 +1,5 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { queryAuthUser } from 'lib/localState'
 import { GET_SONG_QUERY } from 'lib/graphql'
 import { LIST_USER_PLAYED_SONGS_QUERY, SORT, PAGE_SIZE } from 'components/song.userRecentlyPlayed.comp'

@@ -1,5 +1,5 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { queryAuthUser, postLoginAction, queryPostLoginAction } from 'lib/localState'
 import { GET_PLAYLIST_QUERY } from 'lib/graphql'
 import AuthUser from 'components/user.auth.comp'

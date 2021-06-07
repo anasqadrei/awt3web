@@ -1,5 +1,5 @@
 import { gql, useMutation } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { queryAuthUser } from 'lib/localState'
 import { validateCommentsCollection, getCommentsCollectionQuery } from 'lib/commentsCollection'
 import { SONGS_COLLECTION, ARTISTS_COLLECTION, PLAYLISTS_COLLECTION, BLOGPOSTS_COLLECTION } from 'lib/constants'

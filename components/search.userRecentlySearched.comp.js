@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { gql, useQuery } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { queryAuthUser } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'
 

@@ -1,6 +1,6 @@
 import Router from 'next/router'
 import { gql, useMutation } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { queryAuthUser } from 'lib/localState'
 import AuthUser from 'components/user.auth.comp'
 import { LIST_USER_PLAYLISTS_QUERY, DEFAULT_SORT, PAGE_SIZE } from 'components/playlist.user.comp'

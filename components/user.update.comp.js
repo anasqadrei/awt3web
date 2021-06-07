@@ -1,5 +1,5 @@
 import { gql, useQuery, useMutation } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { AUTH_USER_FRAGMENT } from 'lib/graphql'
 import { authUser } from 'lib/localState'
 import ErrorMessage from 'components/errorMessage'

@@ -11,14 +11,12 @@
     "start": "next start"
   },
   "devDependencies": {
-    "@zeit/next-source-maps": "^0.0.3",
     "babel-plugin-transform-define": "^2.0.0",
     "graphql": "^15.5.0"
   },
   "dependencies": {
     "@apollo/client": "^3.3.19",
-    "@sentry/browser": "^5.24.2",
-    "@sentry/node": "^5.24.2",
+    "@sentry/nextjs": "^6.5.1",
     "aws-appsync-auth-link": "^3.0.4",
     "firebase": "^8.6.5",
     "next": "^10.2.3",
@@ -26,9 +24,5 @@
     "react-dom": "^17.0.2",
     "react-firebaseui": "^5.0.2",
     "react-modal": "^3.14.2"
-  },
-  "resolutions": {
-    "node-fetch": "^2.6.1",
-    "kind-of": "^6.0.3"
   }
 }

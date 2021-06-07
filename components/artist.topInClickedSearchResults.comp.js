@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import ArtistGridItem from 'components/artist.gridItem.comp'
 import ErrorMessage from 'components/errorMessage'
 

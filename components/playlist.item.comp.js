@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useMutation } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { PLAYLISTS_COLLECTION } from 'lib/constants'
 import { CREATE_CLICKED_SEARCH_RESULT_MUTATION } from 'lib/graphql'
 

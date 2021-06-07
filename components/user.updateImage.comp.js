@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { gql, useApolloClient, useMutation } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { AUTH_USER_FRAGMENT } from 'lib/graphql'
 import { authUser } from 'lib/localState'
 import { GET_UPLOAD_SIGNED_URL_QUERY } from 'lib/graphql'

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { queryAuthUser } from 'lib/localState'
 import ArtistRowItem from 'components/artist.rowItem.comp'
 import ErrorMessage from 'components/errorMessage'

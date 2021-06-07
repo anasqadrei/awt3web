@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import ErrorMessage from 'components/errorMessage'
 
 export const PAGE_SIZE = 10

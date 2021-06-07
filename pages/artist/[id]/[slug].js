@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Error from 'next/error'
-import * as Sentry from '@sentry/node'
+import * as Sentry from '@sentry/nextjs'
 import { initializeApollo } from 'lib/apolloClient'
 import { validateUrl } from 'lib/validateUrl'
 import { GET_ARTIST_QUERY } from 'lib/graphql'
