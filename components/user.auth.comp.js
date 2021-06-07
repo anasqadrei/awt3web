@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/node'
-import * as firebase from 'firebase/app'
+import firebase from 'firebase/app'
 import 'firebase/auth'
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 import Modal from 'react-modal'

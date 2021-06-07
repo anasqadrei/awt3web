@@ -60,7 +60,7 @@ const Page = () => {
           popular artists
           <TopLikedArtists/>
         </div>
-        <Link href="browse">
+        <Link href="/browse">
           <a>Browse More</a>
         </Link>
       </div>
