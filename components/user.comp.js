@@ -161,7 +161,7 @@ const Comp = () => {
       <p>Public Playlists added:</p>
       <Playlists userId={ getUser.id } snippet={ true } private={ false }/>
       <p>
-        <Link href="/user/[id]/[slug]/uploads" as={`/user/${ getUser.id }/${ getUser.slug }/uploads`}>
+        <Link href={ `/user/${ getUser.id }/${ getUser.slug }/uploads` }>
           <a>more uploads</a>
         </Link>
       </p>

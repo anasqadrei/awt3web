@@ -135,7 +135,7 @@ const Comp = (props) => {
       { props.display === DISPLAY.LIST && listArtistSongs.map(song => (
           <section key={ song.id }>
             <img src={ song.defaultImage ? song.defaultImage.url : `https://via.placeholder.com/30?text=no+photo?` }/>
-            <Link href="/song/[id]/[slug]" as={ `/song/${ song.id }/${ song.slug }` }>
+            <Link href={ `/song/${ song.id }/${ song.slug }` }>
               <a>{ song.title }</a>
             </Link>
             <img src="https://via.placeholder.com/30?text=duration"/> { song.duration }
@@ -147,7 +147,7 @@ const Comp = (props) => {
 
       { props.display === DISPLAY.TEXT && listArtistSongs.map(song => (
           <span key={ song.id }>
-            <Link href="/song/[id]/[slug]" as={ `/song/${ song.id }/${ song.slug }` }>
+            <Link href={ `/song/${ song.id }/${ song.slug }` }>
               <a>{ song.title }</a>
             </Link>{' '}
           </span>

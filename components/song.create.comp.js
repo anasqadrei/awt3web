@@ -35,7 +35,7 @@ const Comp = () => {
     CREATE_SONG_MUTATION,
     {
       onCompleted: (data) => {
-        Router.push(`/song/[id]/[slug]`, `/song/${ data.createSong.id }/${ data.createSong.slug }`)
+        Router.push(`/song/${ data.createSong.id }/${ data.createSong.slug }`)
       },
       onError: (error) => {
         Sentry.captureException(error)

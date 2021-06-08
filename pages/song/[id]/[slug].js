@@ -155,7 +155,7 @@ const Page = ({ song }) => {
         <img src={ song.defaultImage ? song.defaultImage.url : `https://via.placeholder.com/100?text=no+photo?` }/>
         <h1 className="title">
           { song.title } -
-          <Link href="/artist/[id]/[slug]" as={ `/artist/${ song.artist.id }/${ song.artist.slug }` }>
+          <Link href={ `/artist/${ song.artist.id }/${ song.artist.slug }` }>
             <a>{ song.artist.name }</a>
           </Link>
         </h1>
@@ -217,14 +217,14 @@ const Page = ({ song }) => {
         {
           song.hashtags && song.hashtags.map(hashtag => (
             <div key={ hashtag }>
-              <Link href="/hashtag/[hashtag]" as={ `/hashtag/${ hashtag }` }><a>#{ hashtag }</a></Link>
+              <Link href={ `/hashtag/${ hashtag }` }><a>#{ hashtag }</a></Link>
             </div>
           ))
         }
         <p>المدة: { song.duration }</p>
         <p>حجم الملف: { song.fileSize }MB</p>
         <p>الجودة: { song.bitrate }kbps</p>
-        أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ song.user.id }/${ song.user.slug }` }><a>{ song.user.username }</a></Link> on { song.createdDate }
+        أضافها <Link href={ `/user/${ song.user.id }/${ song.user.slug }` }><a>{ song.user.username }</a></Link> on { song.createdDate }
         <div>
           <div hidden={ getAuthUser?.id !== song.user.id }>
             <button onClick={ () => { setUpdateSongModalIsOpen(true) } }>
@@ -247,7 +247,7 @@ const Page = ({ song }) => {
         { song.imagesList?.map(image => (
           <div key={ image.id }>
             <img src={ image.url } alt={ song.title }/>
-            أضافها <Link href="/user/[id]/[slug]" as={ `/user/${ image.user.id }/${ image.user.slug }` }><a>{ image.user.username }</a></Link> on { image.createdDate }
+            أضافها <Link href={ `/user/${ image.user.id }/${ image.user.slug }` }><a>{ image.user.username }</a></Link> on { image.createdDate }
             <DeleteSongImage songId={ song.id } image={ image }/>
             <LikeSongImage songId={ song.id } imageId={ image.id }/>
           </div>
@@ -282,7 +282,7 @@ const Page = ({ song }) => {
         { song.lyrics && (
           <div>
             <div dangerouslySetInnerHTML={{ __html: song.lyrics.content }}/>
-            { song.lyrics.createdDate && `created on ${ song.lyrics.createdDate }` } { song.lyrics.lastUpdatedDate && `last modified on ${ song.lyrics.lastUpdatedDate }` } by <Link href="/user/[id]/[slug]" as={ `/user/${ song.lyrics.user.id }/${ song.lyrics.user.slug }` }><a>{ song.lyrics.user.username }</a></Link>
+            { song.lyrics.createdDate && `created on ${ song.lyrics.createdDate }` } { song.lyrics.lastUpdatedDate && `last modified on ${ song.lyrics.lastUpdatedDate }` } by <Link href={ `/user/${ song.lyrics.user.id }/${ song.lyrics.user.slug }` }><a>{ song.lyrics.user.username }</a></Link>
             <div hidden={ getAuthUser?.id !== song.lyrics.user.id }>
               <button onClick={ () => { setUpdateLyricsModalIsOpen(true) } }>
                 Update Lyrics

@@ -56,7 +56,7 @@ const Comp = () => {
   return (
     <section>
       { listSongHashtags.map(hashtag => (
-          <Link key={ hashtag } href="/hashtag/[hashtag]" as={ `/hashtag/${ hashtag }` }>
+          <Link key={ hashtag } href={ `/hashtag/${ hashtag }` }>
             <a>#{ hashtag }</a>
           </Link>
       ))}

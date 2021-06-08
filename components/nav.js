@@ -21,10 +21,10 @@ const Comp = () => {
       {
         getAuthUser ? (
           <div>
-            <Link href="/user/[id]/[slug]" as={ `/user/${ getAuthUser.id }/${ getAuthUser.slug }` }>
+            <Link href={ `/user/${ getAuthUser.id }/${ getAuthUser.slug }` }>
               <a>{ getAuthUser.username }</a>
             </Link>
-            <Link href="/user/[id]/[slug]" as={ `/user/${ getAuthUser.id }/${ getAuthUser.slug }` }>
+            <Link href={ `/user/${ getAuthUser.id }/${ getAuthUser.slug }` }>
               <img src={ getAuthUser.imageUrl ? getAuthUser.imageUrl : `https://via.placeholder.com/100?text=No+Photo` } alt={ getAuthUser.imageUrl && getAuthUser.username }/>
             </Link>
             <button onClick={ logout }>

@@ -108,11 +108,11 @@ const Comp = (props) => {
       { listUserSongImages.map(songImage => (
         <div key={ songImage.id }>
           <img src={ songImage.url }/>
-          <Link href="/song/[id]/[slug]" as={ `/song/${ songImage.song.id }/${ songImage.song.slug }` }>
+          <Link href={ `/song/${ songImage.song.id }/${ songImage.song.slug }` }>
             <a>{ songImage.song.title }</a>
           </Link>
           -
-          <Link href="/artist/[id]/[slug]" as={ `/artist/${ songImage.song.artist.id }/${ songImage.song.artist.slug }` }>
+          <Link href={ `/artist/${ songImage.song.artist.id }/${ songImage.song.artist.slug }` }>
             <a>{ songImage.song.artist.name }</a>
           </Link>
         </div>

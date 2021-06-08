@@ -32,7 +32,7 @@ const Comp = (props) => {
   return (
     <section>
       <img src={ props.playlist.imageUrl ? props.playlist.imageUrl : `https://via.placeholder.com/30?text=no+photo?` }/>
-      <Link href="/playlist/[id]/[slug]" as={ `/playlist/${ props.playlist.id }/${ props.playlist.slug }` }>
+      <Link href={ `/playlist/${ props.playlist.id }/${ props.playlist.slug }` }>
         <a onClick={ () => logClickedSearchResult() }>{ props.playlist.name }</a>
       </Link>
       <img src="https://via.placeholder.com/30?text=duration"/> { props.playlist.duration }

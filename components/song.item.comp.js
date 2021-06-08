@@ -32,11 +32,11 @@ const Comp = (props) => {
   return (
     <section>
       <img src={ props.song.defaultImage?.url || `https://via.placeholder.com/30?text=no+photo?` }/>
-      <Link href="/song/[id]/[slug]" as={ `/song/${ props.song.id }/${ props.song.slug }` }>
+      <Link href={ `/song/${ props.song.id }/${ props.song.slug }` }>
         <a onClick={ () => logClickedSearchResult() }>{ props.song.title }</a>
       </Link>
       -
-      <Link href="/artist/[id]/[slug]" as={ `/artist/${ props.song.artist.id }/${ props.song.artist.slug }` }>
+      <Link href={ `/artist/${ props.song.artist.id }/${ props.song.artist.slug }` }>
         <a>{ props.song.artist.name }</a>
       </Link>
       <img src="https://via.placeholder.com/30?text=duration"/> { props.song.duration }

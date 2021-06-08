@@ -24,7 +24,7 @@ const Comp = () => {
     CREATE_PLAYLIST_MUTATION,
     {
       onCompleted: (data) => {
-        Router.push(`/playlist/[id]/[slug]`, `/playlist/${ data.createPlaylist.id }/${ data.createPlaylist.slug }`)
+        Router.push(`/playlist/${ data.createPlaylist.id }/${ data.createPlaylist.slug }`)
       },
       onError: (error) => {
         Sentry.captureException(error)

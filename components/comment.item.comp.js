@@ -328,10 +328,10 @@ const Comp = (props) => {
   // display component
   return (
     <div>
-      <Link href="/user/[id]/[slug]" as={ `/user/${ props.comment.user.id }/${ props.comment.user.slug }` }>
+      <Link href={ `/user/${ props.comment.user.id }/${ props.comment.user.slug }` }>
         <img src={ props.comment.user.imageUrl ? props.comment.user.imageUrl : `https://via.placeholder.com/100?text=No+Photo` } alt={ props.comment.user.imageUrl && props.comment.user.username }/>
       </Link>
-      <Link href="/user/[id]/[slug]" as={ `/user/${ props.comment.user.id }/${ props.comment.user.slug }` }>
+      <Link href={ `/user/${ props.comment.user.id }/${ props.comment.user.slug }` }>
         <a>{ props.comment.user.username }</a>
       </Link>
 

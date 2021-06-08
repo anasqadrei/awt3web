@@ -108,11 +108,11 @@ const Comp = (props) => {
       { listUserLyrics.map(lyrics => (
         <div key={ lyrics.id }>
           <div dangerouslySetInnerHTML={{ __html: lyrics.content }}/>
-          <Link href="/song/[id]/[slug]" as={ `/song/${ lyrics.song.id }/${ lyrics.song.slug }` }>
+          <Link href={ `/song/${ lyrics.song.id }/${ lyrics.song.slug }` }>
             <a>{ lyrics.song.title }</a>
           </Link>
           -
-          <Link href="/artist/[id]/[slug]" as={ `/artist/${ lyrics.song.artist.id }/${ lyrics.song.artist.slug }` }>
+          <Link href={ `/artist/${ lyrics.song.artist.id }/${ lyrics.song.artist.slug }` }>
             <a>{ lyrics.song.artist.name }</a>
           </Link>
         </div>

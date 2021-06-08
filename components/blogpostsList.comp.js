@@ -107,7 +107,7 @@ const Comp = () => {
 
       { listBlogposts.map(blogpost => (
         <div key={ blogpost.id }>
-          <Link href="/blog/[id]/[slug]" as={ `/blog/${ blogpost.id }/${ blogpost.slug }` }>
+          <Link href={ `/blog/${ blogpost.id }/${ blogpost.slug }` }>
             <a>{ blogpost.title }</a>
           </Link>
           <p>Date { blogpost.createdDate }, { blogpost.comments || 0 } comments</p>

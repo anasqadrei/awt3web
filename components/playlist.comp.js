@@ -144,7 +144,7 @@ const Comp = () => {
               {
                 getPlaylist.hashtags && getPlaylist.hashtags.map(hashtag => (
                   <div key={ hashtag }>
-                    <Link href="/hashtag/[hashtag]" as={ `/hashtag/${ hashtag }` }><a>#{ hashtag }</a></Link>
+                    <Link href={ `/hashtag/${ hashtag }` }><a>#{ hashtag }</a></Link>
                   </div>
                 ))
               }
@@ -153,7 +153,7 @@ const Comp = () => {
               <br/>
               private: { getPlaylist.private.toString() }
               <br/>
-              Added by: <Link href="/user/[id]/[slug]" as={ `/user/${ getPlaylist.user.id }/${ getPlaylist.user.slug }` }><a>{ getPlaylist.user.username }</a></Link> on { getPlaylist.createdDate }
+              Added by: <Link href={ `/user/${ getPlaylist.user.id }/${ getPlaylist.user.slug }` }><a>{ getPlaylist.user.username }</a></Link> on { getPlaylist.createdDate }
             </div>
 
             <div>

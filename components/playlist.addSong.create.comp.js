@@ -101,15 +101,15 @@ const Comp = (props) => {
         dataAddSong && (
           <div>
             Song
-            <Link href="/song/[id]/[slug]" as={ `/song/${ props.song.id }/${ props.song.slug }` }>
+            <Link href={ `/song/${ props.song.id }/${ props.song.slug }` }>
               <a>{ props.song.title }</a>
             </Link>
             -
-            <Link href="/artist/[id]/[slug]" as={ `/artist/${ props.song.artist.id }/${ props.song.artist.slug }` }>
+            <Link href={ `/artist/${ props.song.artist.id }/${ props.song.artist.slug }` }>
               <a>{ props.song.artist.name }</a>
             </Link>
             was added to playlist
-            <Link href="/playlist/[id]/[slug]" as={ `/playlist/${ dataAddSong.addSongToPlaylist.id }/${ dataAddSong.addSongToPlaylist.slug }` }>
+            <Link href={ `/playlist/${ dataAddSong.addSongToPlaylist.id }/${ dataAddSong.addSongToPlaylist.slug }` }>
               <a>{ dataAddSong.addSongToPlaylist.name }</a>
             </Link>
             successfully!!

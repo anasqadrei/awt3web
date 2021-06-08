@@ -173,7 +173,7 @@ const Comp = (props) => {
               Add
             </button>
             <img src={ playlist.imageUrl ? playlist.imageUrl : `https://via.placeholder.com/30?text=no+photo?` }/>
-            <Link href="/playlist/[id]/[slug]" as={ `/playlist/${ playlist.id }/${ playlist.slug }` }>
+            <Link href={ `/playlist/${ playlist.id }/${ playlist.slug }` }>
               <a>{ playlist.name }</a>
             </Link>
           </div>
