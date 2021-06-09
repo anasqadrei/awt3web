@@ -18,11 +18,18 @@ export async function getStaticProps(context) {
   try {
     // apollo client for the build time
     const client = await initializeApollo()
+
     // query
     const { data } = await client.query({
       query: GET_ARTIST_QUERY,
       variables: { id: context.params.id }
     })
+
+    // if artist was not found
+    if (!data?.getArtist) {
+      return { notFound: true }
+    }
+
     // return apollo cache and artist
     // incremental static regeneration every 10 minutes (600 seconds)
     return {
@@ -34,7 +41,7 @@ export async function getStaticProps(context) {
     }
   } catch (error) {
     Sentry.captureException(error)
-    return { props: {} }
+    return { notFound: true }
   }
 }
 
@@ -56,11 +63,6 @@ const Page = ({ artist }) => {
       validateUrl(router, 'artist', artist.id, artist.slug)
     }
   })
-
-  // if artist was not found or error (after running getStaticProps())
-  if (!router.isFallback && !artist) {
-    return <Error statusCode={ 404 } title="Artist Not Found"/>
-  }
 
   // If the page is not yet generated, this will be displayed initially until getStaticProps() finishes running
   if (router.isFallback) {

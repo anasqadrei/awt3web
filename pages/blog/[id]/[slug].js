@@ -16,11 +16,18 @@ export async function getStaticProps(context) {
   try {
     // apollo client for the build time
     const client = await initializeApollo()
+
     // query
     const { data } = await client.query({
       query: GET_BLOGPOST_QUERY,
       variables: { id: context.params.id }
     })
+
+    // if blogpost was not found
+    if (!data?.getBlogpost) {
+      return { notFound: true }
+    }
+
     // return apollo cache and blogpost
     // incremental static regeneration every 100 minutes (6000 seconds)
     return {
@@ -32,7 +39,7 @@ export async function getStaticProps(context) {
     }
   } catch (error) {
     Sentry.captureException(error)
-    return { props: {} }
+    return { notFound: true }
   }
 }
 
@@ -54,11 +61,6 @@ const Page = ({ blogpost }) => {
       validateUrl(router, 'blog', blogpost.id, blogpost.slug)
     }
   })
-
-  // if blogpost was not found or error (after running getStaticProps())
-  if (!router.isFallback && !blogpost) {
-    return <Error statusCode={ 404 } title="Blogpost Not Found"/>
-  }
 
   // If the page is not yet generated, this will be displayed initially until getStaticProps() finishes running
   if (router.isFallback) {
