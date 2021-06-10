@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { gql, useQuery, useMutation, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/nextjs'
 import { queryAuthUser } from 'lib/localState'
@@ -172,7 +173,7 @@ const Comp = (props) => {
             <button onClick={ () => handleAdd(playlist.id) } disabled={ loadingAddSong || dataAddSong?.addSongToPlaylist.id === playlist.id }>
               Add
             </button>
-            <img src={ playlist.imageUrl ? playlist.imageUrl : `https://via.placeholder.com/30?text=no+photo?` }/>
+            <Image src={ playlist.imageUrl || `https://via.placeholder.com/30?text=no+photo?` } width={ 30 } height={ 30 }/>
             <Link href={ `/playlist/${ playlist.id }/${ playlist.slug }` }>
               <a>{ playlist.name }</a>
             </Link>

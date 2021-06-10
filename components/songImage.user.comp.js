@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { gql, useQuery, NetworkStatus } from '@apollo/client'
 import * as Sentry from '@sentry/nextjs'
 import ErrorMessage from 'components/errorMessage'
@@ -107,7 +108,7 @@ const Comp = (props) => {
     <section>
       { listUserSongImages.map(songImage => (
         <div key={ songImage.id }>
-          <img src={ songImage.url }/>
+          <Image src={ songImage.url } width={ 100 } height={ 100 }/>
           <Link href={ `/song/${ songImage.song.id }/${ songImage.song.slug }` }>
             <a>{ songImage.song.title }</a>
           </Link>

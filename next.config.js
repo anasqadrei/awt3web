@@ -2,6 +2,12 @@ const { withSentryConfig } = require('@sentry/nextjs')
 
 const moduleExports = {
   target: 'serverless',
+  images: {
+    domains: [
+      process.env.NEXT_PUBLIC_AWTARIKA_IMAGES_DOMAIN,
+      'via.placeholder.com',
+    ],
+  },
   async redirects() {
     return [
       {

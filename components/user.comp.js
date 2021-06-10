@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { gql, useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/nextjs'
@@ -103,7 +104,13 @@ const Comp = () => {
       <Head title={ getUser.username }/>
 
       <h1 className="title">{ getUser.username }</h1>
-      <img src={ getUser.imageUrl ? getUser.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
+      {
+        getUser.imageUrl?.match(process.env.NEXT_PUBLIC_AWTARIKA_IMAGES_DOMAIN) ? (
+          <Image src={ getUser.imageUrl } alt={ getUser.imageUrl && getUser.username } width={ 50 } height={ 50 }/>
+        ) : (
+          <img src={ getUser.imageUrl || `https://via.placeholder.com/50?text=No+Photo` } alt={ getUser.imageUrl && getUser.username } width={ 50 } height={ 50 }/>
+        )
+      }
 
       {
         getAuthUser?.id === getUser.id && (

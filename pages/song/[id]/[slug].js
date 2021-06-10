@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Error from 'next/error'
+import Image from 'next/image'
 import Modal from 'react-modal'
 import * as Sentry from '@sentry/nextjs'
 import { initializeApollo } from 'lib/apolloClient'
@@ -153,7 +153,7 @@ const Page = ({ song }) => {
           </Modal>
         </div>
 
-        <img src={ song.defaultImage ? song.defaultImage.url : `https://via.placeholder.com/100?text=no+photo?` }/>
+        <Image src={ song.defaultImage?.url || `https://via.placeholder.com/100?text=no+photo?` } alt={ song.title } width={ 100 } height={ 100 }/>
         <h1 className="title">
           { song.title } -
           <Link href={ `/artist/${ song.artist.id }/${ song.artist.slug }` }>
@@ -247,7 +247,7 @@ const Page = ({ song }) => {
       <div>
         { song.imagesList?.map(image => (
           <div key={ image.id }>
-            <img src={ image.url } alt={ song.title }/>
+            <Image src={ image.url } alt={ song.title } width={ 100 } height={ 100 }/>
             أضافها <Link href={ `/user/${ image.user.id }/${ image.user.slug }` }><a>{ image.user.username }</a></Link> on { image.createdDate }
             <DeleteSongImage songId={ song.id } image={ image }/>
             <LikeSongImage songId={ song.id } imageId={ image.id }/>

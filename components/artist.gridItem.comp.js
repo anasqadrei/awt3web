@@ -1,9 +1,10 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 const Comp = (props) => (
   <section>
     <Link href={ `/artist/${ props.artist.id }/${ props.artist.slug }` }>
-      <a><img src={ props.artist.imageUrl ? props.artist.imageUrl : `https://via.placeholder.com/150?text=no+photo?` } alt={ props.artist.name }/></a>
+      <a><Image src={ props.artist.imageUrl || `https://via.placeholder.com/150?text=no+photo?` } alt={ props.artist.name } width={ 150 } height={ 150 }/></a>
     </Link>
     <div>
       <Link href={ `/artist/${ props.artist.id }/${ props.artist.slug }` }>

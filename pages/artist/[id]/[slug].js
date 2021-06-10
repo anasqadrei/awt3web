@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
-import Error from 'next/error'
 import * as Sentry from '@sentry/nextjs'
 import { initializeApollo } from 'lib/apolloClient'
 import { validateUrl } from 'lib/validateUrl'
@@ -87,7 +87,7 @@ const Page = ({ artist }) => {
 
       <section>
         <div>
-          <img src={ artist.imageUrl ? artist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
+          <Image src={ artist.imageUrl || `https://via.placeholder.com/100?text=no+photo?` } alt={ artist.name } width={ 100 } height={ 100 }/>
           <h1 className="title">{ artist.name }</h1>
           <LikeArtist artistId={ artist.id }/>
         </div>

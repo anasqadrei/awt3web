@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/nextjs'
@@ -99,7 +100,7 @@ const Comp = () => {
             <Head title={ getPlaylist.name }/>
 
             <div>
-              <img src={ getPlaylist.imageUrl ? getPlaylist.imageUrl : `https://via.placeholder.com/100?text=no+photo` }/>
+              <Image src={ getPlaylist.imageUrl || `https://via.placeholder.com/100?text=no+photo?` } width={ 100 } height={ 100 }/>
               <div hidden={ getAuthUser?.id !== getPlaylist.user.id }>
                 <button onClick={ () => { setUpdatePlaylistImageModalIsOpen(true) } }>
                   Update Playlist Image

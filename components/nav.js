@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import Search from 'components/search.comp'
 import { queryAuthUser } from 'lib/localState'
 import LibraryNav from 'components/libraryNav'
@@ -25,7 +26,15 @@ const Comp = () => {
               <a>{ getAuthUser.username }</a>
             </Link>
             <Link href={ `/user/${ getAuthUser.id }/${ getAuthUser.slug }` }>
-              <img src={ getAuthUser.imageUrl ? getAuthUser.imageUrl : `https://via.placeholder.com/100?text=No+Photo` } alt={ getAuthUser.imageUrl && getAuthUser.username }/>
+              <a>
+                {
+                  getAuthUser.imageUrl?.match(process.env.NEXT_PUBLIC_AWTARIKA_IMAGES_DOMAIN) ? (
+                    <Image src={ getAuthUser.imageUrl } alt={ getAuthUser.imageUrl && getAuthUser.username } width={ 50 } height={ 50 }/>
+                  ) : (
+                    <img src={ getAuthUser.imageUrl || `https://via.placeholder.com/50?text=No+Photo` } alt={ getAuthUser.imageUrl && getAuthUser.username } width={ 50 } height={ 50 }/>
+                  )
+                }
+              </a>
             </Link>
             <button onClick={ logout }>
               Logout

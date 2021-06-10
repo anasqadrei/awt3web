@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/nextjs'
 import { PLAYLISTS_COLLECTION } from 'lib/constants'
@@ -31,7 +32,7 @@ const Comp = (props) => {
   // display data
   return (
     <section>
-      <img src={ props.playlist.imageUrl ? props.playlist.imageUrl : `https://via.placeholder.com/30?text=no+photo?` }/>
+      <Image src={ props.playlist.imageUrl || `https://via.placeholder.com/30?text=no+photo?` } width={ 30 } height={ 30 }/>
       <Link href={ `/playlist/${ props.playlist.id }/${ props.playlist.slug }` }>
         <a onClick={ () => logClickedSearchResult() }>{ props.playlist.name }</a>
       </Link>

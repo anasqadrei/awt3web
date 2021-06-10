@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import * as Sentry from '@sentry/nextjs'
 import { queryAuthUser, postLoginAction, queryPostLoginAction } from 'lib/localState'
@@ -329,7 +330,15 @@ const Comp = (props) => {
   return (
     <div>
       <Link href={ `/user/${ props.comment.user.id }/${ props.comment.user.slug }` }>
-        <img src={ props.comment.user.imageUrl ? props.comment.user.imageUrl : `https://via.placeholder.com/100?text=No+Photo` } alt={ props.comment.user.imageUrl && props.comment.user.username }/>
+        <a>
+          {
+            props.comment.user.imageUrl?.match(process.env.NEXT_PUBLIC_AWTARIKA_IMAGES_DOMAIN) ? (
+              <Image src={ props.comment.user.imageUrl } alt={ props.comment.user.imageUrl && props.comment.user.username } width={ 50 } height={ 50 }/>
+            ) : (
+              <img src={ props.comment.user.imageUrl || `https://via.placeholder.com/50?text=No+Photo` } alt={ props.comment.user.imageUrl && props.comment.user.username } width={ 50 } height={ 50 }/>
+            )
+          }
+        </a>      
       </Link>
       <Link href={ `/user/${ props.comment.user.id }/${ props.comment.user.slug }` }>
         <a>{ props.comment.user.username }</a>

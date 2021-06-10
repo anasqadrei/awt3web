@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import Error from 'next/error'
 import * as Sentry from '@sentry/nextjs'
 import { initializeApollo } from 'lib/apolloClient'
 import { validateUrl } from 'lib/validateUrl'
