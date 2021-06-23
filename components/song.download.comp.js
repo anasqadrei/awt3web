@@ -44,8 +44,6 @@ const Comp = (props) => {
 
   // function: handle onClick event
   const handleDownload = () => {
-    // TODO: download song
-
     // execute mutation and update the cache
     getAuthUser && downloadSong({
       variables: {
@@ -53,8 +51,9 @@ const Comp = (props) => {
         songId: props.songId,
       },
       update: (cache, { data: { downloadSong } }) => {
-        // if a successful download, update downloads counter in the cache
+        // if getting the download link was successful, then update downloads counter and start the download process
         if (downloadSong) {
+          // update downloads counter in the cache
           cache.modify({
             id: cache.identify(getSong),
             fields: {
@@ -62,6 +61,24 @@ const Comp = (props) => {
                 return currentValue + 1
               },
             }
+          })
+
+          // trigger the download process
+          fetch(downloadSong, { mode: 'cors' })
+          .then(response => response.blob())
+          .then(blob => {       
+            // create <a>, click it and then remove it
+            const link = document.createElement('a')
+            link.href = window.URL.createObjectURL(new Blob([blob]))
+            link.setAttribute('download', `${ getSong.title } - ${ getSong.artist.name }.mp3`)
+            if (typeof link.download === 'undefined') link.setAttribute('target', '_blank')
+            link.style.display = 'none'
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+          })
+          .catch((error) => {
+            Sentry.captureException(error)
           })
         }
       },
